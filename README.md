@@ -1,144 +1,121 @@
-<div align="center">
-<p><img width="200" src="https://github.com/vue-bulma/vue-admin/blob/master/client/assets/logo@2x.png"></p>
+# CoreUI Vue - Free Bootstrap Admin Template [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=CoreUI%20-%20Free%20Vue%20Admin%20Template%20&url=http://coreui.io/vue/&hashtags=bootstrap,admin,template,dashboard,panel,free,angular,react,vue)
 
-<h1>Vue Admin</h1>
+### Check out our Vue Admin Templates and support CoreUI Development
 
-<p>
-  <strong>Vue Admin Panel Framework</strong>,
-  <a href="https://admin.vuebulma.com">Live Demo</a>
-</p>
+[![Bootstrap Admin Templates Bundle](https://genesisui.com/img/bundle2.png)](https://genesisui.com/bundle.html?support=1)
 
-<p>
-  <sub>Made with ❤︎ by
-    <a href="https://twitter.com/_fundon">Fangdun Cai</a> and
-    <a href="https://github.com/vue-bulma/vue-admin/graphs/contributors">contributors</a>
-  </sub>
-</p>
+[Check out Bootstrap Admin Templates Bundle](https://genesisui.com/bundle.html?support=1)
 
-<p>
-<a href="https://npmjs.org/package/vue-admin"><img src="https://img.shields.io/npm/v/vue-admin.svg" alt="NPM version"></a>
-<a href="https://www.npmjs.com/package/vue-admin"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"></a>
-<a href="https://travis-ci.org/vue-bulma/vue-admin"><img src="https://img.shields.io/travis/vue-bulma/vue-admin.svg?label=linux" alt="Linux Build"></a>
-<a href="https://ci.appveyor.com/project/fundon/vue-admin"><img src="https://img.shields.io/appveyor/ci/fundon/vue-admin/master.svg?label=windows" alt="Window Build"/></a>
-<a href="https://gitter.im/fundon/vue-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/fundon/vue-admin.svg" alt="Gitter"></a>
-</p>
+This is Vue.js version of our Bootstrap 4 admin template [CoreUI](https://github.com/mrholek/CoreUI-Free-Bootstrap-Admin-Template).
 
-</div>
+Please help us on [Product Hunt](https://www.producthunt.com/posts/coreui-open-source-bootstrap-4-admin-template-with-angular-2-react-js-vue-js-support) & [Designer News](https://www.designernews.co/stories/81127). Thanks in advance!
 
-![](screenshots/preview.jpg)
+Why I decided to create CoreUI? Please read this article: [Jack of all trades, master of none. Why Boostrap Admin Templates suck.](https://medium.com/@lukaszholeczek/jack-of-all-trades-master-of-none-5ea53ef8a1f#.7eqx1bcd8)
 
+CoreUI is an Open Source Vue & Bootstrap Admin Template. But CoreUI is not just another Admin Template. It goes way beyond hitherto admin templates thanks to transparent code and file structure. And if that's not enough, let’s just add that CoreUI consists bunch of unique features and over 1000 high quality icons.
 
-## Features
+CoreUI is based on Bootstrap 4 and offers 6 versions: [HTML5 AJAX](https://github.com/mrholek/CoreUI-Free-Bootstrap-Admin-Template), [HTML5 Static](https://github.com/mrholek/CoreUI-Free-Bootstrap-Admin-Template), [AngularJS](https://github.com/mrholek/CoreUI-AngularJS), [Angular 2+](https://github.com/mrholek/CoreUI-Angular), [React.js](https://github.com/mrholek/CoreUI-React) & [Vue.js](https://github.com/mrholek/CoreUI-Vue).
 
-* Powered by [Vue][] **2.0** & [Bulma][] **0.3**
-* Responsive and Flexible Box Layout
-* [Variety of Charts](doc/charts.md)
-* [Rich Components](doc/components.md) or See [vue-bulma][]
-* Based on the awesome third-party [libraries](doc/dependencies.md)
+CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of redundant components, so the app is light enough to offer ultimate user experience. This means mobile devices also, where the navigation is just as easy and intuitive as on a desktop or laptop. The CoreUI Layout API lets you customize your project for almost any device – be it Mobile, Web or WebApp – CoreUI covers them all!
 
+[![CoreUI Vue Free Bootstrap Admin Template](http://coreui.io/assets/img/coreui.png "CoreUI Vue Free Bootstrap Admin Template")](http://coreui.io)
 
-## [Backers](backers.md)
+**NOTE:** Please remember to **STAR** this project and **FOLLOW** [my Github](https://github.com/mrholek) to keep you update with this template.
 
-Its ongoing development is made possible thanks to the support by these awesome backers. If you'd like to join them, check out:
+## Demo
 
-* [Patreon campaign](https://www.patreon.com/_fundon)
+A fully functional demo is available at [CoreUI](http://coreui.io/)
 
-* [OpenCollective](https://opencollective.com/vue-admin#backer): Support us with a monthly donation and help us continue our activities
+## What's included
 
-<a href="https://opencollective.com/vue-admin/backer/0/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/0/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/1/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/1/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/2/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/2/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/3/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/3/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/4/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/4/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/5/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/5/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/6/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/6/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/7/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/7/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/8/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/8/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/9/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/9/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/10/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/10/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/11/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/11/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/12/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/12/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/13/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/13/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/14/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/14/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/15/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/15/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/16/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/16/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/17/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/17/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/18/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/18/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/19/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/19/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/20/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/20/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/21/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/21/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/22/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/22/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/23/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/23/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/24/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/24/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/25/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/25/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/26/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/26/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/27/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/27/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/28/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/28/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/backer/29/website" target="_blank"><img src="https://opencollective.com/vue-admin/backer/29/avatar.svg"></a>
+Within the download you'll find the following directories and files:
 
-## Sponsors
+```
+CoreUI-Vue/
+├── build/               # webpack config files
+├── config/              # main project config
+├── scss/                # styles
+├── src/                 # project root
+│   ├── assets/                 # module assets (processed by webpack)
+│   ├── components/             # ui components
+│   ├── containers/             # ui containers
+│   ├── router/                 # routing 
+│   ├── shared/                 # utils
+│   ├── views/                  # ui views
+│   ├── App.vue                 # main app component
+│   └── main.js                 # app entry file
+├── _nav.js              # sidebar nav config
+├── static/              # pure static assets (directly copied)
+├── test/
+│   └── unit/            # unit tests
+│   └── e2e/             # e2e tests
+├── .babelrc.js          # babel config
+├── .editorconfig        # settings for your editor
+├── .eslintignore        # eslint ignore rules
+├── .eslintrc.js         # eslint config
+├── .gitignore           # defaults for gitignore
+├── .postcssrc.js        # postcss config
+├── CHANGELOG.md
+├── index.html           # index.html template
+├── LICENSE
+├── README.md
+└── package.json         # build scripts and dependencies
+```
 
-Become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://opencollective.com/vue-admin#sponsor)]
+## Other Versions
 
-<a href="https://opencollective.com/vue-admin/sponsor/0/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/1/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/2/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/3/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/4/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/5/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/6/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/7/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/8/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/9/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/9/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/10/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/10/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/11/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/11/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/12/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/12/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/13/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/13/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/14/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/14/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/15/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/15/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/16/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/16/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/17/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/17/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/18/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/18/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/19/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/19/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/20/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/20/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/21/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/21/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/22/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/22/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/23/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/23/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/24/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/24/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/25/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/25/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/26/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/26/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/27/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/27/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/28/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/28/avatar.svg"></a>
-<a href="https://opencollective.com/vue-admin/sponsor/29/website" target="_blank"><img src="https://opencollective.com/vue-admin/sponsor/29/avatar.svg"></a>
+CoreUI includes 6 Version for Angular 4, AngularJS, React.js, Vue.js, Static HTML5 and AJAX HTML5.
 
+* [Angular Version (Angular 2+)](https://github.com/mrholek/CoreUI-Angular)
+* [AngularJS Version](https://github.com/mrholek/CoreUI-AngularJS)
+* [HTML5 AJAX Version](https://github.com/mrholek/CoreUI-Free-Bootstrap-Admin-Template)
+* [HTML5 Static Version](https://github.com/mrholek/CoreUI-Free-Bootstrap-Admin-Template)
+* [React.js Version](https://github.com/mrholek/CoreUI-React)
+* [Vue.js Version](https://github.com/mrholek/CoreUI-Vue)
+* [ASP.NET Core 2 MVC Version](https://github.com/mrholek/CoreUI-NET)
 
-## [Development](doc/development.md)
+## Build Setup
 
+``` bash
+# install dependencies
+npm install
 
-### Requirements
+# serve with hot reload at localhost:8080
+npm run dev
 
-  * Node >= v5
+# build for production with minification
+npm run build
 
-  * NPM >= v3
+# build for production and view the bundle analyzer report
+npm run build --report
 
-  * Webpack v2
+# run unit tests
+npm run unit
 
+# run e2e tests
+npm run e2e
 
-## Notes
+# run all tests
+npm test
+```
 
-  If you want to use Vue Admin with Vue 1.0 version, please checkout the [vue-v1](https://github.com/vue-bulma/vue-admin/tree/vue-v1) branch.
+For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
-  Launch Vue Admin as a desktop application! Please check [Run Project with Electron](https://github.com/vue-bulma/vue-admin/wiki/Guide#run-project-with-electron)
+## Bugs and feature requests
 
+Have a bug or a feature request? [Please open a new issue](https://github.com/mrholek/CoreUI-Vue/issues/new).
 
-## Maintainers
-+ [fundon](https://github.com/fundon) &nbsp;&middot;&nbsp; [fundon.me](https://fundon.me) &nbsp;&middot;&nbsp; [Twitter@fundon](https://twitter.com/_fundon)
-+ [luventa](https://github.com/luventa)
+## Documentation
 
+CoreUI's documentation, is hosted on our website [CoreUI](http://coreui.io/)
 
-[Live Demo]: https://admin.vuebulma.com/
-[Fangdun Cai]: https://twitter.com/_fundon
-[Vue]: http://vuejs.org
-[Bulma]: http://bulma.io
-[Vue-bulma]: https://github.com/vue-bulma
+## Copyright and license
 
+copyright 2017 creativeLabs Łukasz Holeczek. Code released under [the MIT license](https://github.com/mrholek/CoreUI-Vue/blob/master/LICENSE).
+creativeLabs Łukasz Holeczek reserves the right to change the license of future releases. You can’t re-distribute the CoreUI as stock. You can’t do this if you modify the CoreUI.
+
+## Support CoreUI Development
+
+CoreUI is an MIT licensed open source project and completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. You can support development by donating on [PayPal](https://www.paypal.me/holeczek) or buying one of our [premium bootstrap 4 admin templates](https://genesisui.com/?support=1).
+
+As of now I am exploring the possibility of working on CoreUI fulltime - if you are a business that is building core products using CoreUI, I am also open to conversations regarding custom sponsorship / consulting arrangements. Get in touch on [Twitter](https://twitter.com/lukaszholeczek).

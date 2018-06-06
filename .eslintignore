@@ -1,1 +1,6 @@
-build/build.js
+/build/
+/config/
+/dist/
+/*.js
+/test/unit/coverage/
+/test/e2e/specs/
