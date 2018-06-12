@@ -11,8 +11,8 @@ const ApiService = {
   },
 
   setHeader () {
-    //chequear si usamos headers acá
-    //para user y password gcrypt con .htpasswd
+    // chequear si usamos headers acá
+    // para user y password gcrypt con .htpasswd
     Vue.axios.defaults.headers.common['Authorization'] = `Token ${JwtService.getToken()}`
   },
 
