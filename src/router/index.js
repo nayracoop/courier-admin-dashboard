@@ -48,6 +48,10 @@ import Alerts from '@/views/notifications/Alerts'
 import Badges from '@/views/notifications/Badges'
 import Modals from '@/views/notifications/Modals'
 
+// Courier
+import Providers from '@/views/providers/ProviderList'
+import Clients from '@/views/clients/ClientList'
+
 // Views - Pages
 import Page404 from '@/views/pages/Page404'
 import Page500 from '@/views/pages/Page500'
@@ -274,6 +278,26 @@ export default new Router({
               path: 'modals',
               name: 'Modals',
               component: Modals
+            }
+          ]
+        },
+        {
+          path: '/courier',
+          redirect: '/courier/proveedores',
+          name: 'Courier',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'proveedores',
+              name: 'Proveedores',
+              component: Providers
+            },
+            {
+              path: 'clientes',
+              name: 'Clientes',
+              component: Clients
             }
           ]
         }

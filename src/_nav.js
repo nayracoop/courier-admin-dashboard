@@ -257,17 +257,28 @@ export default {
       ]
     },
     {
-      name: 'Download CoreUI',
-      url: 'http://coreui.io/vue/',
-      icon: 'icon-cloud-download',
-      class: 'mt-auto',
-      variant: 'success'
+      divider: true
     },
     {
-      name: 'Try CoreUI PRO',
-      url: 'http://coreui.io/pro/vue/',
-      icon: 'icon-layers',
-      variant: 'danger'
+      title: true,
+      name: 'Courier'
+    },
+    {
+      name: 'Courier',
+      url: '/courier',
+      icon: 'icon-star',
+      children: [
+        {
+          name: 'Proveedores',
+          url: '/courier/proveedores',
+          icon: 'icon-star'
+        },
+        {
+          name: 'Clientes',
+          url: '/courier/clientes',
+          icon: 'icon-star'
+        }
+      ]
     }
   ]
 }

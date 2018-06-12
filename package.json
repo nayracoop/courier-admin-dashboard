@@ -1,11 +1,11 @@
 {
-  "name": "@coreui/coreui-free-vue-admin-template",
-  "version": "2.0.0-beta.3",
-  "description": "Open Source Bootstrap Admin Template",
-  "author": "Łukasz Holeczek",
-  "homepage": "http://coreui.io",
-  "copyright": "Copyright 2018 creativeLabs Łukasz Holeczek",
-  "license": "MIT",
+  "name": "courier-admin-dashboard",
+  "version": "0.0.1",
+  "description": "Dashboard",
+  "author": "Nayra Coop",
+  "homepage": "https://nayra.coop",
+  "copyright": "Copyright 2018",
+  "license": "SIT",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
