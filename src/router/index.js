@@ -50,7 +50,10 @@ import Modals from '@/views/notifications/Modals'
 
 // Courier
 import Providers from '@/views/providers/Providers'
+// import Providers from '@/views/providers/ProviderList'
+import ProviderSingle from '@/views/providers/ProviderSingle'
 import Clients from '@/views/clients/ClientList'
+import ClientSingle from '@/views/clients/ClientSingle'
 
 // Views - Pages
 import Page404 from '@/views/pages/Page404'
@@ -295,9 +298,19 @@ export default new Router({
               component: Providers
             },
             {
+              path: 'proveedorindividual',
+              name: 'Proveedor individual',
+              component: ProviderSingle
+            },
+            {
               path: 'clientes',
               name: 'Clientes',
               component: Clients
+            },
+            {
+              path: 'clienteindividual',
+              name: 'Cliente individual',
+              component: ClientSingle
             }
           ]
         },
