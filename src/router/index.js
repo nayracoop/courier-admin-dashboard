@@ -49,7 +49,7 @@ import Badges from '@/views/notifications/Badges'
 import Modals from '@/views/notifications/Modals'
 
 // Courier
-import Providers from '@/views/providers/ProviderList'
+import Providers from '@/views/providers/Providers'
 import Clients from '@/views/clients/ClientList'
 
 // Views - Pages
@@ -300,6 +300,12 @@ export default new Router({
               component: Clients
             }
           ]
+        },
+        {
+          name: 'provider',
+          path: '/provider/:id?',
+          props: true,
+          component: () => import('@/views/providers/Provider')
         }
       ]
     },

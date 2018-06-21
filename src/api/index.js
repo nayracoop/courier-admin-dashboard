@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import JwtService from '@/common/jwt.service'
+import JwtService from '@/common/services/jwt'
 import { API_URL } from '@/common/config'
+
+import provider from '@/api/provider'
 
 const ApiService = {
   init () {
@@ -56,17 +58,4 @@ const ApiService = {
 
 export default ApiService
 
-export const ProvidersService = {
-  get (slug) {
-    return ApiService.get('providers', slug)
-  },
-  create (params) {
-    return ApiService.post('providers', {article: params})
-  },
-  update (slug, params) {
-    return ApiService.update('providers', slug, {article: params})
-  },
-  destroy (slug) {
-    return ApiService.delete(`providers/${slug}`)
-  }
-}
+export const ProvidersService = provider

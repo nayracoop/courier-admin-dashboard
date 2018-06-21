@@ -6,18 +6,36 @@ import 'core-js/es7/array'
 // import cssVars from 'css-vars-ponyfill'
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
-import App from './App'
-import router from './router'
+import App from '@/App'
+import router from '@/router'
+import store from '@/store'
+// import { CHECK_AUTH } from '@/store/types/actions'
+
+import ApiService from '@/api'
+import DateFilter from '@/common/filters/date'
+import ErrorFilter from '@/common/filters/error'
 
 // todo
 // cssVars()
-
 Vue.use(BootstrapVue)
+Vue.filter('date', DateFilter)
+Vue.filter('error', ErrorFilter)
+
+ApiService.init()
+
+// router.beforeEach(
+//   (to, from, next) => {
+//     return Promise
+//       .all([store.dispatch(CHECK_AUTH)])
+//       .then(next)
+//   }
+// )
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: {
     App
