@@ -12,15 +12,15 @@
       :per-page="perPage"
       responsive="sm">
     <template slot="Acciones" slot-scope="data">
-      <b-button variant="primary">
+      <router-link tag="b-button" variant="primary" :to="{ name: 'Client', params: { id: data.item.id } }">
         <i class="fa fa-pencil"></i>
-      </b-button>
-      <b-button :small="small" :href="ok">
+      </router-link>
+      <router-link tag="b-button" to="charts" :small="small">
         <i class="fa fa-pencil"></i>
-      </b-button>
-      <b-button :small="small" :href="ok">
+      </router-link>
+      <router-link tag="b-button" to="charts" :small="small">
         <i class="fa fa-pencil"></i>
-      </b-button>
+      </router-link>
     </template>
     </b-table>
     <nav>
@@ -69,7 +69,7 @@ export default {
   data: () => {
     return {
       fields: [
-        {key: 'name', label: 'Nombre', sortable: true},
+        {key: 'name', label: 'Nombre', sortable: true, editable: true},
         {key: 'userCode', label: 'Código', sortable: true},
         {key: 'vatId', label: 'CUIT', sortable: true},
         {key: 'taxType', label: 'CondiciónIVA'},

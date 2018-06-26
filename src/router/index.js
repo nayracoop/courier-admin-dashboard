@@ -294,19 +294,25 @@ export default new Router({
           children: [
             {
               path: 'proveedores',
-              name: 'Proveedores',
+              name: 'Providers',
               component: Providers
             },
             {
-              name: 'provider',
-              path: '/provider/:id?',
+              path: 'proveedores/:id?',
+              name: 'Provider',
               props: true,
               component: () => import('@/views/providers/Provider')
             },
             {
               path: 'clientes',
-              name: 'Clientes',
+              name: 'Clients',
               component: Clients
+            },
+            {
+              path: 'clientes/:id?',
+              name: 'Client',
+              props: true,
+              component: () => import('@/views/clients/Client')
             }
           ]
         }
