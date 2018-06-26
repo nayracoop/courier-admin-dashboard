@@ -4,7 +4,8 @@ import VueAxios from 'vue-axios'
 import JwtService from '@/common/services/jwt'
 import { API_URL } from '@/common/config'
 
-import provider from '@/api/provider'
+import provider from './provider.service'
+import client from './client.service'
 
 const ApiService = {
   init () {
@@ -59,3 +60,4 @@ const ApiService = {
 export default ApiService
 
 export const ProvidersService = provider
+export const ClientsService = client

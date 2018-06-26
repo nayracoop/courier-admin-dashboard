@@ -14,9 +14,9 @@
     </div>
     <!-- v-if="actions" -->
     <template>
-      <c-provider-actions
+      <!-- <c-provider-actions
       :provider="provider"
-      ></c-provider-actions>
+      ></c-provider-actions> -->
     </template>
     <!-- :canModify="isCurrentUser()" -->
     <!-- <template v-else>
@@ -39,13 +39,13 @@
 
 <script>
 // import { mapGetters } from 'vuex'
-import CProviderActions from '@/components/ProviderActions'
+// import CProviderActions from '@/components/ProviderActions'
 
 export default {
   name: 'c-provider-meta',
-  components: {
-    CProviderActions
-  },
+  // components: {
+  //   CProviderActions
+  // },
   props: {
     provider: {
       type: Object,

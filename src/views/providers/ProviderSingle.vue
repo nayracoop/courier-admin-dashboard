@@ -54,12 +54,12 @@
           <b-row>
             <b-col sm="6">
               <b-form-group
-            label="Categoría fiscal"
-            label-for="ivaCond"
-            :label-cols="3"
-            :horizontal="false"
-            v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado de tu cliente"
-            >
+              label="Categoría fiscal"
+              label-for="ivaCond"
+              :label-cols="3"
+              :horizontal="false"
+              v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado de tu cliente"
+              >
             <b-form-select id="ivaCond"
               :plain="true"
               :options="['Consumidor final','Exento', 'Exterior', 'IVA no alcanzado', 'Monotributista', 'Responsable inscripto']"
@@ -233,6 +233,6 @@
   border-bottom: 1px solid #ebebebeb;
 }
 .actions-bar button{
-    margin-right: 10px;
+  margin-right: 10px;
 }
 </style>

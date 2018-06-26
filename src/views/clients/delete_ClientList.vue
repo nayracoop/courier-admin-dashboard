@@ -1,20 +1,36 @@
 <template>
   <b-card :header="caption">
-    <b-table :hover="hover" :striped="striped" :bordered="bordered" :small="small" :fixed="fixed" responsive="sm" :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage">
-      <template slot="Acciones" slot-scope="data">
-          <b-button variant="primary">
-              <i class="fa fa-pencil"></i>
-            </b-button>
-            <b-button :small="small" :href="ok">
-              <i class="fa fa-pencil"></i>
-            </b-button>
-            <b-button :small="small" :href="ok">
-              <i class="fa fa-pencil"></i>
-            </b-button>
-</template>
+    <b-table
+      :hover="hover" 
+      :striped="striped" 
+      :bordered="bordered" 
+      :small="small" 
+      :fixed="fixed"      
+      :items="items" 
+      :fields="fields" 
+      :current-page="currentPage" 
+      :per-page="perPage"
+      responsive="sm">
+    <template slot="Acciones" slot-scope="data">
+      <b-button variant="primary">
+        <i class="fa fa-pencil"></i>
+      </b-button>
+      <b-button :small="small" :href="ok">
+        <i class="fa fa-pencil"></i>
+      </b-button>
+      <b-button :small="small" :href="ok">
+        <i class="fa fa-pencil"></i>
+      </b-button>
+    </template>
     </b-table>
     <nav>
-      <b-pagination :total-rows="getRowCount(items)" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente" hide-goto-end-buttons/>
+      <b-pagination 
+        :total-rows="getRowCount(items)" 
+        :per-page="perPage" 
+        v-model="currentPage" 
+        prev-text="Anterior" 
+        next-text="Siguiente" 
+        hide-goto-end-buttons />
     </nav>
   </b-card>
 </template>

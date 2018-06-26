@@ -1,0 +1,103 @@
+<template>
+  <b-card :header="caption">
+    <b-table
+      :hover="hover"
+      :striped="striped"
+      :bordered="bordered"
+      :small="small"
+      :fixed="fixed"
+      :items="clients"
+      :fields="fields"
+      :current-page="currentPage"
+      :per-page="perPage"
+      responsive="sm">
+    <template slot="Acciones" slot-scope="data">
+      <b-button variant="primary">
+        <i class="fa fa-pencil"></i>
+      </b-button>
+      <b-button :small="small" :href="ok">
+        <i class="fa fa-pencil"></i>
+      </b-button>
+      <b-button :small="small" :href="ok">
+        <i class="fa fa-pencil"></i>
+      </b-button>
+    </template>
+    </b-table>
+    <nav>
+      <b-pagination
+        :total-rows="clientsCount"
+        :per-page="perPage"
+        v-model="currentPage"
+        prev-text="Anterior"
+        next-text="Siguiente"
+        hide-goto-end-buttons />
+    </nav>
+  </b-card>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import { FETCH_CLIENTS } from '@/store/types/actions'
+export default {
+  name: 'c-client-list',
+  props: {
+    caption: {
+      type: String,
+      default: 'Clientes'
+    },
+    hover: {
+      type: Boolean,
+      default: true
+    },
+    striped: {
+      type: Boolean,
+      default: false
+    },
+    bordered: {
+      type: Boolean,
+      default: true
+    },
+    small: {
+      type: Boolean,
+      default: false
+    },
+    fixed: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: () => {
+    return {
+      fields: [
+        {key: 'name', label: 'Nombre', sortable: true},
+        {key: 'userCode', label: 'Código', sortable: true},
+        {key: 'vatId', label: 'CUIT', sortable: true},
+        {key: 'taxType', label: 'CondiciónIVA'},
+        {key: 'phone', label: 'Teléfono'},
+        {key: 'address', label: 'Dirección'},
+        {key: 'email', label: 'Email', sortable: true},
+        {key: 'province', label: 'Provincia'},
+        {key: 'Acciones'}
+      ],
+      currentPage: 1,
+      perPage: 5,
+      totalRows: 0
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'clientsCount',
+      'isLoading',
+      'clients'
+    ])
+  },
+  mounted () {
+    this.fetchClients()
+  },
+  methods: {
+    fetchClients () {
+      this.$store.dispatch(FETCH_CLIENTS)
+    }
+  }
+}
+</script>
