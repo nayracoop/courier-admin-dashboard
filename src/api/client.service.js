@@ -1,4 +1,5 @@
 import find from 'lodash/find'
+import Parse from 'parse'
 
 const _clients = [{
   id: '12',
@@ -41,10 +42,29 @@ const _clients = [{
 
 export default {
   getAll () {
-    return Promise.resolve({ 'clients': _clients, 'clientsCount': 2 })
+    var query = new Parse.Query('Client')
+    query.ascending('name')
+
+    const myPromise = query.find()
+    return myPromise
+    // return Promise.resolve({ 'clients': _clients, 'clientsCount': 2 })
   },
   get (id) {
     let client = find(_clients, { id: id })
     return Promise.resolve({ 'client': client })
+  },
+  create (params) {
+    console.log(Parse)
+    var Client = Parse.Object.extend('Client')
+    var client = new Client()
+
+    client.save(params, {
+      success: function (client) {
+        console.log('exito')
+      },
+      error: function (client, error) {
+        console.log('error')
+      }
+    })
   }
 }
