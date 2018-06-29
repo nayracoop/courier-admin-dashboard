@@ -12,7 +12,7 @@
       :per-page="perPage"
       responsive="sm">
     <template slot="Acciones" slot-scope="data">
-      <router-link tag="b-button" variant="primary" :to="{ name: 'Client', params: { id: data.item.id } }">
+      <router-link tag="b-button" variant="primary" :to="{ name: 'Client', params: { id: data.item.objectId } }">
         <i class="fa fa-pencil"></i>
       </router-link>
       <router-link tag="b-button" to="charts" :small="small">
