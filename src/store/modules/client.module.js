@@ -50,7 +50,7 @@ export const actions = {
     }
     return ClientsService.get(clientId)
       .then(data => {
-        context.commit(SET_CLIENT, data.client)
+        context.commit(SET_CLIENT, data)
         return data
       })
   },
@@ -81,7 +81,7 @@ export const actions = {
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
   [SET_CLIENT] (state, Client) {
-    state.client = Client
+    state.client = Client.toJSON()
   },
   [RESET_STATE] () {
     for (let f in state) {
@@ -91,9 +91,13 @@ export const mutations = {
   [FETCH_START] (state) {
     state.isLoading = true
   },
-  [FETCH_CLIENTS_END] (state, { clients, clientsCount }) {
-    state.clients = clients
-    state.clientsCount = clientsCount
+  [FETCH_CLIENTS_END] (state, clients) {
+    // con parse, cada posición del array es un Parse Object
+    // lo pasamos a json con map
+    state.clients = clients.map(function (e) {
+      return e.toJSON()
+    })
+    state.clientsCount = clients.length
     state.isLoading = false
   }
 }

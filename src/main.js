@@ -15,9 +15,17 @@ import ApiService from '@/api'
 import DateFilter from '@/common/filters/date'
 import ErrorFilter from '@/common/filters/error'
 
+import Parse from 'parse'
+import VueLocalStorage from 'vue-localstorage'
+
+Vue.use(VueLocalStorage)
+Vue.use(BootstrapVue)
+
+Parse.initialize(process.env.PARSE_APP_ID, process.env.PARSE_JAVASCRIPT_KEY)
+Parse.serverURL = process.env.PARSE_URI
+
 // todo
 // cssVars()
-Vue.use(BootstrapVue)
 Vue.filter('date', DateFilter)
 Vue.filter('error', ErrorFilter)
 
