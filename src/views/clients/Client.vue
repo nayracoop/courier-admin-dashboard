@@ -276,22 +276,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-.actions-bar{
-  margin-top: 0px;
-  margin-bottom: 15px;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  border-top: 1px solid #ebebebeb;
-  border-bottom: 1px solid #ebebebeb;
 
-}
-</style>

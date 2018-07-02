@@ -51,6 +51,7 @@ import Modals from '@/views/notifications/Modals'
 // Courier
 import Providers from '@/views/providers/Providers'
 import Clients from '@/views/clients/Clients'
+import CNewShipping from '@/views/courier/Shipping'
 // import Providers from '@/views/providers/ProviderList'
 // import ProviderSingle from '@/views/providers/ProviderSingle'
 // import ClientSingle from '@/views/clients/ClientSingle'
@@ -307,6 +308,11 @@ export default new Router({
               path: 'clientes',
               name: 'Clients',
               component: Clients
+            },
+            {
+              path: 'nuevoenvio',
+              name: 'NewShipping',
+              component: CNewShipping
             },
             {
               path: 'clientes/:id?',

@@ -3,3 +3,24 @@
 main{
     background: #fafafa;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+.actions-bar{
+  margin-top: 0px;
+  margin-bottom: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-top: 1px solid #ebebebeb;
+  border-bottom: 1px solid #ebebebeb;
+
+}
+.fa-question-circle{
+  color: lightgrey;
+}

@@ -12,14 +12,14 @@
       :per-page="perPage"
       responsive="sm">
     <template slot="Acciones" slot-scope="data">
-      <router-link tag="b-button" variant="primary" :to="{ name: 'Client', params: { id: data.item.id } }">
+      <router-link tag="b-button" :variant="primary" class="btn-primary" :to="{ name: 'Client', params: { id: data.item.id } }">
         <i class="fa fa-pencil"></i>
       </router-link>
-      <router-link tag="b-button" to="charts" :small="small">
+      <router-link tag="b-button" :variant="primary" to="charts" :small="small">
         <i class="fa fa-pencil"></i>
       </router-link>
-      <router-link tag="b-button" to="charts" :small="small">
-        <i class="fa fa-pencil"></i>
+      <router-link tag="b-button" class="btn-danger" to="charts" :small="small">
+        <i class="fa fa-trash"></i>
       </router-link>
     </template>
     </b-table>
