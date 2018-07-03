@@ -2,12 +2,12 @@
 <div class="animated fadeIn">
     <b-row>
       <b-col sm="12">
-        <b-card>          
+        <b-card>
           <div slot="header">
             <strong>{{ provider.name }}</strong>
           </div>
           <b-form v-on:submit.prevent="onSave(provider.id, provider)">
-            <template>      
+            <template>
             <b-row class="actions-bar">
                 <b-col sm="12">
                   <b-button variant="outline-primary" :to="{ name: 'NewShipping' }">Confeccionar envío</b-button>
@@ -15,7 +15,7 @@
                 </b-col>
           </b-row>
           </template>
-          <b-row>          
+          <b-row>
             <b-col sm="6">
               <b-form-group>
                 <label for="name">Nombre</label>
@@ -62,13 +62,13 @@
               value="Sin identificar / venta global diaria">
             </b-form-select>
             </b-form-group>
-            </b-col> 
+            </b-col>
             <b-col sm="6">
               <b-form-group>
                 <label for="email">Email</label>
             <b-form-input id="email" type="email" autocomplete="email"></b-form-input>
           </b-form-group>
-            </b-col> 
+            </b-col>
           </b-row>
           <!--b-row>
             <b-col sm="6">
@@ -79,7 +79,7 @@
           </b-form-group>
             </b-col>
           </b-row-->
-          <b-row>            
+          <b-row>
             <b-col sm="6">
               <b-form-group>
                 <label for="phone">Teléfono</label>
@@ -95,7 +95,7 @@
               </b-form-group>
             </b-col>
           </b-row>
-          <b-row>            
+          <b-row>
             <b-col sm="6">
               <b-form-group>
                 <label for="country">País</label>
@@ -125,8 +125,8 @@
             </b-col>
             <b-col sm="6">
               <b-form-group>
-                <label for="pricesList">Cuenta Contable</label>  
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Cuenta contable en la que impactarán las compras a este proveedor. Te surgerimos mantener la cuenta que viene preconfigurada. Si estás familiarizado con el plan de cuentas modificala por la cuenta que prefieras"></i>          
+                <label for="pricesList">Cuenta Contable</label>
+                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Cuenta contable en la que impactarán las compras a este proveedor. Te surgerimos mantener la cuenta que viene preconfigurada. Si estás familiarizado con el plan de cuentas modificala por la cuenta que prefieras"></i>
             <b-form-select id=""
               :plain="true"
               :options="['Crear cuenta contable']"
@@ -134,16 +134,16 @@
             </b-form-select>
             </b-form-group>
             </b-col>
-          </b-row>          
+          </b-row>
           <b-row>
             <b-col sm="12">
               <b-form-group>
                 <label label-for="notes">Observaciones</label>
             <b-form-textarea id="notes" :no-resize="true" :textarea="true" :rows="4"  :value="provider.observation"></b-form-textarea>
           </b-form-group>
-            </b-col>            
+            </b-col>
           </b-row>
-          <template>      
+          <template>
             <b-row class="actions-bar">
                 <b-col sm="12">
                   <b-button variant="outline-primary">Guardar</b-button>
@@ -159,20 +159,19 @@
     </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
-import store from "@/store";
-import CListErrors from "@/components/ListErrors";
+import { mapGetters } from 'vuex'
+import store from '@/store'
+import CListErrors from '@/components/ListErrors'
 import {
   PROVIDER_SAVE,
   PROVIDER_EDIT,
   FETCH_PROVIDER,
   PROVIDER_RESET_STATE
-} from "@/store/types/actions";
-import { taxType } from "@/store/const/constVars";
-import { idType } from "@/store/const/constVars";
+} from '@/store/types/actions'
+import { taxType, idType } from '@/store/const/constVars'
 
 export default {
-  name: "v-provider",
+  name: 'v-provider',
   components: { CListErrors },
   props: {
     previousProvider: {
@@ -180,58 +179,58 @@ export default {
       required: false
     }
   },
-  async beforeRouteUpdate(to, from, next) {
+  async beforeRouteUpdate (to, from, next) {
     // Reset state if user goes from /editor/:id to /editor
     // The component is not recreated so we use to hook to reset the state.
-    await store.dispatch(PROVIDER_RESET_STATE);
-    return next();
+    await store.dispatch(PROVIDER_RESET_STATE)
+    return next()
   },
-  async beforeRouteEnter(to, from, next) {
+  async beforeRouteEnter (to, from, next) {
     // SO: https://github.com/vuejs/vue-router/issues/1034
     // If we arrive directly to this url, we need to fetch the provider
-    await store.dispatch(PROVIDER_RESET_STATE);
+    await store.dispatch(PROVIDER_RESET_STATE)
     if (to.params.id !== undefined) {
       await store.dispatch(
         FETCH_PROVIDER,
         to.params.id,
         to.params.previousProvider
-      );
+      )
     }
-    return next();
+    return next()
   },
-  async beforeRouteLeave(to, from, next) {
-    await store.dispatch(PROVIDER_RESET_STATE);
-    next();
+  async beforeRouteLeave (to, from, next) {
+    await store.dispatch(PROVIDER_RESET_STATE)
+    next()
   },
-  data() {
+  data () {
     return {
       inProgress: false,
       errors: {},
       taxTypes: taxType,
       idTypes: idType
-    };
+    }
   },
   computed: {
-    ...mapGetters(["provider"])
+    ...mapGetters(['provider'])
   },
   methods: {
-    onSave(id, provider) {
-      let action = id ? PROVIDER_EDIT : PROVIDER_SAVE;
-      this.inProgress = true;
+    onSave (id, provider) {
+      let action = id ? PROVIDER_EDIT : PROVIDER_SAVE
+      this.inProgress = true
       this.$store
         .dispatch(action)
         .then(({ data }) => {
-          this.inProgress = false;
+          this.inProgress = false
           this.$router.push({
-            name: "provider",
+            name: 'provider',
             params: { id: data.provider.id }
-          });
+          })
         })
         .catch(({ response }) => {
-          this.inProgress = false;
-          this.errors = response.data.errors;
-        });
+          this.inProgress = false
+          this.errors = response.data.errors
+        })
     }
   }
-};
+}
 </script>

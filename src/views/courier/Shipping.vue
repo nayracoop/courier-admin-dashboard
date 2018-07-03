@@ -5,10 +5,8 @@
 import CNewShipping from '@/components/NewShipping'
 
 export default {
- components: {
+  components: {
     CNewShipping
   }
-    }
+}
 </script>
-
-

@@ -19,8 +19,8 @@
     </div>
   </div-->
 
-  <b-card :header="caption">  
-    <template>      
+  <b-card :header="caption">
+    <template>
             <b-row class="actions-bar">
                 <b-col sm="6">
                   <b-button class="btn-primary" variant="btn-primary">Nuevo proveedor</b-button>
@@ -54,7 +54,7 @@
       <router-link tag="b-button" class="btn-primary" variant="btn-primary" :to="{ name: 'Provider', params: { id: data.item.id } }">
         <i class="fa fa-pencil"></i>
       </router-link>
-      <router-link tag="b-button" to="charts" :small="small" :to="{ name: 'NewShipping' }">
+      <router-link tag="b-button" :small="small" :to="{ name: 'NewShipping' }">
         <i class="fa fa-plane"></i>
       </router-link>
       <router-link tag="b-button" class="btn-danger" to="charts" :small="small">
@@ -127,13 +127,13 @@ export default {
     }
   },
   computed: {
-     ...mapGetters([
+    ...mapGetters([
       'providersCount',
-      'isLoading',  
+      'isLoading',
       'providers'
     ])
   },
-   mounted () {
+  mounted () {
     this.fetchProviders()
   },
   methods: {
@@ -152,8 +152,7 @@ import CProviderRow from '@/components/ProviderRow'
 //   import VPagination from '@/components/VPagination'
 import { FETCH_PROVIDERS } from '@/store/types/actions'
 
-export default { 
-  
+export default {
   name: 'c-provider-list',
   components: {
     CProviderRow
@@ -249,10 +248,4 @@ export default {
   }
 }
 */
-
-
-
-
-</script> 
-
-
+</script>

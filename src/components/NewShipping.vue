@@ -5,7 +5,7 @@
         <b-card>
           <div slot="header">
             <strong>Nuevo envío</strong>
-          </div>          
+          </div>
            <b-row>
             <b-col sm="6">
               <b-form-group>
@@ -28,9 +28,9 @@
               value="1">
             </b-form-select>
             </b-form-group>
-            </b-col>             
+            </b-col>
           </b-row>
-          <b-row>            
+          <b-row>
             <b-col sm="6">
               <b-form-group>
                 <label for="providerName">Proveedor</label>
@@ -41,7 +41,7 @@
               value="Nombre Proveedor">
             </b-form-select>
             </b-form-group>
-            </b-col>            
+            </b-col>
             <b-col sm="6">
               <b-form-group>
                 <label for="serviceType">Servicio</label>
@@ -52,9 +52,9 @@
               value="Tipo de servicio">
             </b-form-select>
             </b-form-group>
-            </b-col>           
+            </b-col>
           </b-row>
-          <b-row>            
+          <b-row>
             <b-col sm="6">
               <b-form-group>
                 <label for="packageType">Embalaje</label>
@@ -65,20 +65,28 @@
               value="Tipo de embalaje">
             </b-form-select>
             </b-form-group>
-            </b-col>            
+            </b-col>
             <b-col sm="6">
               <b-form-group>
                 <span>Medidas</span> <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Dimensiones del paquete en centímetros"></i>
-            <label for="length">Largo</label>
-            <b-form-input type="text" id="length" placeholder="" :value="weight"></b-form-input>
+            <b-row>
+              <b-col sm="4">
+              <label for="length">Largo</label>
+            <b-form-input horizontal type="text" id="length" placeholder="" :value="weight"></b-form-input>
+            </b-col>
+            <b-col sm="4">
             <label for="width">Ancho</label>
-            <b-form-input type="text" id="width" placeholder="" :value="weight"></b-form-input>
+            <b-form-input horizontal type="text" id="width" placeholder="" :value="weight"></b-form-input>
+            </b-col>
+            <b-col sm="4">
             <label for="height">Alto</label>
-            <b-form-input type="text" id="height" placeholder="" :value="weight"></b-form-input>
+            <b-form-input horizontal type="text" id="height" placeholder="" :value="weight"></b-form-input>
+            </b-col>
+            </b-row>
             </b-form-group>
-            </b-col>           
+            </b-col>
           </b-row>
-          <b-row>            
+          <b-row>
             <b-col sm="6">
               <b-form-group>
                 <label for="packageType">Embalaje</label>
@@ -89,14 +97,14 @@
               value="Tipo de embalaje">
             </b-form-select>
             </b-form-group>
-            </b-col>            
+            </b-col>
             <b-col sm="6">
               <b-form-group>
                 <label for="weight">Peso</label>
                 <i class="fa fa-question-circle fa-sm"></i>
             <b-form-input type="text" id="weight" placeholder="" :value="weight"></b-form-input>
             </b-form-group>
-            </b-col>           
+            </b-col>
           </b-row>
         </b-card>
       </b-col>
@@ -106,21 +114,16 @@
 
 <script>
 
-import { serviceType } from "@/store/const/constVars";
-import { packageType } from "@/store/const/constVars";
-import { shippingType } from "@/store/const/constVars";
-import { taxType } from "@/store/const/constVars";
+import { serviceType, packageType, shippingType } from '@/store/const/constVars'
 
 export default {
-name: 'c-new-shipping',
+  name: 'c-new-shipping',
 
-data() {
+  data () {
     return {
       serviceTypes: serviceType,
       packageTypes: packageType,
-      taxTypes: taxType,
       shippingTypes: shippingType
-      
-    };
+    }
   }
 }
