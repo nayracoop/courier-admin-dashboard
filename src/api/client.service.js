@@ -1,32 +1,44 @@
-// import find from 'lodash/find'
 import Parse from 'parse'
 
 export default {
+  create (params) {
+    var Client = Parse.Object.extend('Client')
+    var client = new Client()
+
+    return client.save(params)
+  },
   getAll () {
     var query = new Parse.Query('Client')
     query.ascending('name')
 
-    const myPromise = query.find()
-    return myPromise
-    // return Promise.resolve({ 'clients': _clients, 'clientsCount': 2 })
+    return query.find()
   },
   get (id) {
     var query = new Parse.Query('Client')
 
-    const myPromise = query.get(id)
-    return myPromise
+    return query.get(id)
   },
-  create (params) {
-    console.log(Parse)
-    var Client = Parse.Object.extend('Client')
-    var client = new Client()
+  update (params, id) {
+    var query = new Parse.Query('Client')
 
-    client.save(params, {
+    query.get(id, {
       success: function (client) {
-        console.log('exito')
+        return client.save(params)
       },
       error: function (client, error) {
-        console.log('error')
+        return error
+      }
+    })
+  },
+  delete (id) {
+    var query = new Parse.Query('Client')
+
+    query.get(id, {
+      success: function (client) {
+        return client.destroy({})
+      },
+      error: function (client, error) {
+        return error
       }
     })
   }

@@ -204,7 +204,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import store from '@/store'
-import CListErrors from '@/components/ListErrors'
+import CErrorList from '@/components/ErrorList'
 import {
   CLIENT_SAVE,
   CLIENT_EDIT,
@@ -214,7 +214,7 @@ import {
 
 export default {
   name: 'v-client',
-  components: { CListErrors },
+  components: { CErrorList },
   props: {
     previousClient: {
       type: Object,

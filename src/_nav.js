@@ -5,18 +5,16 @@ export default {
       name: 'Courier'
     },
     {
-      name: 'Courier',
-      url: '/courier',
-      children: [
-        {
-          name: 'Proveedores',
-          url: '/courier/proveedores'
-        },
-        {
-          name: 'Clientes',
-          url: '/courier/clientes'
-        }
-      ]
+      name: 'Proveedores',
+      url: '/proveedores'
+    },
+    {
+      name: 'Clientes',
+      url: '/clientes'
+    },
+    {
+      name: 'Envios',
+      url: '/envios'
     }
   ]
 }

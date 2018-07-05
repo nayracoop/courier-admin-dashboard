@@ -18,23 +18,23 @@ import {
 
 const initialState = {
   provider: {
-    id: -1,
-    vatId: '',
-    taxCategory: '',
-    postalCode: '',
+    id: '',
+    externalId: 'external',
+    userCode: '12345',
+    name: 'Juanca',
+    businessName: 'Business name',
+    taxId: '2032760990',
+    taxCategory: 'CUIT',
+    taxType: 'Exento', // capaz condition?
+    address: 'Noogoosda',
+    country: 'Argentina',
+    province: 'Buenos Aires',
+    postalCode: '1234',
+    email: 'pehuen@mil.net',
+    phone: '0293219321',
+    observation: 'Observaction',
     purchaseAccount: '',
-    saleAccount: '',
-    address: '',
-    email: '',
-    taxType: '',
-    name: '',
-    observation: '',
-    country: '',
-    externalId: '',
-    province: '',
-    businessName: '',
-    phone: '',
-    userCode: ''
+    saleAccount: ''
   }
 }
 
@@ -51,18 +51,18 @@ export const actions = {
     }
     return ProvidersService.get(providerId)
       .then(data => {
-        context.commit(SET_PROVIDER, data.provider)
+        context.commit(SET_PROVIDER, data)
         return data
       })
   },
   [PROVIDER_SAVE] ({ state }) {
-    return ProvidersService.create(state.Provider)
+    return ProvidersService.create(state.provider)
   },
   [PROVIDER_DELETE] (context, id) {
     return ProvidersService.destroy(id)
   },
   [PROVIDER_EDIT] ({ state }) {
-    return ProvidersService.update(state.Provider.id, state.Provider)
+    return ProvidersService.update(state.provider.id, state.provider)
   },
   [PROVIDER_RESET_STATE] ({ commit }) {
     commit(RESET_STATE)
@@ -81,8 +81,8 @@ export const actions = {
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
-  [SET_PROVIDER] (state, Provider) {
-    state.provider = Provider
+  [SET_PROVIDER] (state, provider) {
+    state.provider = provider.toJSON()
   },
   [RESET_STATE] () {
     for (let f in state) {
@@ -92,9 +92,11 @@ export const mutations = {
   [FETCH_START] (state) {
     state.isLoading = true
   },
-  [FETCH_PROVIDERS_END] (state, { providers, providersCount }) {
-    state.providers = providers
-    state.providersCount = providersCount
+  [FETCH_PROVIDERS_END] (state, providers) {
+    state.providers = providers.map(function (e) {
+      return e.toJSON()
+    })
+    state.providersCount = providers.length
     state.isLoading = false
   }
 }

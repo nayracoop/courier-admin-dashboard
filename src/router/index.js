@@ -7,51 +7,57 @@ import DefaultContainer from '@/containers/DefaultContainer'
 // Views
 import Dashboard from '@/views/Dashboard'
 
-import Colors from '@/views/theme/Colors'
-import Typography from '@/views/theme/Typography'
+// import Colors from '@/views/theme/Colors'
+// import Typography from '@/views/theme/Typography'
 
-import Charts from '@/views/Charts'
-import Widgets from '@/views/Widgets'
+// import Charts from '@/views/Charts'
+// import Widgets from '@/views/Widgets'
 
 // Views - Components
-import Cards from '@/views/base/Cards'
-import Forms from '@/views/base/Forms'
-import Switches from '@/views/base/Switches'
-import Tables from '@/views/base/Tables'
-import Tabs from '@/views/base/Tabs'
-import Breadcrumbs from '@/views/base/Breadcrumbs'
-import Carousels from '@/views/base/Carousels'
-import Collapses from '@/views/base/Collapses'
-import Jumbotrons from '@/views/base/Jumbotrons'
-import ListGroups from '@/views/base/ListGroups'
-import Navs from '@/views/base/Navs'
-import Navbars from '@/views/base/Navbars'
-import Paginations from '@/views/base/Paginations'
-import Popovers from '@/views/base/Popovers'
-import ProgressBars from '@/views/base/ProgressBars'
-import Tooltips from '@/views/base/Tooltips'
+// import Cards from '@/views/base/Cards'
+// import Forms from '@/views/base/Forms'
+// import Switches from '@/views/base/Switches'
+// import Tables from '@/views/base/Tables'
+// import Tabs from '@/views/base/Tabs'
+// import Breadcrumbs from '@/views/base/Breadcrumbs'
+// import Carousels from '@/views/base/Carousels'
+// import Collapses from '@/views/base/Collapses'
+// import Jumbotrons from '@/views/base/Jumbotrons'
+// import ListGroups from '@/views/base/ListGroups'
+// import Navs from '@/views/base/Navs'
+// import Navbars from '@/views/base/Navbars'
+// import Paginations from '@/views/base/Paginations'
+// import Popovers from '@/views/base/Popovers'
+// import ProgressBars from '@/views/base/ProgressBars'
+// import Tooltips from '@/views/base/Tooltips'
 
 // Views - Buttons
-import StandardButtons from '@/views/buttons/StandardButtons'
-import ButtonGroups from '@/views/buttons/ButtonGroups'
-import Dropdowns from '@/views/buttons/Dropdowns'
-import BrandButtons from '@/views/buttons/BrandButtons'
+// import StandardButtons from '@/views/buttons/StandardButtons'
+// import ButtonGroups from '@/views/buttons/ButtonGroups'
+// import Dropdowns from '@/views/buttons/Dropdowns'
+// import BrandButtons from '@/views/buttons/BrandButtons'
 
 // Views - Icons
-import Flags from '@/views/icons/Flags'
-import FontAwesome from '@/views/icons/FontAwesome'
-import SimpleLineIcons from '@/views/icons/SimpleLineIcons'
-import CoreUIIcons from '@/views/icons/CoreUIIcons'
+// import Flags from '@/views/icons/Flags'
+// import FontAwesome from '@/views/icons/FontAwesome'
+// import SimpleLineIcons from '@/views/icons/SimpleLineIcons'
+// import CoreUIIcons from '@/views/icons/CoreUIIcons'
 
 // Views - Notifications
-import Alerts from '@/views/notifications/Alerts'
-import Badges from '@/views/notifications/Badges'
-import Modals from '@/views/notifications/Modals'
+// import Alerts from '@/views/notifications/Alerts'
+// import Badges from '@/views/notifications/Badges'
+// import Modals from '@/views/notifications/Modals'
 
 // Courier
 import Providers from '@/views/providers/Providers'
+import Provider from '@/views/providers/Provider'
+
 import Clients from '@/views/clients/Clients'
-import CNewShipping from '@/views/courier/Shipping'
+import Client from '@/views/clients/Client'
+
+import Shippings from '@/views/courier/Shippings'
+import Shipping from '@/views/courier/Shipping'
+
 // import Providers from '@/views/providers/ProviderList'
 // import ProviderSingle from '@/views/providers/ProviderSingle'
 // import ClientSingle from '@/views/clients/ClientSingle'
@@ -65,7 +71,7 @@ import Register from '@/views/pages/Register'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'hash', // Demo is living in GitHub.io, so required!
+  mode: 'hash',
   linkActiveClass: 'open active',
   scrollBehavior: () => ({ y: 0 }),
   routes: [
@@ -81,246 +87,55 @@ export default new Router({
           component: Dashboard
         },
         {
-          path: 'theme',
-          redirect: '/theme/colors',
-          name: 'Theme',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          children: [
-            {
-              path: 'colors',
-              name: 'Colors',
-              component: Colors
-            },
-            {
-              path: 'typography',
-              name: 'Typography',
-              component: Typography
-            }
-          ]
+          path: 'proveedores',
+          name: 'Proveedores',
+          component: Providers
         },
         {
-          path: 'charts',
-          name: 'Charts',
-          component: Charts
+          path: 'proveedores/nuevo',
+          name: 'Nuevo Proveedor',
+          props: true,
+          component: Provider
         },
         {
-          path: 'widgets',
-          name: 'Widgets',
-          component: Widgets
+          path: 'proveedor/editar/:id',
+          name: 'Editar Proveedor',
+          props: true,
+          component: Provider
         },
         {
-          path: 'base',
-          redirect: '/base/cards',
-          name: 'Base',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          children: [
-            {
-              path: 'cards',
-              name: 'Cards',
-              component: Cards
-            },
-            {
-              path: 'forms',
-              name: 'Forms',
-              component: Forms
-            },
-            {
-              path: 'switches',
-              name: 'Switches',
-              component: Switches
-            },
-            {
-              path: 'tables',
-              name: 'Tables',
-              component: Tables
-            },
-            {
-              path: 'tabs',
-              name: 'Tabs',
-              component: Tabs
-            },
-            {
-              path: 'breadcrumbs',
-              name: 'Breadcrumbs',
-              component: Breadcrumbs
-            },
-            {
-              path: 'carousels',
-              name: 'Carousels',
-              component: Carousels
-            },
-            {
-              path: 'collapses',
-              name: 'Collapses',
-              component: Collapses
-            },
-            {
-              path: 'jumbotrons',
-              name: 'Jumbotrons',
-              component: Jumbotrons
-            },
-            {
-              path: 'list-groups',
-              name: 'List Groups',
-              component: ListGroups
-            },
-            {
-              path: 'navs',
-              name: 'Navs',
-              component: Navs
-            },
-            {
-              path: 'navbars',
-              name: 'Navbars',
-              component: Navbars
-            },
-            {
-              path: 'paginations',
-              name: 'Paginations',
-              component: Paginations
-            },
-            {
-              path: 'popovers',
-              name: 'Popovers',
-              component: Popovers
-            },
-            {
-              path: 'progress-bars',
-              name: 'Progress Bars',
-              component: ProgressBars
-            },
-            {
-              path: 'tooltips',
-              name: 'Tooltips',
-              component: Tooltips
-            }
-          ]
+          path: 'clientes',
+          name: 'Clientes',
+          component: Clients
         },
         {
-          path: 'buttons',
-          redirect: '/buttons/standard-buttons',
-          name: 'Buttons',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          children: [
-            {
-              path: 'standard-buttons',
-              name: 'Standard Buttons',
-              component: StandardButtons
-            },
-            {
-              path: 'button-groups',
-              name: 'Button Groups',
-              component: ButtonGroups
-            },
-            {
-              path: 'dropdowns',
-              name: 'Dropdowns',
-              component: Dropdowns
-            },
-            {
-              path: 'brand-buttons',
-              name: 'Brand Buttons',
-              component: BrandButtons
-            }
-          ]
+          path: 'cliente/editar/:id',
+          name: 'Editar Cliente',
+          props: true,
+          component: Client
         },
         {
-          path: 'icons',
-          redirect: '/icons/font-awesome',
-          name: 'Icons',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          children: [
-            {
-              path: 'coreui-icons',
-              name: 'CoreUI Icons',
-              component: CoreUIIcons
-            },
-            {
-              path: 'flags',
-              name: 'Flags',
-              component: Flags
-            },
-            {
-              path: 'font-awesome',
-              name: 'Font Awesome',
-              component: FontAwesome
-            },
-            {
-              path: 'simple-line-icons',
-              name: 'Simple Line Icons',
-              component: SimpleLineIcons
-            }
-          ]
+          path: 'clientes/nuevo',
+          name: 'Nuevo Cliente',
+          props: true,
+          component: Client
         },
         {
-          path: 'notifications',
-          redirect: '/notifications/alerts',
-          name: 'Notifications',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          children: [
-            {
-              path: 'alerts',
-              name: 'Alerts',
-              component: Alerts
-            },
-            {
-              path: 'badges',
-              name: 'Badges',
-              component: Badges
-            },
-            {
-              path: 'modals',
-              name: 'Modals',
-              component: Modals
-            }
-          ]
+          path: 'envios',
+          name: 'Envios',
+          component: Shippings
         },
         {
-          path: '/courier',
-          redirect: '/courier/proveedores',
-          name: 'Courier',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          children: [
-            {
-              path: 'proveedores',
-              name: 'Providers',
-              component: Providers
-            },
-            {
-              path: 'proveedores/:id?',
-              name: 'Provider',
-              props: true,
-              component: () => import('@/views/providers/Provider')
-            },
-            {
-              path: 'clientes',
-              name: 'Clients',
-              component: Clients
-            },
-            {
-              path: 'nuevoenvio',
-              name: 'NewShipping',
-              component: CNewShipping
-            },
-            {
-              path: 'clientes/:id?',
-              name: 'Client',
-              props: true,
-              component: () => import('@/views/clients/Client')
-            }
-          ]
+          path: 'envios/nuevo',
+          name: 'Nuevo Envío',
+          props: true,
+          component: Shipping
+        },
+        {
+          path: 'envios/editar/:id',
+          name: 'Editar Envío',
+          props: true,
+          component: Shipping
         }
       ]
     },

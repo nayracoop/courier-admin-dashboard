@@ -1,76 +1,70 @@
 <template>
-<div class="animated fadeIn">
+  <div class="animated fadeIn">
     <b-row>
       <b-col sm="12">
         <b-card>
           <div slot="header">
-            <strong>{{ provider.name }}</strong>
+            <strong>{{ provider.name || 'Nuevo Proveedor' }}</strong>
           </div>
           <b-form v-on:submit.prevent="onSave(provider.id, provider)">
-            <template>
-            <b-row class="actions-bar">
+            <template v-if="provider.id">
+              <b-row class="actions-bar">
                 <b-col sm="12">
-                  <b-button variant="outline-primary" :to="{ name: 'NewShipping' }">Confeccionar envío</b-button>
+                  <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío' }">Confeccionar envío</b-button>
                   <b-button variant="outline-primary">Imprimir lista de precios</b-button>
                 </b-col>
-          </b-row>
-          </template>
-          <b-row>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="name">Nombre</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social de tu cliente"></i>
-                <b-form-input type="text" id="name" placeholder="" :value="provider.name"></b-form-input>
-              </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group>
-            <label for="code" v-b-tooltip.hover title="">Código</label>
-            <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste a tu cliente. Campo opcional"></i>
-            <b-form-input type="text" id="code" placeholder="" :value="provider.userCode"></b-form-input>
-          </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col sm="6">
-            <b-form-group>
-              <label for="idType" label >Tipo de identificación</label>
-            <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste a tu cliente. Campo opcional"></i>
-            <b-form-select id="idType"
-              :plain="true"
-              :options="idTypes"
-              value="Sin identificar / venta global diaria">
-            </b-form-select>
-            </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="idNumber">N° de identificación</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número del DNI, CUIT, CUIL, etc"></i>
-            <b-form-input type="text" pattern="[0-9]" id="idNumber" placeholder=""></b-form-input>
-              </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="ivaCond">Condición IVA</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado de tu cliente"></i>
-            <b-form-select id="ivaCond"
-              :plain="true"
-              :options="taxTypes"
-              value="Sin identificar / venta global diaria">
-            </b-form-select>
-            </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="email">Email</label>
-            <b-form-input id="email" type="email" autocomplete="email"></b-form-input>
-          </b-form-group>
-            </b-col>
-          </b-row>
-          <!--b-row>
+              </b-row>
+            </template>
+            <b-row>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="name">Nombre</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social de tu cliente"></i>
+                  <b-form-input type="text" id="name" placeholder="" v-model="provider.name"></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="code" v-b-tooltip.hover title="">Código</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste a tu cliente. Campo opcional"></i>
+                  <b-form-input type="text" id="code" placeholder="" v-model="provider.userCode"></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="idType">Tipo de identificación</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste a tu cliente. Campo opcional"></i>
+                  <b-form-select id="idType" :plain="true" :options="idTypes" v-model="provider.taxCategory">
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="idNumber">N° de identificación</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número del DNI, CUIT, CUIL, etc"></i>
+                  <b-form-input id="idNumber" type="text" pattern="[0-9]+" placeholder="" v-model="provider.taxId"></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="ivaCond">Condición IVA</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado de tu cliente"></i>
+                  <b-form-select id="ivaCond" :plain="true" :options="taxTypes" v-model="provider.taxType">
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="email">Email</label>
+                  <b-form-input id="email" type="email" autocomplete="email" v-model="provider.email"></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <!--b-row>
             <b-col sm="6">
               <b-form-group>
             <label for="postalCode">Código Postal</label>
@@ -79,100 +73,97 @@
           </b-form-group>
             </b-col>
           </b-row-->
-          <b-row>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="phone">Teléfono</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de teléfono del proveedor"></i>
-            <b-form-input type="tel" id="phone" pattern="[0-9]" placeholder="" :value="provider.phone"></b-form-input>
-              </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="address">Domicilio</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Calle y número del proveedor"></i>
-            <b-form-input type="text" id="address" placeholder="" :value="provider.address"></b-form-input>
-              </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="country">País</label>
-            <b-form-input type="text" id="country" placeholder=""  :value="provider.country"></b-form-input>
-              </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group
-            label="Provincia"
-            label-for="state"
-            :label-cols="3"
-            :horizontal="false">
-            <b-form-select id="state"
-              :plain="true"
-              :options="['Buenos Aires','Catamarca', 'Chaco', 'Chubut']"
-              value="">
-            </b-form-select>
-            </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="region">Localidad</label>
-            <b-form-input type="text" id="region" placeholder=""></b-form-input>
-              </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="pricesList">Cuenta Contable</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Cuenta contable en la que impactarán las compras a este proveedor. Te surgerimos mantener la cuenta que viene preconfigurada. Si estás familiarizado con el plan de cuentas modificala por la cuenta que prefieras"></i>
-            <b-form-select id=""
-              :plain="true"
-              :options="['Crear cuenta contable']"
-              value="">
-            </b-form-select>
-            </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col sm="12">
-              <b-form-group>
-                <label label-for="notes">Observaciones</label>
-            <b-form-textarea id="notes" :no-resize="true" :textarea="true" :rows="4"  :value="provider.observation"></b-form-textarea>
-          </b-form-group>
-            </b-col>
-          </b-row>
-          <template>
-            <b-row class="actions-bar">
+            <b-row>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="phone">Teléfono</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de teléfono del proveedor"></i>
+                  <b-form-input type="tel" id="phone" pattern="[0-9]+" placeholder="" v-model="provider.phone"></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="address">Domicilio</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Calle y número del proveedor"></i>
+                  <b-form-input type="text" id="address" placeholder="" v-model="provider.address"></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="country">País</label>
+                  <b-form-input type="text" id="country" placeholder="" v-model="provider.country"></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group label="Provincia" label-for="state" :label-cols="3" :horizontal="false">
+                  <b-form-select id="state" :plain="true" :options="['Buenos Aires', 'Catamarca', 'Chaco', 'Chubut']" v-model="provider.province">
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <!-- <b-row>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="region">Localidad</label>
+                  <b-form-input type="text" id="region" placeholder=""></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="pricesList">Cuenta Contable</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Cuenta contable en la que impactarán las compras a este proveedor. Te surgerimos mantener la cuenta que viene preconfigurada. Si estás familiarizado con el plan de cuentas modificala por la cuenta que prefieras"></i>
+                  <b-form-select id="" :plain="true" :options="['Crear cuenta contable']" value="">
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row> -->
+            <b-row>
+              <b-col sm="12">
+                <b-form-group>
+                  <label label-for="notes">Observaciones</label>
+                  <b-form-textarea id="notes" :no-resize="true" :textarea="true" :rows="4" v-model="provider.observation"></b-form-textarea>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <template>
+              <b-row class="actions-bar">
                 <b-col sm="12">
-                  <b-button variant="outline-primary">Guardar</b-button>
-                  <b-button variant="outline-primary">Eliminar</b-button>
+                  <b-button variant="outline-primary" type="submit" :disabled="inProgress">Guardar</b-button>
+                  <b-button v-if="provider.id" variant="outline-primary">Eliminar</b-button>
                   <b-button variant="outline-primary">Volver</b-button>
                 </b-col>
-          </b-row>
-          </template>
-        </b-form>
+              </b-row>
+            </template>
+          </b-form>
         </b-card>
       </b-col>
-      </b-row>
-    </div>
+    </b-row>
+  </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import {
+  mapGetters
+} from 'vuex'
 import store from '@/store'
-import CListErrors from '@/components/ListErrors'
+import CErrorList from '@/components/ErrorList'
 import {
   PROVIDER_SAVE,
   PROVIDER_EDIT,
   FETCH_PROVIDER,
   PROVIDER_RESET_STATE
 } from '@/store/types/actions'
-import { taxType, idType } from '@/store/const/constVars'
+import {
+  taxType,
+  idType
+} from '@/store/const'
 
 export default {
   name: 'v-provider',
-  components: { CListErrors },
+  components: {
+    CErrorList
+  },
   props: {
     previousProvider: {
       type: Object,
@@ -219,17 +210,28 @@ export default {
       this.inProgress = true
       this.$store
         .dispatch(action)
-        .then(({ data }) => {
+        .then(function (myProvider) {
           this.inProgress = false
           this.$router.push({
-            name: 'provider',
-            params: { id: data.provider.id }
+            name: 'Editar Proveedor',
+            params: {
+              id: myProvider.id
+            }
           })
+        }, function (error) {
+          console.log(error)
         })
-        .catch(({ response }) => {
-          this.inProgress = false
-          this.errors = response.data.errors
-        })
+        // .then((data) => {
+        //   console.log('data')
+        //   console.log(data.id)
+        // })
+        // .catch(({
+        //   response
+        // }) => {
+        //   console.log(response)
+        //   this.inProgress = false
+        //   this.errors = response.data.errors
+        // })
     }
   }
 }
