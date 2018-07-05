@@ -1,6 +1,6 @@
 // Here you can add other styles
 
-main{
+main {
     background: #fafafa;
 }
 
@@ -12,7 +12,7 @@ main{
 .fade-leave-to {
   opacity: 0;
 }
-.actions-bar{
+.actions-bar {
   margin-top: 0px;
   margin-bottom: 15px;
   padding-top: 10px;
@@ -21,6 +21,38 @@ main{
   border-bottom: 1px solid #ebebebeb;
 
 }
-.fa-question-circle{
+.fa-question-circle {
   color: lightgrey;
+}
+.card-header[role="tab"] a:focus { 
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+.card-header[role="tab"] a {
+  background: #f7f7f7;
+  border: 0px;
+  text-align: left;
+  font-weight: bolder;
+}
+.card-header[role="tab"] {
+  background: #f7f7f7;
+}
+.card-header[role="tab"] a[aria-expanded="false"]::after,
+.card-header[role="tab"] a[aria-expanded="true"]::after {
+  font-family: 'FontAwesome';
+  width: 10px;
+  height: 10px;
+  right: 20px;
+  position: absolute;
+  display: inline-block;  
+}
+.card-header[role="tab"] a[aria-expanded="false"]::after {
+  content: '\f107';
+}
+.card-header[role="tab"] a[aria-expanded="true"]::after {
+  content: '\f106';
+}
+.info-address {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
