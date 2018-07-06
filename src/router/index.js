@@ -111,7 +111,6 @@ export default new Router({
         {
           path: 'cliente/editar/:id',
           name: 'Editar Cliente',
-          props: true,
           component: Client
         },
         {

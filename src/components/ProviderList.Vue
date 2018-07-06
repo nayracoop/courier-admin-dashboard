@@ -4,10 +4,9 @@
     <template>
       <b-row class="actions-bar">
         <b-col sm="6">
-          <router-link :to="{ name: 'Nuevo Proveedor' }" tag="b-button" class="btn-primary" variant="btn-primary">
+          <b-button :to="{ name: 'Nuevo Proveedor' }" variant="primary">
             Nuevo proveedor
-          </router-link>
-          <!-- <b-button class="btn-primary" variant="btn-primary">Nuevo proveedor</b-button> -->
+          </b-button>
           <b-button variant="outline-primary">Importar</b-button>
           <b-button variant="outline-danger ">Eliminar</b-button>
         </b-col>
@@ -24,15 +23,15 @@
     <b-table :hover="hover" :striped="striped" :bordered="bordered" :small="small" :fixed="fixed" :items="providers" :fields="fields"
       :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm">
       <template slot="Acciones" slot-scope="data">
-        <router-link tag="b-button" class="btn-primary" variant="btn-primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
+        <b-button variant="primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
           <i class="fa fa-pencil"></i>
-        </router-link>
-        <router-link tag="b-button" :small="small" :to="{ name: 'Nuevo Envío' }">
+        </b-button>
+        <b-button :small="small" :to="{ name: 'Nuevo Envío' }">
           <i class="fa fa-plane"></i>
-        </router-link>
-        <router-link tag="b-button" class="btn-danger" to="charts" :small="small">
+        </b-button>
+        <b-button class="btn-danger" to="charts" :small="small">
           <i class="fa fa-trash"></i>
-        </router-link>
+        </b-button>
       </template>
     </b-table>
     <nav>

@@ -18,7 +18,7 @@ import {
 
 const initialState = {
   provider: {
-    id: '',
+    // id: '',
     externalId: 'external',
     userCode: '12345',
     name: 'Juanca',
@@ -44,28 +44,8 @@ const state = Object.assign({
   providersCount: 0 }, initialState)
 
 export const actions = {
-  [FETCH_PROVIDER] (context, providerId, prevProvider) {
-    // avoid extronuous network call if article exists
-    if (prevProvider !== undefined) {
-      return context.commit(SET_PROVIDER, prevProvider)
-    }
-    return ProvidersService.get(providerId)
-      .then(data => {
-        context.commit(SET_PROVIDER, data)
-        return data
-      })
-  },
   [PROVIDER_SAVE] ({ state }) {
     return ProvidersService.create(state.provider)
-  },
-  [PROVIDER_DELETE] (context, id) {
-    return ProvidersService.destroy(id)
-  },
-  [PROVIDER_EDIT] ({ state }) {
-    return ProvidersService.update(state.provider.id, state.provider)
-  },
-  [PROVIDER_RESET_STATE] ({ commit }) {
-    commit(RESET_STATE)
   },
   [FETCH_PROVIDERS] ({ commit }) {
     commit(FETCH_START)
@@ -76,19 +56,31 @@ export const actions = {
       .catch((error) => {
         throw new Error(error)
       })
+  },
+  [FETCH_PROVIDER] (context, providerId, prevProvider) {
+    // avoid extronuous network call if object exists
+    if (prevProvider !== undefined) {
+      return context.commit(SET_PROVIDER, prevProvider)
+    }
+    return ProvidersService.get(providerId)
+      .then(data => {
+        context.commit(SET_PROVIDER, data)
+        return data
+      })
+  },
+  [PROVIDER_EDIT] ({ state }) {
+    return ProvidersService.update(state.provider.objectId, state.provider)
+  },
+  [PROVIDER_DELETE] (context, id) {
+    return ProvidersService.delete(id)
+  },
+  [PROVIDER_RESET_STATE] ({ commit }) {
+    commit(RESET_STATE)
   }
 }
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
-  [SET_PROVIDER] (state, provider) {
-    state.provider = provider.toJSON()
-  },
-  [RESET_STATE] () {
-    for (let f in state) {
-      Vue.set(state, f, initialState[f])
-    }
-  },
   [FETCH_START] (state) {
     state.isLoading = true
   },
@@ -98,6 +90,14 @@ export const mutations = {
     })
     state.providersCount = providers.length
     state.isLoading = false
+  },
+  [SET_PROVIDER] (state, provider) {
+    state.provider = provider.toJSON()
+  },
+  [RESET_STATE] () {
+    for (let f in state) {
+      Vue.set(state, f, initialState[f])
+    }
   }
 }
 

@@ -4,14 +4,14 @@
       <b-col sm="12">
         <b-card>
           <div slot="header">
-            <strong>{{ provider.name || 'Nuevo Proveedor' }}</strong>
+            <strong>{{ isEdit ? provider.name : 'Nuevo proveedor' }}</strong>
           </div>
-          <b-form v-on:submit.prevent="onSave(provider.id, provider)">
-            <template v-if="provider.id">
+          <b-form v-on:submit.prevent="onSave(provider.objectId, provider)">
+            <template v-if="isEdit">
               <b-row class="actions-bar">
                 <b-col sm="12">
-                  <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío' }">Confeccionar envío</b-button>
-                  <b-button variant="outline-primary">Imprimir lista de precios</b-button>
+                  <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío</b-button>
+                  <b-button variant="outline-primary" disabled>Imprimir lista de precios</b-button>
                 </b-col>
               </b-row>
             </template>
@@ -25,7 +25,7 @@
               </b-col>
               <b-col sm="6">
                 <b-form-group>
-                  <label for="code" v-b-tooltip.hover title="">Código</label>
+                  <label for="code">Código</label>
                   <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste a tu cliente. Campo opcional"></i>
                   <b-form-input type="text" id="code" placeholder="" v-model="provider.userCode"></b-form-input>
                 </b-form-group>
@@ -65,14 +65,14 @@
               </b-col>
             </b-row>
             <!--b-row>
-            <b-col sm="6">
-              <b-form-group>
-            <label for="postalCode">Código Postal</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
-                <b-form-input type="text" id="postalCode" placeholder="" :value="provider.postalCode"></b-form-input>
-          </b-form-group>
-            </b-col>
-          </b-row-->
+              <b-col sm="6">
+                <b-form-group>
+                  <label for="postalCode">Código Postal</label>
+                  <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
+                  <b-form-input type="text" id="postalCode" placeholder="" :value="provider.postalCode"></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row-->
             <b-row>
               <b-col sm="6">
                 <b-form-group>
@@ -130,9 +130,9 @@
             <template>
               <b-row class="actions-bar">
                 <b-col sm="12">
-                  <b-button variant="outline-primary" type="submit" :disabled="inProgress">Guardar</b-button>
-                  <b-button v-if="provider.id" variant="outline-primary">Eliminar</b-button>
-                  <b-button variant="outline-primary">Volver</b-button>
+                  <b-button variant="outline-primary" :disabled="inProgress" type="submit" >Guardar</b-button>
+                  <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
+                  <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
                 </b-col>
               </b-row>
             </template>
@@ -151,6 +151,7 @@ import CErrorList from '@/components/ErrorList'
 import {
   PROVIDER_SAVE,
   PROVIDER_EDIT,
+  PROVIDER_DELETE,
   FETCH_PROVIDER,
   PROVIDER_RESET_STATE
 } from '@/store/types/actions'
@@ -202,36 +203,42 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['provider'])
+    ...mapGetters(['provider']),
+    isEdit () {
+      return !!this.provider.objectId
+    }
   },
   methods: {
     onSave (id, provider) {
+      var $this = this
       let action = id ? PROVIDER_EDIT : PROVIDER_SAVE
-      this.inProgress = true
-      this.$store
+      $this.inProgress = true
+      $this.$store
         .dispatch(action)
-        .then(function (myProvider) {
-          this.inProgress = false
-          this.$router.push({
+        .then(myProvider => {
+          $this.inProgress = false
+          $this.$router.push({
             name: 'Editar Proveedor',
             params: {
               id: myProvider.id
             }
           })
-        }, function (error) {
+        }, error => {
+          // mostrar errores
+          console.log('error')
           console.log(error)
         })
-        // .then((data) => {
-        //   console.log('data')
-        //   console.log(data.id)
-        // })
-        // .catch(({
-        //   response
-        // }) => {
-        //   console.log(response)
-        //   this.inProgress = false
-        //   this.errors = response.data.errors
-        // })
+    },
+    deleteProvider (id) {
+      this.$store
+        .dispatch(PROVIDER_DELETE, id)
+        .then(res => {
+          this.$router.push('/proveedores')
+        }, error => {
+          // mostrar errores
+          console.log('error')
+          console.log(error)
+        })
     }
   }
 }

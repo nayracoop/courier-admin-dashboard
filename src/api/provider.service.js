@@ -2,26 +2,28 @@ import Parse from 'parse'
 
 export default {
   create (params) {
-    var Provider = Parse.Object.extend('Provider')
-    var provider = new Provider()
+    let Provider = Parse.Object.extend('Provider')
+    let provider = new Provider()
 
     return provider.save(params)
   },
   getAll () {
-    var query = new Parse.Query('Provider')
+    let query = new Parse.Query('Provider')
     query.ascending('name')
+    query.doesNotExist('deletedAt')
 
     return query.find()
   },
   get (id) {
-    var query = new Parse.Query('Provider')
+    let query = new Parse.Query('Provider')
+    query.doesNotExist('deletedAt')
 
     return query.get(id)
   },
-  update (params, id) {
-    var query = new Parse.Query('Provider')
+  update (id, params) {
+    let query = new Parse.Query('Provider')
 
-    query.get(id, {
+    return query.get(id, {
       success: function (provider) {
         return provider.save(params)
       },
@@ -31,11 +33,14 @@ export default {
     })
   },
   delete (id) {
-    var query = new Parse.Query('Provider')
+    let query = new Parse.Query('Provider')
 
-    query.get(id, {
+    return query.get(id, {
       success: function (provider) {
-        return provider.destroy({})
+        let d = new Date()
+        let n = d.toISOString()
+        provider.set('deletedAt', n)
+        return provider.save()
       },
       error: function (provider, error) {
         return error
