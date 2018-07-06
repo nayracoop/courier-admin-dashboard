@@ -1,5 +1,20 @@
 <template>
   <b-card :header="caption">
+    <b-row class="actions-bar">
+        <b-col sm="6">
+          <b-button variant="primary" :to="{ name: 'Nuevo Cliente' }">Nuevo cliente</b-button>
+          <b-button v-b-modal.modal-center variant="outline-danger">Eliminar</b-button>
+          <b-button disabled variant="outline-primary">Importar</b-button>
+        </b-col>
+        <b-form-group class="ml-auto col-6">
+          <b-input-group>
+            <b-form-input v-model="filter" placeholder="Buscar..." />
+            <b-input-group-append>
+              <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-row>
     <b-table
       :hover="hover"
       :striped="striped"
@@ -12,16 +27,15 @@
       :per-page="perPage"
       responsive="sm">
     <template slot="Acciones" slot-scope="data">
-      <router-link tag="b-button" variant="primary" :to="{ name: 'Editar Client', params: { id: data.item.objectId } }">
-        <!--router-link tag="b-button" :variant="primary" class="btn-primary" :to="{ name: 'Cliente', params: { id: data.item.id } }"-->
+      <b-button variant="primary" :to="{ name: 'Editar Cliente', params: { id: data.item.objectId } }">
         <i class="fa fa-pencil"></i>
-      </router-link>
-      <router-link tag="b-button" :variant="primary" to="charts" :small="small">
-        <i class="fa fa-pencil"></i>
-      </router-link>
-      <router-link tag="b-button" class="btn-danger" to="charts" :small="small">
+      </b-button>
+      <b-button variant="secondary" :small="small" :to="{ name: 'Nuevo Envío' }">
+        <i class="fa fa-plane"></i>
+      </b-button>
+      <b-button variant="danger" :small="small">
         <i class="fa fa-trash"></i>
-      </router-link>
+      </b-button>
     </template>
     </b-table>
     <nav>
@@ -33,6 +47,15 @@
         next-text="Siguiente"
         hide-goto-end-buttons />
     </nav>
+    <b-modal id="modal-center" ref="deleteModal" hide-footer centered title="Confirmación">
+    <p class="my-2 mb-4 text-center">¿Desea eliminar definitivamente el registro seleccionado?</p>
+    <b-row>
+      <b-col sm="12 text-center" slot="modal-footer">
+        <b-button variant="primary" @click="hideModal">No, volveré atrás</b-button>
+        <b-button variant="danger">Sí, deseo eliminarlo</b-button>
+      </b-col>
+    </b-row>
+  </b-modal>
   </b-card>
 </template>
 
@@ -71,9 +94,9 @@ export default {
     return {
       fields: [
         {key: 'name', label: 'Nombre', sortable: true, editable: true},
-        {key: 'userCode', label: 'Código', sortable: true},
+        // {key: 'userCode', label: 'Código', sortable: true},
         {key: 'vatId', label: 'CUIT', sortable: true},
-        {key: 'taxType', label: 'CondiciónIVA'},
+        // {key: 'taxType', label: 'CondiciónIVA'},
         {key: 'phone', label: 'Teléfono'},
         {key: 'address', label: 'Dirección'},
         {key: 'email', label: 'Email', sortable: true},
@@ -98,6 +121,9 @@ export default {
   methods: {
     fetchClients () {
       this.$store.dispatch(FETCH_CLIENTS)
+    },
+    hideModal () {
+      this.$refs.deleteModal.hide()
     }
   }
 }

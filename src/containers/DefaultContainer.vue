@@ -3,7 +3,7 @@
     <AppHeader fixed>
       <SidebarToggler class="d-lg-none" display="md" mobile />
       <b-link class="navbar-brand" to="#">
-        <img class="navbar-brand-full" src="static/img/brand/logo.svg" width="89" height="25" alt="CoreUI Logo">
+        <img class="navbar-brand-full" src="static/img/brand/logo.png" width="52" height="" alt="CoreUI Logo">
         <img class="navbar-brand-minimized" src="static/img/brand/sygnet.svg" width="30" height="30" alt="CoreUI Logo">
       </b-link>
       <SidebarToggler class="d-md-down-none mr-auto" display="lg" />
@@ -49,15 +49,16 @@
         <DafaultAside/>
       </AppAside>
     </div>
-    <TheFooter>
+    <DFooter>
       <!--footer-->
-    </TheFooter>
+    </DFooter>
   </div>
 </template>
 
 <script>
 import nav from '../_nav'
-import { Header as AppHeader, SidebarToggler, Sidebar as AppSidebar, SidebarFooter, SidebarForm, SidebarHeader, SidebarMinimizer, SidebarNav, Aside as AppAside, AsideToggler, Footer as TheFooter, Breadcrumb } from '@coreui/vue'
+import { Header as AppHeader, SidebarToggler, Sidebar as AppSidebar, SidebarFooter, SidebarForm, SidebarHeader, SidebarMinimizer, SidebarNav, Aside as AppAside, AsideToggler, Breadcrumb } from '@coreui/vue'
+import DFooter from './DefaultFooter'
 import DafaultAside from './DafaultAside'
 import DefaultHeaderDropdownAccnt from './DefaultHeaderDropdownAccnt'
 
@@ -68,7 +69,7 @@ export default {
     AppHeader,
     AppSidebar,
     AppAside,
-    TheFooter,
+    DFooter,
     Breadcrumb,
     DafaultAside,
     DefaultHeaderDropdownAccnt,

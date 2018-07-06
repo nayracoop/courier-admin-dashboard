@@ -1,14 +1,13 @@
 <template>
   <b-card :header="caption">
-
     <template>
       <b-row class="actions-bar">
         <b-col sm="6">
           <b-button :to="{ name: 'Nuevo Proveedor' }" variant="primary">
             Nuevo proveedor
           </b-button>
-          <b-button variant="outline-primary">Importar</b-button>
-          <b-button variant="outline-danger ">Eliminar</b-button>
+          <b-button v-b-modal.modal-center variant="outline-danger">Eliminar</b-button>
+          <b-button disabled variant="outline-primary" >Importar</b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
           <b-input-group>
@@ -35,6 +34,15 @@
       </template>
     </b-table>
     <nav>
+    <b-modal id="modal-center" ref="deleteModal" hide-footer centered title="Confirmación">
+    <p class="my-2 mb-4 text-center">¿Desea eliminar definitivamente el registro seleccionado?</p>
+    <b-row>
+      <b-col sm="12 text-center" slot="modal-footer">
+        <b-button variant="primary" @click="hideModal">No, volveré atrás</b-button>
+        <b-button variant="danger">Sí, deseo eliminarlo</b-button>
+      </b-col>
+    </b-row>
+  </b-modal>
       <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
         hide-goto-end-buttons />
     </nav>
@@ -80,20 +88,20 @@ export default {
         sortable: true,
         editable: true
       },
-      {
+      /* {
         key: 'userCode',
         label: 'Código',
         sortable: true
-      },
+      }, */
       {
         key: 'vatId',
         label: 'CUIT',
         sortable: true
       },
-      {
+      /* {
         key: 'taxType',
         label: 'CondiciónIVA'
-      },
+      }, */
       {
         key: 'phone',
         label: 'Teléfono'
@@ -134,6 +142,9 @@ export default {
   methods: {
     fetchProviders () {
       this.$store.dispatch(FETCH_PROVIDERS)
+    },
+    hideModal () {
+      this.$refs.deleteModal.hide()
     }
   }
 }

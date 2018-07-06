@@ -56,3 +56,15 @@ main {
   margin-top: 15px;
   margin-bottom: 15px;
 }
+.package-size::after{
+  content: 'cms';
+  position: absolute;
+  left: 0px;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+}
+
+.custom-file-label::after{
+  content: "Examinar";
+}
