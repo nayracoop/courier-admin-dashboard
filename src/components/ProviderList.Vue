@@ -6,8 +6,8 @@
           <b-button :to="{ name: 'Nuevo Proveedor' }" variant="primary">
             Nuevo proveedor
           </b-button>
-          <b-button v-b-modal.modal-center variant="outline-danger">Eliminar</b-button>
-          <b-button disabled variant="outline-primary" >Importar</b-button>
+          <b-button @click="showing=true" v-b-modal.modal-center variant="outline-danger">Eliminar</b-button>
+          <b-button disabled variant="outline-primary">Importar</b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
           <b-input-group>
@@ -34,26 +34,23 @@
       </template>
     </b-table>
     <nav>
-    <b-modal id="modal-center" ref="deleteModal" hide-footer centered title="Confirmación">
-    <p class="my-2 mb-4 text-center">¿Desea eliminar definitivamente el registro seleccionado?</p>
-    <b-row>
-      <b-col sm="12 text-center" slot="modal-footer">
-        <b-button variant="primary" @click="hideModal">No, volveré atrás</b-button>
-        <b-button variant="danger">Sí, deseo eliminarlo</b-button>
-      </b-col>
-    </b-row>
-  </b-modal>
       <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
         hide-goto-end-buttons />
     </nav>
+    <c-confirmation-modal @confirm="confirmDelete()" @cancel="hideModal()" :count="2" :showing="showing"></c-confirmation-modal>
   </b-card>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_PROVIDERS } from '@/store/types/actions'
+import CConfirmationModal from '@/components/DeleteConfirmation'
+
 export default {
   name: 'c-provider-list',
+  components: {
+    CConfirmationModal
+  },
   props: {
     caption: {
       type: String,
@@ -88,20 +85,20 @@ export default {
         sortable: true,
         editable: true
       },
-      /* {
-        key: 'userCode',
-        label: 'Código',
-        sortable: true
-      }, */
+        /* {
+          key: 'userCode',
+          label: 'Código',
+          sortable: true
+        }, */
       {
         key: 'vatId',
         label: 'CUIT',
         sortable: true
       },
-      /* {
-        key: 'taxType',
-        label: 'CondiciónIVA'
-      }, */
+        /* {
+          key: 'taxType',
+          label: 'CondiciónIVA'
+        }, */
       {
         key: 'phone',
         label: 'Teléfono'
@@ -126,7 +123,8 @@ export default {
       currentPage: 1,
       perPage: 5,
       totalRows: 0,
-      filter: null
+      filter: null,
+      showing: false
     }
   },
   computed: {
@@ -144,7 +142,11 @@ export default {
       this.$store.dispatch(FETCH_PROVIDERS)
     },
     hideModal () {
-      this.$refs.deleteModal.hide()
+      this.showing = false
+    },
+    confirmDelete () {
+      this.showing = false
+      console.log('confirma la eliminación')
     }
   }
 }
