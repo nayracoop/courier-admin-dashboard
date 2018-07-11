@@ -1,5 +1,5 @@
 <template>
-  <b-modal v-model="show" id="modal-confirm" ref="deleteModal" hide-footer centered title="Confirmación">
+  <b-modal id="modal-confirm" ref="deleteModal" hide-footer centered title="Confirmación">
     <p class="my-2 mb-4 text-center">¿Desea eliminar definitivamente {{ count > 1 ? `los ${count} registros seleccionados` : 'el registro seleccionado' }}?</p>
     <b-row>
       <b-col sm="12 text-center" slot="modal-footer">
@@ -13,15 +13,7 @@
 <script>
 export default {
   name: 'c-confirmation-modal',
-  props: [ 'count', 'showing' ],
-  computed: {
-    show: {
-      get: function () {
-        return this.showing
-      },
-      set: function (newValue) { }
-    }
-  },
+  props: [ 'count' ],
   methods: {
     onConfirm () {
       this.$emit('confirm')
