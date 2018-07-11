@@ -3,3 +3,5 @@ export const idType = ['Sin identificar / venta global diaria', 'DNI', 'CUIL', '
 export const shippingType = ['Importación', 'Exportación', 'Doméstico']
 export const serviceType = ['Doméstico', 'Economy', 'Priority']
 export const packageType = ['Cajas', 'Pack', 'Sobre']
+export const shippingZone = ['1', '2', '3', '4', '5', '6']
+export const shippingWeight = ['0,5', '1', '1,5', '2', '2,5', '3']
