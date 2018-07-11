@@ -240,8 +240,6 @@ export default {
             }
           })
         }, error => {
-          // mostrar errores
-          console.log('error')
           console.log(error)
         })
     },

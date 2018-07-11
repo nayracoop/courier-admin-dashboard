@@ -9,7 +9,7 @@ import BootstrapVue from 'bootstrap-vue'
 import App from '@/App'
 import router from '@/router'
 import store from '@/store'
-// import { CHECK_AUTH } from '@/store/types/actions'
+import { CHECK_AUTH } from '@/store/types/actions'
 
 import ApiService from '@/api'
 import DateFilter from '@/common/filters/date'
@@ -24,20 +24,28 @@ Vue.use(BootstrapVue)
 Parse.initialize(process.env.PARSE_APP_ID, process.env.PARSE_JAVASCRIPT_KEY)
 Parse.serverURL = process.env.PARSE_URI
 
-// todo
-// cssVars()
 Vue.filter('date', DateFilter)
 Vue.filter('error', ErrorFilter)
 
 ApiService.init()
 
-// router.beforeEach(
-//   (to, from, next) => {
-//     return Promise
-//       .all([store.dispatch(CHECK_AUTH)])
-//       .then(next)
-//   }
-// )
+router.beforeEach(
+  (to, from, next) => {
+    if (to.name !== 'Login') {
+      return store.dispatch(CHECK_AUTH)
+        .then(isAuthenticated => {
+        // console.log(isAuthenticated)
+          if (isAuthenticated) {
+            next()
+          } else {
+            next({ name: 'Login' })
+          }
+        })
+    } else {
+      next()
+    }
+  }
+)
 
 /* eslint-disable no-new */
 new Vue({

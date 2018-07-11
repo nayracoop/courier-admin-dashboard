@@ -6,7 +6,7 @@
           <b-button :to="{ name: 'Nuevo Proveedor' }" variant="primary">
             Nuevo proveedor
           </b-button>
-          <b-button @click="showing=true" v-b-modal.modal-center variant="outline-danger">Eliminar</b-button>
+          <b-button @click="showModal()" v-b-modal.modal-center variant="outline-danger">Eliminar</b-button>
           <b-button disabled variant="outline-primary">Importar</b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
@@ -19,31 +19,42 @@
         </b-form-group>
       </b-row>
     </template>
-    <b-table :hover="hover" :striped="striped" :bordered="bordered" :small="small" :fixed="fixed" :items="providers" :fields="fields"
-      :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm">
-      <template slot="Acciones" slot-scope="data">
+    <!-- tabla -->
+    <b-table :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="providers" :fields="fields"
+      :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
+
+      <template slot="HEAD_selection" slot-scope="head">
+        <input type="checkbox" @click.stop="toggleSelected" v-model="allSelected" />
+      </template>
+
+      <template slot="selection" slot-scope="data">
+        <input type="checkbox" name="checked" :key="data.index" :value="data.item" @click.stop v-model="checkedItems" />
+      </template>
+
+      <template slot="actions" slot-scope="data">
         <b-button variant="primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
           <i class="fa fa-pencil"></i>
         </b-button>
-        <b-button :small="small" :to="{ name: 'Nuevo Envío' }">
+        <b-button :small="true" :to="{ name: 'Nuevo Envío' }">
           <i class="fa fa-plane"></i>
         </b-button>
-        <b-button class="btn-danger" to="charts" :small="small">
+        <b-button class="btn-danger" :small="true" @click="showModal(data.item.objectId)">
           <i class="fa fa-trash"></i>
         </b-button>
       </template>
     </b-table>
+    <!-- end tabla -->
     <nav>
       <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
-        hide-goto-end-buttons />
+        hide-goto-end-buttons @click.native="clearSelected" />
     </nav>
-    <c-confirmation-modal @confirm="confirmDelete()" @cancel="hideModal()" :count="2" :showing="showing"></c-confirmation-modal>
+    <c-confirmation-modal @confirm="confirmDelete()" @cancel="hideModal()" :count="checkedItems.length" ref="confirmationModal" />
   </b-card>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_PROVIDERS } from '@/store/types/actions'
+import { FETCH_PROVIDERS, PROVIDER_DELETE } from '@/store/types/actions'
 import CConfirmationModal from '@/components/DeleteConfirmation'
 
 export default {
@@ -51,102 +62,91 @@ export default {
   components: {
     CConfirmationModal
   },
-  props: {
-    caption: {
-      type: String,
-      default: 'Proveedores'
-    },
-    hover: {
-      type: Boolean,
-      default: true
-    },
-    striped: {
-      type: Boolean,
-      default: false
-    },
-    bordered: {
-      type: Boolean,
-      default: true
-    },
-    small: {
-      type: Boolean,
-      default: false
-    },
-    fixed: {
-      type: Boolean,
-      default: false
-    }
-  },
+  props: { caption: { type: String, default: 'Proveedores' } },
   data: () => {
     return {
-      fields: [{
-        key: 'name',
-        label: 'Nombre',
-        sortable: true,
-        editable: true
-      },
-        /* {
-          key: 'userCode',
-          label: 'Código',
-          sortable: true
-        }, */
-      {
-        key: 'vatId',
-        label: 'CUIT',
-        sortable: true
-      },
-        /* {
-          key: 'taxType',
-          label: 'CondiciónIVA'
-        }, */
-      {
-        key: 'phone',
-        label: 'Teléfono'
-      },
-      {
-        key: 'address',
-        label: 'Dirección'
-      },
-      {
-        key: 'email',
-        label: 'Email',
-        sortable: true
-      },
-      {
-        key: 'province',
-        label: 'Provincia'
-      },
-      {
-        key: 'Acciones'
-      }
+      fields: [ 'selection',
+        { key: 'name', label: 'Nombre', sortable: true, editable: true },
+        // { key: 'userCode', label: 'Código', sortable: true },
+        { key: 'taxId', label: 'CUIT', sortable: true },
+        // { key: 'taxType', label: 'CondiciónIVA' },
+        { key: 'phone', label: 'Teléfono' },
+        { key: 'address', label: 'Dirección' },
+        { key: 'email', label: 'Email', sortable: true },
+        { key: 'province', label: 'Provincia' },
+        { key: 'actions', label: 'Acciones' }
       ],
+      allSelected: false,
+      checkedItems: [],
+      tableValues: [],
+      deleteId: -1,
+      deleteMultiple: false,
       currentPage: 1,
       perPage: 5,
       totalRows: 0,
-      filter: null,
-      showing: false
+      filter: null
     }
   },
   computed: {
-    ...mapGetters([
-      'providersCount',
-      'isLoading',
-      'providers'
-    ])
+    ...mapGetters([ 'providersCount', 'isLoading', 'providers' ])
   },
   mounted () {
     this.fetchProviders()
+  },
+  watch: {
+    checkedItems (a, b) {
+      this.allSelected = (this.tableValues.length === a.length)
+    }
   },
   methods: {
     fetchProviders () {
       this.$store.dispatch(FETCH_PROVIDERS)
     },
+    showModal (id) {
+      if (id) {
+        this.deleteId = id
+        this.deleteMultiple = false
+        this.$refs.confirmationModal.$refs.deleteModal.show()
+      } else if (this.checkedItems.length > 0) {
+        // si no hay id y no hay checkboxes seleccionados, ni muestro el modal
+        this.deleteMultiple = true
+        this.$refs.confirmationModal.$refs.deleteModal.show()
+      }
+    },
     hideModal () {
-      this.showing = false
+      this.$refs.confirmationModal.$refs.deleteModal.hide()
     },
     confirmDelete () {
-      this.showing = false
-      console.log('confirma la eliminación')
+      var promises = []
+      if (this.deleteMultiple) {
+        for (var i = 0, len = this.checkedItems.length; i < len; i++) {
+          promises.push(
+            this.$store.dispatch(PROVIDER_DELETE, this.checkedItems[i].objectId)
+          )
+        }
+        Promise.all(promises).then(() => {
+          this.fetchProviders()
+          this.clearSelected()
+        })
+      } else {
+        this.$store
+          .dispatch(PROVIDER_DELETE, this.deleteId)
+          .then(res => {
+            this.fetchProviders()
+            this.clearSelected()
+          }, error => {
+            console.log(error)
+          })
+      }
+      this.$refs.confirmationModal.$refs.deleteModal.hide()
+    },
+    toggleSelected () {
+      this.allSelected = !this.allSelected
+      this.checkedItems = this.allSelected ? this.tableValues : []
+    },
+    clearSelected () {
+      this.allSelected = false
+      this.checkedItems = []
     }
   }
 }
