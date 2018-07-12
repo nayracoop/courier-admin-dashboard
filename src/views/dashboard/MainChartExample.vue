@@ -13,7 +13,7 @@ export default {
   mounted () {
     const brandSuccess = getStyle('--success') || '#4dbd74'
     const brandInfo = getStyle('--info') || '#20a8d8'
-    const brandDanger = getStyle('--danger') || '#f86c6b'
+    const brandWarning = getStyle('--warning')
 
     let elements = 27
     const data1 = []
@@ -21,15 +21,15 @@ export default {
     const data3 = []
 
     for (let i = 0; i <= elements; i++) {
-      data1.push(random(50, 200))
-      data2.push(random(80, 100))
-      data3.push(65)
+      data1.push(random(12000, 8000))
+      data2.push(random(8400, 4000))
+      data3.push(random(4000, 2000))
     }
     this.renderChart({
-      labels: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+      labels: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
       datasets: [
         {
-          label: 'My First dataset',
+          label: 'Envíos totales',
           backgroundColor: hexToRgba(brandInfo, 10),
           borderColor: brandInfo,
           pointHoverBackgroundColor: '#fff',
@@ -37,20 +37,20 @@ export default {
           data: data1
         },
         {
-          label: 'My Second dataset',
+          label: 'Envíos en tránsito',
           backgroundColor: 'transparent',
-          borderColor: brandSuccess,
+          borderColor: brandWarning,
           pointHoverBackgroundColor: '#fff',
           borderWidth: 2,
           data: data2
         },
         {
-          label: 'My Third dataset',
+          label: 'Envíos entregados',
           backgroundColor: 'transparent',
-          borderColor: brandDanger,
+          borderColor: brandSuccess,
           pointHoverBackgroundColor: '#fff',
-          borderWidth: 1,
-          borderDash: [8, 5],
+          borderWidth: 2,
+          // borderDash: [8, 5],
           data: data3
         }
       ]
@@ -81,8 +81,8 @@ export default {
           ticks: {
             beginAtZero: true,
             maxTicksLimit: 5,
-            stepSize: Math.ceil(250 / 5),
-            max: 250
+            stepSize: Math.ceil(1000 / 1),
+            max: 12000
           },
           gridLines: {
             display: true

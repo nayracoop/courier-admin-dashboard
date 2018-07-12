@@ -11,7 +11,7 @@ export default {
   props: ['data', 'height', 'width', 'variant'],
   mounted () {
     this.renderChart({
-      labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
       datasets: [
         {
           backgroundColor: 'transparent',

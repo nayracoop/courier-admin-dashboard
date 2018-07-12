@@ -8,7 +8,7 @@ export default {
   mounted () {
     const datasets4 = [
       {
-        label: 'My First dataset',
+        label: 'Cantidad de envíos',
         backgroundColor: 'rgba(255,255,255,.3)',
         borderColor: 'transparent',
         data: [78, 81, 80, 45, 34, 12, 40, 75, 34, 89, 32, 68, 54, 72, 18, 98]

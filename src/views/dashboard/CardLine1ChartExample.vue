@@ -10,7 +10,7 @@ export default {
     const brandPrimary = getStyle('--primary') || '#20a8d8'
     const datasets1 = [
       {
-        label: 'My First dataset',
+        label: 'Cantidad de clientes activos',
         backgroundColor: brandPrimary,
         borderColor: 'rgba(255,255,255,.55)',
         data: [65, 59, 84, 84, 51, 55, 40]
@@ -19,7 +19,7 @@ export default {
 
     this.renderChart(
       {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
         datasets: datasets1
       },
       {

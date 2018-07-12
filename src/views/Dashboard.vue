@@ -1,61 +1,58 @@
 <template>
   <div class="animated fadeIn">
     <b-row>
-      <b-col sm="6" lg="3">
-        <b-card no-body class="bg-primary">
-          <b-card-body class="pb-0">
-            <b-dropdown class="float-right" variant="transparent p-0" right>
-              <template slot="button-content">
-                <i class="icon-settings"></i>
-              </template>
-              <b-dropdown-item>Action</b-dropdown-item>
-              <b-dropdown-item>Another action</b-dropdown-item>
-              <b-dropdown-item>Something else here...</b-dropdown-item>
-              <b-dropdown-item disabled>Disabled action</b-dropdown-item>
-            </b-dropdown>
-            <h4 class="mb-0">9.823</h4>
-            <p>Members online</p>
-          </b-card-body>
-          <card-line1-chart-example chartId="card-chart-01" class="chart-wrapper px-3" style="height:70px;" :height="70"/>
-        </b-card>
-      </b-col>
-      <b-col sm="6" lg="3">
-        <b-card no-body class="bg-info">
-          <b-card-body class="pb-0">
-            <b-dropdown class="float-right" variant="transparent p-0" right no-caret>
-              <template slot="button-content">
-                <i class="icon-location-pin"></i>
-              </template>
-              <b-dropdown-item>Action</b-dropdown-item>
-              <b-dropdown-item>Another action</b-dropdown-item>
-              <b-dropdown-item>Something else here...</b-dropdown-item>
-              <b-dropdown-item disabled>Disabled action</b-dropdown-item>
-            </b-dropdown>
-            <h4 class="mb-0">9.823</h4>
-            <p>Members online</p>
-          </b-card-body>
-          <card-line2-chart-example chartId="card-chart-02" class="chart-wrapper px-3" style="height:70px;" :height="70"/>
-        </b-card>
-      </b-col>
-      <b-col sm="6" lg="3">
+      <b-col sm="6" lg="4">
         <b-card no-body class="bg-warning">
           <b-card-body class="pb-0">
             <b-dropdown class="float-right" variant="transparent p-0" right>
               <template slot="button-content">
                 <i class="icon-settings"></i>
               </template>
-              <b-dropdown-item>Action</b-dropdown-item>
-              <b-dropdown-item>Another action</b-dropdown-item>
-              <b-dropdown-item>Something else here...</b-dropdown-item>
-              <b-dropdown-item disabled>Disabled action</b-dropdown-item>
+              <b-dropdown-item>Ver todos los envíos</b-dropdown-item>
+              <b-dropdown-item>Crear un nuevo envío</b-dropdown-item>
             </b-dropdown>
-            <h4 class="mb-0">9.823</h4>
-            <p>Members online</p>
+            <h4 class="mb-0 p-title">12.000</h4>
+            <i class="fa fa-plane"></i>
+            <p>Envíos</p>
           </b-card-body>
-          <card-line3-chart-example chartId="card-chart-03" class="chart-wrapper" style="height:70px;" height="70"/>
+          <card-bar-chart-example chartId="card-chart-04" class="chart-wrapper px-3" style="height:70px;" height="70"/>
         </b-card>
       </b-col>
-      <b-col sm="6" lg="3">
+      <b-col sm="6" lg="4">
+        <b-card no-body class="bg-primary">
+          <b-card-body class="pb-0">
+            <b-dropdown class="float-right" variant="transparent p-0" right>
+              <template slot="button-content">
+                <i class="icon-settings"></i>
+              </template>
+              <b-dropdown-item>Ver todos los clientes</b-dropdown-item>
+              <b-dropdown-item>Agregar un nuevo cliente</b-dropdown-item>
+            </b-dropdown>
+            <h4 class="mb-0 p-title">1400</h4>
+            <i class="fa fa-user fa-sm"></i>
+            <p>Clientes activos</p>
+          </b-card-body>
+          <card-line1-chart-example chartId="card-chart-01" class="chart-wrapper px-3" style="height:70px;" :height="70"/>
+        </b-card>
+      </b-col>
+      <b-col sm="6" lg="4">
+        <b-card no-body class="bg-info">
+          <b-card-body class="pb-0">
+            <b-dropdown class="float-right" variant="transparent p-0" right>
+              <template slot="button-content">
+                <i class="icon-settings"></i>
+              </template>
+              <b-dropdown-item>Ver todos los proveedores</b-dropdown-item>
+              <b-dropdown-item>Agregar un nuevo proveedor</b-dropdown-item>
+            </b-dropdown>
+            <h4 class="mb-0 p-title">1250</h4>
+            <i class="fa fa-user"></i>
+            <p>Proveedores activos</p>
+          </b-card-body>
+          <card-line2-chart-example chartId="card-chart-02" class="chart-wrapper px-3" style="height:70px;" :height="70"/>
+        </b-card>
+      </b-col>
+      <!--b-col sm="6" lg="3">
         <b-card no-body class="bg-danger">
           <b-card-body class="pb-0">
             <b-dropdown class="float-right" variant="transparent p-0" right>
@@ -72,22 +69,22 @@
           </b-card-body>
           <card-bar-chart-example chartId="card-chart-04" class="chart-wrapper px-3" style="height:70px;" height="70"/>
         </b-card>
-      </b-col>
+      </b-col-->
     </b-row>
 
     <b-card>
       <b-row>
         <b-col sm="5">
-          <h4 id="traffic" class="card-title mb-0">Traffic</h4>
-          <div class="small text-muted">November 2017</div>
+          <h4 id="traffic" class="card-title mb-0">Estado de envíos</h4>
+          <div class="small text-muted">Julio 2018</div>
         </b-col>
         <b-col sm="7" class="d-none d-md-block">
-          <b-button type="button" variant="primary" class="float-right"><i class="icon-cloud-download"></i></b-button>
+          <!--b-button type="button" variant="primary" class="float-right"><i class="icon-cloud-download"></i></b-button-->
           <b-button-toolbar class="float-right" aria-label="Toolbar with buttons group">
             <b-form-radio-group class="mr-3" id="radiosBtn" buttons button-variant="outline-secondary" v-model="selected" name="radiosBtn">
-              <b-form-radio class="mx-0" value="Day">Day</b-form-radio>
-              <b-form-radio class="mx-0" value="Month">Month</b-form-radio>
-              <b-form-radio class="mx-0" value="Year">Year</b-form-radio>
+              <b-form-radio class="mx-0" value="Day">Día</b-form-radio>
+              <b-form-radio class="mx-0" value="Month">Mes</b-form-radio>
+              <b-form-radio class="mx-0" value="Year">Año</b-form-radio>
             </b-form-radio-group>
           </b-button-toolbar>
         </b-col>
@@ -95,35 +92,25 @@
       <main-chart-example chartId="main-chart-01" class="chart-wrapper" style="height:300px;margin-top:40px;" height="300"></main-chart-example>
       <div slot="footer">
         <b-row class="text-center">
-          <b-col class="mb-sm-2 mb-0">
-            <div class="text-muted">Visits</div>
-            <strong>29.703 Users (40%)</strong>
-            <b-progress height={} class="progress-xs mt-2" :precision="1" variant="success" :value="40"></b-progress>
+          <b-col class="mb-sm-4 mb-0">
+            <div class="text-muted">Envíos totales</div>
+            <strong>12.000 (100%)</strong>
+            <b-progress height={} class="progress-xs mt-2" :precision="1" variant="info" :value="12000"></b-progress>
           </b-col>
-          <b-col class="mb-sm-2 mb-0 d-md-down-none">
-            <div class="text-muted">Unique</div>
-            <strong>24.093 Users (20%)</strong>
-            <b-progress height={} class="progress-xs mt-2" :precision="1" variant="info" :value="20"></b-progress>
+          <b-col class="mb-sm-4 mb-0 d-md-down-none">
+            <div class="text-muted">Envíos en tránsito</div>
+            <strong>8.400 (70%)</strong>
+            <b-progress height={} class="progress-xs mt-2" :precision="1" variant="warning" :value="8400"></b-progress>
           </b-col>
-          <b-col class="mb-sm-2 mb-0">
-            <div class="text-muted">Pageviews</div>
-            <strong>78.706 Views (60%)</strong>
-            <b-progress height={} class="progress-xs mt-2" :precision="1" variant="warning" :value="60"></b-progress>
-          </b-col>
-          <b-col class="mb-sm-2 mb-0">
-            <div class="text-muted">New Users</div>
-            <strong>22.123 Users (80%)</strong>
-            <b-progress height={} class="progress-xs mt-2" :precision="1" variant="danger" :value="80"></b-progress>
-          </b-col>
-          <b-col class="mb-sm-2 mb-0 d-md-down-none">
-            <div class="text-muted">Bounce Rate</div>
-            <strong>Average Rate (40.15%)</strong>
-            <b-progress height={} class="progress-xs mt-2" :precision="1" :value="40"></b-progress>
+          <b-col class="mb-sm-4 mb-0">
+            <div class="text-muted">Envíos entregados </div>
+            <strong>4000 (30%)</strong>
+            <b-progress height={} class="progress-xs mt-2" :precision="1" variant="success" :value="4000"></b-progress>
           </b-col>
         </b-row>
       </div>
     </b-card>
-    <b-row>
+    <!--b-row>
       <b-col sm="6" lg="3">
         <div class="brand-card">
           <div class="brand-card-header bg-facebook">
@@ -204,29 +191,38 @@
           </div>
         </div>
       </b-col>
-    </b-row>
+    </b-row-->
     <b-row>
       <b-col md="12">
-        <b-card header="Traffic &amp; Sales">
+        <b-card header="Promedio de envíos diarios">
           <b-row>
-            <b-col sm="12" lg="6">
+            <b-col sm="12" lg="12">
               <b-row>
-                <b-col sm="6">
+                <b-col sm="3">
                   <Callout variant="info">
-                    <small class="text-muted">New Clients</small><br>
-                    <strong class="h4">9,123</strong>
+                    <small class="text-muted">Envíos totales</small><br>
+                    <strong class="h4">100%</strong>
                     <div class="chart-wrapper" :style="{ top: '-10px'}">
                       <!--<callout-chart-example :data="[35, 23, 56, 22, 97, 23, 64]" variant="#20a8d8" width="80" height="30" />-->
                       <callout-chart-example chartId="callout-chart-01" :data="[35, 23, 56, 22, 97, 23, 64]" variant="info" width="80" height="30" />
                     </div>
                   </Callout>
                 </b-col>
-                <b-col sm="6">
-                  <Callout variant="danger">
-                    <small class="text-muted">Recurring Clients</small><br>
-                    <strong class="h4">22,643</strong>
+                <b-col sm="3">
+                  <Callout variant="warning">
+                    <small class="text-muted">Envíos en tránsito</small><br>
+                    <strong class="h4">35%</strong>
                     <div class="chart-wrapper" :style="{ top: '-10px'}">
-                      <callout-chart-example chartId="callout-chart-02" :data="[65, 59, 84, 84, 51, 55, 40]" variant="danger" width="80" height="30" />
+                      <callout-chart-example chartId="callout-chart-02" :data="[65, 59, 84, 84, 51, 55, 40]" variant="warning" width="80" height="30" />
+                    </div>
+                  </Callout>
+                </b-col>
+                <b-col sm="3">
+                  <Callout variant="success">
+                    <small class="text-muted">Envíos entregados</small><br>
+                    <strong class="h4">65%</strong>
+                    <div class="chart-wrapper" :style="{ top: '-10px'}">
+                      <callout-chart-example chartId="callout-chart-02" :data="[65, 59, 84, 84, 51, 55, 40]" variant="success" width="80" height="30" />
                     </div>
                   </Callout>
                 </b-col>
@@ -235,92 +231,101 @@
               <div class="progress-group mb-4">
                 <div class="progress-group-prepend">
                   <span class="progress-group-text">
-                    Monday
+                    Lunes
                   </span>
                 </div>
                 <div class="progress-group-bars">
                   <b-progress class="progress-xs" variant="info" :value="34" height={} />
-                  <b-progress class="progress-xs" variant="danger" :value="78" height={} />
+                  <b-progress class="progress-xs" variant="success" :value="78" height={} />
+                  <b-progress class="progress-xs" variant="warning" :value="18" height={} />
                 </div>
               </div>
               <div class="progress-group mb-4">
                 <div class="progress-group-prepend">
                   <span class="progress-group-text">
-                    Tuesday
+                    Martes
                   </span>
                 </div>
                 <div class="progress-group-bars">
                   <b-progress height={} class="progress-xs" :value="56" variant="info"></b-progress>
-                  <b-progress height={} class="progress-xs" :value="94" variant="danger"></b-progress>
+                  <b-progress class="progress-xs" variant="warning" :value="18" height={} />
+                  <b-progress height={} class="progress-xs" :value="94" variant="success"></b-progress>
                 </div>
               </div>
               <div class="progress-group mb-4">
                 <div class="progress-group-prepend">
                   <span class="progress-group-text">
-                    Wednesday
+                    Miércoles
                   </span>
                 </div>
                 <div class="progress-group-bars">
                   <b-progress height={} class="progress-xs" :value="12" variant="info"></b-progress>
-                  <b-progress height={} class="progress-xs" :value="67" variant="danger"></b-progress>
+                  <b-progress class="progress-xs" variant="warning" :value="18" height={} />
+                  <b-progress height={} class="progress-xs" :value="67" variant="success"></b-progress>
                 </div>
               </div>
               <div class="progress-group mb-4">
                 <div class="progress-group-prepend">
                   <span class="progress-group-text">
-                    Thursday
+                    Jueves
                   </span>
                 </div>
                 <div class="progress-group-bars">
                   <b-progress height={} class="progress-xs" :value="43" variant="info"></b-progress>
-                  <b-progress height={} class="progress-xs" :value="91" variant="danger"></b-progress>
+                  <b-progress class="progress-xs" variant="warning" :value="18" height={} />
+                  <b-progress height={} class="progress-xs" :value="91" variant="success"></b-progress>
                 </div>
               </div>
               <div class="progress-group mb-4">
                 <div class="progress-group-prepend">
                   <span class="progress-group-text">
-                    Friday
+                    Viernes
                   </span>
                 </div>
                 <div class="progress-group-bars">
                   <b-progress height={} class="progress-xs" :value="22" variant="info"></b-progress>
-                  <b-progress height={} class="progress-xs" :value="73" variant="danger"></b-progress>
+                  <b-progress class="progress-xs" variant="warning" :value="18" height={} />
+                  <b-progress height={} class="progress-xs" :value="73" variant="success"></b-progress>
                 </div>
               </div>
               <div class="progress-group mb-4">
                 <div class="progress-group-prepend">
                   <span class="progress-group-text">
-                    Saturday
+                    Sábado
                   </span>
                 </div>
                 <div class="progress-group-bars">
                   <b-progress height={} class="progress-xs" :value="53" variant="info"></b-progress>
-                  <b-progress height={} class="progress-xs" :value="82" variant="danger"></b-progress>
+                  <b-progress class="progress-xs" variant="warning" :value="18" height={} />
+                  <b-progress height={} class="progress-xs" :value="82" variant="success"></b-progress>
                 </div>
               </div>
               <div class="progress-group mb-4">
                 <div class="progress-group-prepend">
                   <span class="progress-group-text">
-                    Sunday
+                    Domingo
                   </span>
                 </div>
                 <div class="progress-group-bars">
                   <b-progress height={} class="progress-xs" :value="9" variant="info"></b-progress>
-                  <b-progress height={} class="progress-xs" :value="69" variant="danger"></b-progress>
+                  <b-progress class="progress-xs" variant="warning" :value="18" height={} />
+                  <b-progress height={} class="progress-xs" :value="69" variant="success"></b-progress>
                 </div>
               </div>
               <div class="legend text-center">
                 <small>
-                  <sup><b-badge pill variant="info">&nbsp;</b-badge></sup>
-                  New clients
+                  <b-badge pill variant="info">&nbsp;</b-badge>
+                  Envíos totales
                   &nbsp;&nbsp;
-                  <sup><b-badge pill variant="danger">&nbsp;</b-badge></sup>
-                  Recurring clients
+                  <b-badge pill variant="warning">&nbsp;</b-badge>
+                  Envíos en tránsito
+                  <b-badge pill variant="success">&nbsp;</b-badge>
+                  Envíos entregados
                 </small>
               </div>
             </b-col>
             <b-col sm="12" lg="6">
-              <b-row>
+              <!--b-row>
                 <b-col sm="6">
                   <Callout variant="warning">
                     <small class="text-muted">Pageviews</small><br>
@@ -339,9 +344,9 @@
                     </div>
                   </Callout>
                 </b-col>
-              </b-row>
-              <hr class="mt-0">
-              <ul class="horizontal-bars type-2">
+              </b-row-->
+              <!--hr class="mt-0"-->
+              <!--ul class="horizontal-bars type-2">
                 <div class="progress-group">
                   <div class="progress-group-header">
                     <i class="icon-user progress-group-icon"></i>
@@ -405,11 +410,11 @@
                 <div class="divider text-center">
                   <b-button variant="link" size="sm" class="text-muted"><i class="icon-options"></i></b-button>
                 </div>
-              </ul>
+              </ul-->
             </b-col>
           </b-row>
           <br/>
-          <b-table class="mb-0 table-outline" responsive="sm" hover :items="tableItems" :fields="tableFields" head-variant="light">
+          <!--b-table class="mb-0 table-outline" responsive="sm" hover :items="tableItems" :fields="tableFields" head-variant="light">
             <div slot="avatar" class="avatar" slot-scope="item">
               <img :src="item.value.url" class="img-avatar" alt="">
               <span class="avatar-status" v-bind:class="{ 'bg-success': item.value.status == 'success',  'bg-warning': item.value.status == 'warning', 'bg-danger': item.value.status == 'danger', 'bg-secondary': item.value.status == '' }"></span>
@@ -441,7 +446,7 @@
               <div class="small text-muted">Last login</div>
               <strong>{{item.value}}</strong>
             </div>
-          </b-table>
+          </b-table-->
         </b-card>
       </b-col>
     </b-row>
