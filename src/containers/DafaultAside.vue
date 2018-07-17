@@ -6,36 +6,58 @@
       </template>
       <b-list-group class="list-group-accent">
         <b-list-group-item class="list-group-item-accent-secondary bg-light text-center font-weight-bold text-muted text-uppercase small">
-          Today
+          COTIZACIÓN DIVISAS
         </b-list-group-item>
-        <b-list-group-item href="#" class="list-group-item-accent-warning list-group-item-divider">
-          <div class="avatar float-right">
-            <img class="img-avatar" src="static/img/avatars/7.jpg" alt="admin@bootstrapmaster.com">
-          </div>
-          <div>Meeting with
-            <strong>Lucas</strong>
+        <b-list-group-item href="#" class="list-group-item-accent-warning list-group-item-gr list-group-item-divider">
+          <div class="avatar float-right circular-icon-cont">
+             <i class="fa fa-usd"></i>
           </div>
           <small class="text-muted mr-3">
-            <i class="icon-calendar"></i>&nbsp;&nbsp;1 - 3pm
+            <i class="icon-calendar"></i>&nbsp;&nbsp;15/7/2018
           </small>
-          <small class="text-muted">
-            <i class="icon-location-pin"></i>&nbsp;&nbsp;Palo Alto, CA
-          </small>
+          <div class="mt-2">Dólar compra:
+            <strong>$24</strong>
+          </div>
+          <div class="mt-2">Dólar venta:
+            <strong>$26</strong>
+          </div>
         </b-list-group-item>
-        <b-list-group-item href="#" class="list-group-item-accent-info">
-          <div class="avatar float-right">
-            <img class="img-avatar" src="static/img/avatars/4.jpg" alt="admin@bootstrapmaster.com">
+        <b-list-group-item href="#" class="list-group-item-accent-warning list-group-item-bl list-group-item-divider">
+          <div class="avatar float-right circular-icon-cont">
+             <i class="fa fa-eur"></i>
           </div>
-          <div>Skype with <strong>Megan</strong>
+          <small class="text-muted mr-3">
+            <i class="icon-calendar"></i>&nbsp;&nbsp;15/7/2018
+          </small>
+          <div class="mt-2">Euro compra:
+            <strong>$30</strong>
           </div>
-          <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp;&nbsp;4 - 5pm</small>
-          <small class="text-muted"><i class="icon-social-skype"></i>&nbsp;&nbsp;On-line</small>
+          <div class="mt-2">Euro venta:
+            <strong>$32</strong>
+          </div>
         </b-list-group-item>
         <hr class="transparent mx-3 my-0">
         <b-list-group-item class="list-group-item-accent-secondary bg-light text-center font-weight-bold text-muted text-uppercase small">
-          Tomorrow
+          PRECIO COMBUSTIBLES
         </b-list-group-item>
-        <b-list-group-item href="#" class="list-group-item-accent-danger list-group-item-divider">
+        <b-list-group-item href="#" class="list-group-item-accent-warning list-group-item-bg list-group-item-divider">
+          <div class="avatar float-right circular-icon-cont">
+             <i class="fa fa-truck"></i>
+          </div>
+          <small class="text-muted mr-3">
+            <i class="icon-calendar"></i>&nbsp;&nbsp;15/7/2018
+          </small>
+          <div class="mt-2">Gasoil:
+            <strong>$30 lt.</strong>
+          </div>
+          <div class="mt-2">Diesel:
+            <strong>$32 lt.</strong>
+          </div>
+          <div class="mt-2">Gas:
+            <strong>$15 m3</strong>
+          </div>
+        </b-list-group-item>
+        <!--b-list-group-item href="#" class="list-group-item-accent-danger list-group-item-divider">
           <div>New UI Project - <strong>deadline</strong>
           </div>
           <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp;&nbsp;10 - 11pm</small>
@@ -90,10 +112,10 @@
               <img src="static/img/avatars/8.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
             </div>
           </div>
-        </b-list-group-item>
+        </b-list-group-item-->
       </b-list-group>
     </b-tab>
-    <b-tab>
+    <!--b-tab>
       <template slot="title">
         <i class='icon-speech'></i>
       </template>
@@ -236,7 +258,7 @@
         <b-progress height={} class="progress-xs" variant="success" :value="10"></b-progress>
         <small class="text-muted">25GB/256GB</small>
       </div>
-    </b-tab>
+    </b-tab-->
   </b-tabs>
 </template>
 

@@ -77,3 +77,55 @@ main {
 .cont-is-shipping .custom-control label::after{
   top: 0.6rem!important;
 }
+
+/* Dashboard index */
+
+.p-title{
+  display: inline-block;
+}
+
+i.fa{
+  margin-left: 5px;
+  font-size: 18px;
+}
+
+.circular-icon-cont{
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  border-radius: 20em;
+  border: 1px solid #c3c3c3;
+  margin-top: 15px;
+}
+.circular-icon-cont i{
+  font-size: 30px;
+  top: 10px; 
+  left: 15px;
+  position: absolute;
+  margin: 0 auto;
+}
+
+.list-group-item-gr{
+  border-left: 4px solid #278327;
+}
+
+.circular-icon-cont i.fa-usd{
+  color: #278327;
+}
+
+.circular-icon-cont i.fa-eur{
+  color: #1d6dcd;
+}
+
+.list-group-item-bl{
+  border-left: 4px solid #1d6dcd;
+}
+
+.circular-icon-cont i.fa-truck{
+  color: #797979;
+  left: 7px;
+}
+
+.list-group-item-bg{
+  border-left: 4px solid #797979;
+}
