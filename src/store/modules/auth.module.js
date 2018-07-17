@@ -42,7 +42,7 @@ const actions = {
   //     })
   //   },
   [CHECK_AUTH] (context) {
-    console.log(state.isAuthenticated)
+    // console.log(state.isAuthenticated)
     return state.isAuthenticated
   }
 //   [UPDATE_USER] (context, payload) {

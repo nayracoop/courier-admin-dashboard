@@ -19,14 +19,14 @@ import {
 const initialState = {
   provider: {
     // id: '',
-    externalId: 'external',
-    userCode: '12345',
-    name: 'Juanca',
+    externalId: 'External123',
+    userCode: '123456',
+    name: 'Nicolosi Pedro',
     businessName: 'Business name',
-    taxId: '2032760990',
-    taxCategory: 'CUIT',
-    taxType: 'Exento', // capaz condition?
-    address: 'Noogoosda',
+    taxId: '20327609910',
+    taxCategory: 4,
+    taxType: 2, // capaz condition?
+    address: 'Nogoyá',
     country: 'Argentina',
     province: 'Buenos Aires',
     postalCode: '1234',
@@ -34,7 +34,22 @@ const initialState = {
     phone: '0293219321',
     observation: 'Observaction',
     purchaseAccount: '',
-    saleAccount: ''
+    saleAccount: '',
+    isShipping: true,
+    costsTable: [{
+      shippingType: 1,
+      serviceType: 2,
+      packageType: 3,
+      shippingZone: 1,
+      costs: [{
+        weight: 0.5,
+        grossPrice: 12,
+        saleDiscount: 10,
+        netPrice: 10,
+        costDiscount: 0,
+        cost: 0
+      }]
+    }]
   }
 }
 

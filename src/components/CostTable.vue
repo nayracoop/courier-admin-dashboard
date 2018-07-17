@@ -1,37 +1,18 @@
 <template>
     <b-form>
-        <!--b-row>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="clientName">Cliente</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social del cliente"></i>
-                <b-form-select id="clientName" :plain="true" :options="['Sivori','AT Capital']">
-                </b-form-select>
-              </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="providerName">Proveedor</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social del proveedor"></i>
-                <b-form-select id="providerName" :plain="true" :options="providerOptions">
-                </b-form-select>
-              </b-form-group>
-            </b-col>
-          </b-row-->
       <b-row>
         <b-col sm="3">
           <b-form-group>
             <label for="shippingType">Tipo de envío</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Elegir tipo de envío"></i>
-            <b-form-select id="shippubgType" :plain="true" :options="shippingTypes" value="1">
-            </b-form-select>
+            <b-form-select id="shippingType" :plain="true" :options="shippingTypes" v-model="cShippingType"></b-form-select>
           </b-form-group>
         </b-col>
         <b-col sm="3">
           <b-form-group>
             <label for="serviceType">Servicio</label>
             <i class="fa fa-question-circle fa-sm"></i>
-            <b-form-select id="serviceType" :plain="true" :options="serviceTypes" value="Tipo de servicio">
+            <b-form-select id="serviceType" :plain="true" :options="serviceTypes" v-model="cServiceType">
             </b-form-select>
           </b-form-group>
         </b-col>
@@ -39,7 +20,7 @@
           <b-form-group>
             <label for="package">Tipo de embalaje</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de embalaje del paquete"></i>
-            <b-form-select id="package" :plain="true" :options="packageTypes" value="Tipo de embalaje">
+            <b-form-select id="package" :plain="true" :options="packageTypes" v-model="cPackageType">
             </b-form-select>
           </b-form-group>
         </b-col>
@@ -47,7 +28,7 @@
           <b-form-group>
             <label for="package">Zona</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Zona de envío"></i>
-            <b-form-select id="package" :plain="true" :options="shippingZones">
+            <b-form-select id="package" :plain="true" :options="shippingZones" v-model="cShippingZone">
             </b-form-select>
           </b-form-group>
         </b-col>
@@ -55,16 +36,8 @@
       <b-row>
         <b-col sm="12">
           <template>
-            <b-table :hover="hover"
-                :striped="striped"
-                :bordered="bordered"
-                :small="small"
-                :fixed="fixed"
-                :items="items"
-                :fields="fields"
-                :current-page="currentPage"
-                :per-page="perPage"
-                responsive="sm">
+            <b-table :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="items"
+              :fields="fields" :current-page="currentPage" :per-page="perPage" responsive="sm">
               <template slot="weight" slot-scope="data">
                 <!-- {{ shippingWeight }} -->
                 1
@@ -91,24 +64,12 @@
     </b-form>
 </template>
 <script>
-import {
-  shippingType,
-  serviceType,
-  packageType,
-  shippingZone,
-  shippingWeight
-} from '@/store/const'
+import { shippingType, serviceType, packageType, shippingZone } from '@/store/const'
 // import { mapGetters } from 'vuex'
 // import { FETCH_PROVIDERS } from '@/store/types/actions'
 export default {
   name: 'c-cost-table',
-  props: {
-    hover: {type: Boolean, default: true},
-    striped: {type: Boolean, default: false},
-    bordered: {type: Boolean, default: true},
-    small: {type: Boolean, default: false},
-    fixed: {type: Boolean, default: false}
-  },
+  props: [ 'provider' ],
   data () {
     return {
       fields: [
@@ -130,31 +91,29 @@ export default {
       serviceTypes: serviceType,
       packageTypes: packageType,
       shippingZones: shippingZone,
-      shippingWeights: shippingWeight
+      selectedShippingType: null,
+      selectedServiceType: null,
+      selectedPackageType: null,
+      selectedShippingZone: null
     }
-  }/* ,
+  },
   computed: {
-    ...mapGetters([
-      'providersCount',
-      'isLoading',
-      'providers'
-    ]),
-    providerOptions () {
-      return this.providers.map(val => {
-        return {
-          value: val.objectId,
-          text: val.name
-        }
-      })
+    cShippingType: {
+      get: function () { return this.provider.costsTable[0].shippingType },
+      set: (val) => { this.selectedShippingType = val }
+    },
+    cServiceType: {
+      get: function () { return this.provider.costsTable[0].serviceType },
+      set: val => { this.selectedServiceType = val }
+    },
+    cPackageType: {
+      get: function () { return this.provider.costsTable[0].packageType },
+      set: (val) => { this.selectedPackageType = val }
+    },
+    cShippingZone: {
+      get: function () { return this.provider.costsTable[0].shippingZone },
+      set: (val) => { this.selectedShippingZone = val }
     }
   }
-  mounted () {
-    this.fetchProviders()
-  },
-  methods: {
-    fetchProviders () {
-      this.$store.dispatch(FETCH_PROVIDERS)
-    }
-  } */
 }
 </script>

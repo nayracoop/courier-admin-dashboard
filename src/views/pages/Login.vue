@@ -41,8 +41,8 @@ export default {
   name: 'Login',
   data () {
     return {
-      username: null,
-      password: null
+      username: 'admin',
+      password: 'mInkLInoUNAT'
     }
   },
   methods: {
