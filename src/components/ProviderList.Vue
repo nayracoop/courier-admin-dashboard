@@ -3,11 +3,9 @@
     <template>
       <b-row class="actions-bar">
         <b-col sm="6">
-          <b-button :to="{ name: 'Nuevo Proveedor' }" variant="primary">
-            Nuevo proveedor
-          </b-button>
-          <b-button @click="showModal()" v-b-modal.modal-center variant="outline-danger">Eliminar</b-button>
-          <b-button disabled variant="outline-primary">Importar</b-button>
+          <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor</b-button>
+          <b-button variant="outline-danger" @click="showModal()" v-b-modal.modal-center>Eliminar</b-button>
+          <b-button variant="outline-primary" disabled>Importar</b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
           <b-input-group>
@@ -54,7 +52,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_PROVIDERS, PROVIDER_DELETE } from '@/store/types/actions'
+import { FETCH_PROVIDERS, IMPORT_PROVIDERS, PROVIDER_DELETE } from '@/store/types/actions'
 import CConfirmationModal from '@/components/DeleteConfirmation'
 
 export default {
@@ -101,6 +99,9 @@ export default {
   methods: {
     fetchProviders () {
       this.$store.dispatch(FETCH_PROVIDERS)
+    },
+    importProviders () {
+      this.$store.dispatch(IMPORT_PROVIDERS)
     },
     showModal (id) {
       if (id) {

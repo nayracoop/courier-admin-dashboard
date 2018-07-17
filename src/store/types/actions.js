@@ -8,6 +8,7 @@ export const UPDATE_USER = 'updateUser'
 /* Providers CRUD */
 export const FETCH_PROVIDER = 'fetchProvider'
 export const FETCH_PROVIDERS = 'fetchProviders'
+export const IMPORT_PROVIDERS = 'importProviders'
 export const PROVIDER_SAVE = 'saveProvider'
 export const PROVIDER_DELETE = 'deleteProvider'
 export const PROVIDER_EDIT = 'editProvider'
