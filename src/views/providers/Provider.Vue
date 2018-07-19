@@ -12,7 +12,7 @@
                   <template v-if="isEdit">
                     <b-row class="actions-bar">
                       <b-col sm="12">
-                        <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío</b-button>
+                        <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }"><i class="fa fa-plane"></i>Confeccionar envío</b-button>
                         <b-button variant="outline-primary" disabled>Imprimir lista de precios</b-button>
                       </b-col>
                     </b-row>
@@ -28,14 +28,14 @@
                       <b-form-group>
                         <label for="name">Nombre</label>
                         <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social de tu cliente"></i>
-                        <b-form-input type="text" id="name" placeholder="" v-model="provider.name"></b-form-input>
+                        <b-form-input type="text" id="name" v-model="provider.name"></b-form-input>
                       </b-form-group>
                     </b-col>
                     <b-col sm="6">
                       <b-form-group>
                         <label for="code">Código</label>
-                        <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste a tu cliente. Campo opcional"></i>
-                        <b-form-input type="text" id="code" placeholder="" v-model="provider.userCode"></b-form-input>
+                        <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste al proveedor. Campo opcional"></i>
+                        <b-form-input type="text" id="code" v-model="provider.userCode"></b-form-input>
                       </b-form-group>
                     </b-col>
                   </b-row>
@@ -52,7 +52,7 @@
                       <b-form-group>
                         <label for="idNumber">N° de identificación</label>
                         <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número del DNI, CUIT, CUIL, etc"></i>
-                        <b-form-input id="idNumber" type="text" pattern="[0-9]+" placeholder="" v-model="provider.taxId"></b-form-input>
+                        <b-form-input id="idNumber" type="text" pattern="[0-9]+" v-model="provider.taxId"></b-form-input>
                       </b-form-group>
                     </b-col>
                   </b-row>
@@ -60,7 +60,7 @@
                     <b-col sm="6">
                       <b-form-group>
                         <label for="ivaCond">Condición IVA</label>
-                        <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado de tu cliente"></i>
+                        <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado del proveedor"></i>
                         <b-form-select id="ivaCond" :plain="true" :options="taxTypes" v-model="provider.taxType">
                         </b-form-select>
                       </b-form-group>
@@ -77,7 +77,7 @@
                       <b-form-group>
                         <label for="postalCode">Código Postal</label>
                         <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
-                        <b-form-input type="text" id="postalCode" placeholder="" :value="provider.postalCode"></b-form-input>
+                        <b-form-input type="text" id="postalCode" :value="provider.postalCode"></b-form-input>
                       </b-form-group>
                     </b-col>
                   </b-row-->
@@ -86,14 +86,14 @@
                       <b-form-group>
                         <label for="phone">Teléfono</label>
                         <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de teléfono del proveedor"></i>
-                        <b-form-input type="tel" id="phone" pattern="[0-9]+" placeholder="" v-model="provider.phone"></b-form-input>
+                        <b-form-input type="tel" id="phone" pattern="[0-9]+" v-model="provider.phone"></b-form-input>
                       </b-form-group>
                     </b-col>
                     <b-col sm="6">
                       <b-form-group>
                         <label for="address">Domicilio</label>
                         <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Calle y número del proveedor"></i>
-                        <b-form-input type="text" id="address" placeholder="" v-model="provider.address"></b-form-input>
+                        <b-form-input type="text" id="address" v-model="provider.address"></b-form-input>
                       </b-form-group>
                     </b-col>
                   </b-row>
@@ -101,32 +101,32 @@
                     <b-col sm="6">
                       <b-form-group>
                         <label for="country">País</label>
-                        <b-form-input type="text" id="country" placeholder="" v-model="provider.country"></b-form-input>
+                        <b-form-input type="text" id="country" v-model="provider.country"></b-form-input>
                       </b-form-group>
                     </b-col>
                     <b-col sm="6">
                       <b-form-group label="Provincia" label-for="state" :label-cols="3" :horizontal="false">
-                        <b-form-select id="state" :plain="true" :options="['Buenos Aires', 'Catamarca', 'Chaco', 'Chubut']" v-model="provider.province">
+                        <b-form-select id="state" :plain="true" :options="['province']" v-model="provider.province">
                         </b-form-select>
                       </b-form-group>
                     </b-col>
                   </b-row>
-                  <!-- <b-row>
+                  <b-row>
                     <b-col sm="6">
                       <b-form-group>
-                        <label for="region">Localidad</label>
-                        <b-form-input type="text" id="region" placeholder=""></b-form-input>
+                        <label for="locality">Localidad</label>
+                        <b-form-input type="text" id="locality" v-model="provider.locality"></b-form-input>
                       </b-form-group>
                     </b-col>
-                    <b-col sm="6">
+                    <!--b-col sm="6">
                       <b-form-group>
                         <label for="pricesList">Cuenta Contable</label>
                         <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Cuenta contable en la que impactarán las compras a este proveedor. Te surgerimos mantener la cuenta que viene preconfigurada. Si estás familiarizado con el plan de cuentas modificala por la cuenta que prefieras"></i>
                         <b-form-select id="" :plain="true" :options="['Crear cuenta contable']" value="">
                         </b-form-select>
                       </b-form-group>
-                    </b-col>
-                  </b-row> -->
+                    </b-col-->
+                  </b-row>
                   <b-row>
                     <b-col sm="12">
                       <b-form-group>
@@ -138,8 +138,9 @@
                   <template>
                     <b-row class="actions-bar">
                       <b-col sm="12">
-                        <b-button variant="outline-primary" :disabled="inProgress" type="submit" >Guardar</b-button>
-                        <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
+                        <b-button variant="primary" v-on:click="pepe ()">toasted</b-button>
+                        <b-button variant="primary" :disabled="inProgress" type="submit" >Guardar</b-button>
+                        <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
                         <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
                       </b-col>
                     </b-row>
@@ -225,7 +226,13 @@ export default {
     }
   },
   methods: {
+    pepe () {
+      this.$toasted.global.my_app_error({
+        message: 'SS'
+      })
+    },
     onSave (id, provider) {
+      console.log('s')
       var $this = this
       let action = id ? PROVIDER_EDIT : PROVIDER_SAVE
       $this.inProgress = true

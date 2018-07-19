@@ -12,7 +12,7 @@
               <b-dropdown-item>Crear un nuevo envío</b-dropdown-item>
             </b-dropdown>
             <h4 class="mb-0 p-title">12.000</h4>
-            <i class="fa fa-plane"></i>
+            <i class="fa fa-plane lg-card-icon"></i>
             <p>Envíos</p>
           </b-card-body>
           <card-bar-chart-example chartId="card-chart-04" class="chart-wrapper px-3" style="height:70px;" height="70"/>
@@ -29,7 +29,7 @@
               <b-dropdown-item>Agregar un nuevo cliente</b-dropdown-item>
             </b-dropdown>
             <h4 class="mb-0 p-title">1400</h4>
-            <i class="fa fa-user fa-sm"></i>
+            <i class="fa fa-user fa-sm lg-card-icon"></i>
             <p>Clientes activos</p>
           </b-card-body>
           <card-line1-chart-example chartId="card-chart-01" class="chart-wrapper px-3" style="height:70px;" :height="70"/>
@@ -46,7 +46,7 @@
               <b-dropdown-item>Agregar un nuevo proveedor</b-dropdown-item>
             </b-dropdown>
             <h4 class="mb-0 p-title">1250</h4>
-            <i class="fa fa-user"></i>
+            <i class="fa fa-user lg-card-icon"></i>
             <p>Proveedores activos</p>
           </b-card-body>
           <card-line2-chart-example chartId="card-chart-02" class="chart-wrapper px-3" style="height:70px;" :height="70"/>
@@ -97,7 +97,7 @@
             <strong>12.000 (100%)</strong>
             <b-progress height={} class="progress-xs mt-2" :precision="1" variant="info" :value="12000"></b-progress>
           </b-col>
-          <b-col class="mb-sm-4 mb-0 d-md-down-none">
+          <b-col class="mb-sm-4 mb-0">
             <div class="text-muted">Envíos en tránsito</div>
             <strong>8.400 (70%)</strong>
             <b-progress height={} class="progress-xs mt-2" :precision="1" variant="warning" :value="8400"></b-progress>

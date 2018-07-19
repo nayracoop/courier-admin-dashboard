@@ -9,7 +9,7 @@ import BootstrapVue from 'bootstrap-vue'
 import App from '@/App'
 import router from '@/router'
 import store from '@/store'
-// import { CHECK_AUTH } from '@/store/types/actions'
+import { CHECK_AUTH } from '@/store/types/actions'
 
 import ApiService from '@/api'
 import DateFilter from '@/common/filters/date'
@@ -17,10 +17,10 @@ import ErrorFilter from '@/common/filters/error'
 
 import Parse from 'parse'
 import VueLocalStorage from 'vue-localstorage'
-
+import ToastHelper from '@/common/helpers/toast'
 Vue.use(VueLocalStorage)
 Vue.use(BootstrapVue)
-
+ToastHelper.init()
 Parse.initialize(process.env.PARSE_APP_ID, process.env.PARSE_JAVASCRIPT_KEY)
 Parse.serverURL = process.env.PARSE_URI
 
@@ -28,7 +28,7 @@ Vue.filter('date', DateFilter)
 Vue.filter('error', ErrorFilter)
 
 ApiService.init()
-/*
+
 router.beforeEach(
   (to, from, next) => {
     if (to.name !== 'Login') {
@@ -46,7 +46,7 @@ router.beforeEach(
     }
   }
 )
-*/
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

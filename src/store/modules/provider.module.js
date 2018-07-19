@@ -29,6 +29,7 @@ const initialState = {
     address: 'Noogoosda',
     country: 'Argentina',
     province: 'Buenos Aires',
+    locality: '',
     postalCode: '1234',
     email: 'pehuen@mil.net',
     phone: '0293219321',
