@@ -99,12 +99,6 @@
           </template>
         </b-col>
      </b-row>
-      <b-row class="actions-bar">
-        <b-col sm="12">
-          <b-button variant="outline-primary" type="submit" :disabled="inProgress">Guardar</b-button>
-          <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
-        </b-col>
-      </b-row>
     </b-form>
 </template>
 <script>
@@ -202,14 +196,11 @@ export default {
           cost: this.newRow.cost
         })
       }
-      this.resetFilter()
     },
     remove (index) {
       if (index > -1) {
         this.provider.costsTable[this.costsTableIndex].costs.splice(index, 1)
       }
-
-      this.resetFilter()
     }
   }
 }
