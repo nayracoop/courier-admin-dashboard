@@ -63,14 +63,14 @@
 </template>
 
 <script>
-import { shippingType, serviceType } from '@/store/const'
+import { shippingTypes, serviceTypes } from '@/store/const'
 
 export default {
   name: 'c-shipping-data',
   data () {
     return {
-      shippingTypes: shippingType,
-      serviceTypes: serviceType
+      shippingTypes: shippingTypes,
+      serviceTypes: serviceTypes
     }
   }
 }

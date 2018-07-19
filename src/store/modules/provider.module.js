@@ -38,12 +38,40 @@ const initialState = {
     isShipping: true,
     costsTable: [{
       shippingType: 1,
-      serviceType: 2,
-      packageType: 3,
+      serviceType: 1,
+      packageType: 1,
       shippingZone: 1,
       costs: [{
         weight: 0.5,
         grossPrice: 12,
+        saleDiscount: 10,
+        netPrice: 10,
+        costDiscount: 0,
+        cost: 0
+      }, {
+        weight: 1,
+        grossPrice: 12,
+        saleDiscount: 10,
+        netPrice: 10,
+        costDiscount: 0,
+        cost: 0
+      }]
+    },
+    {
+      shippingType: 2,
+      serviceType: 2,
+      packageType: 2,
+      shippingZone: 2,
+      costs: [{
+        weight: 2,
+        grossPrice: 2,
+        saleDiscount: 10,
+        netPrice: 10,
+        costDiscount: 0,
+        cost: 0
+      }, {
+        weight: 2.5,
+        grossPrice: 9,
         saleDiscount: 10,
         netPrice: 10,
         costDiscount: 0,

@@ -56,11 +56,7 @@
 </template>
 
 <script>
-import {
-  serviceType,
-  packageType,
-  shippingType
-} from '@/store/const'
+import { serviceTypes, packageTypes, shippingTypes } from '@/store/const'
 
 import CShippingData from '@/components/ShippingData'
 import CAddress from '@/components/Address'
@@ -77,9 +73,9 @@ export default {
   },
   data () {
     return {
-      serviceTypes: serviceType,
-      packageTypes: packageType,
-      shippingTypes: shippingType
+      serviceTypes: serviceTypes,
+      packageTypes: packageTypes,
+      shippingTypes: shippingTypes
     }
   }
 }

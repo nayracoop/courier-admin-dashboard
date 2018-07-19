@@ -138,7 +138,7 @@
                   <template>
                     <b-row class="actions-bar">
                       <b-col sm="12">
-                        <b-button variant="outline-primary" :disabled="inProgress" type="submit" >Guardar</b-button>
+                        <b-button variant="outline-primary" :disabled="inProgress" type="submit">Guardar</b-button>
                         <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
                         <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
                       </b-col>
@@ -163,7 +163,7 @@ import store from '@/store'
 import CErrorList from '@/components/ErrorList'
 import CCostTable from '@/components/CostTable'
 import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, FETCH_PROVIDER, PROVIDER_RESET_STATE } from '@/store/types/actions'
-import { taxType, idType } from '@/store/const'
+import { taxTypes, idTypes } from '@/store/const'
 
 export default {
   name: 'v-provider',
@@ -204,8 +204,8 @@ export default {
     return {
       inProgress: false,
       errors: {},
-      taxTypes: taxType,
-      idTypes: idType
+      taxTypes: taxTypes,
+      idTypes: idTypes
     }
   },
   computed: {
