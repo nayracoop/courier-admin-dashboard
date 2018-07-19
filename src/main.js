@@ -34,7 +34,6 @@ router.beforeEach(
     if (to.name !== 'Login') {
       return store.dispatch(CHECK_AUTH)
         .then(isAuthenticated => {
-        // console.log(isAuthenticated)
           if (isAuthenticated) {
             next()
           } else {

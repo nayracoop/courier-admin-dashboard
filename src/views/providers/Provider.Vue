@@ -20,7 +20,7 @@
                   <b-row>
                     <b-col sm="12" class="cont-is-shipping mb-3">
                       <label for="isShipping">¿Es proveedor de tipo envíos?</label>
-                        <b-form-checkbox id="isShipping" type="checkbox" v-model="checked"></b-form-checkbox>
+                        <b-form-checkbox id="isShipping" v-model="provider.isShipping"></b-form-checkbox>
                     </b-col>
                   </b-row>
                   <b-row>
@@ -138,17 +138,16 @@
                   <template>
                     <b-row class="actions-bar">
                       <b-col sm="12">
-                        <b-button variant="primary" v-on:click="pepe ()">toasted</b-button>
-                        <b-button variant="primary" :disabled="inProgress" type="submit" >Guardar</b-button>
-                        <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
+                        <b-button variant="outline-primary" :disabled="inProgress" type="submit">Guardar</b-button>
+                        <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
                         <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
                       </b-col>
                     </b-row>
                   </template>
                 </b-form>
               </b-tab>
-              <b-tab title="Precios de venta" v-if="checked">
-                <c-cost-table></c-cost-table>
+              <b-tab title="Precios de venta" v-if="provider.isShipping">
+                <c-cost-table :provider="provider"></c-cost-table>
               </b-tab>
           </b-tabs>
         </b-card>
@@ -163,17 +162,8 @@ import {
 import store from '@/store'
 import CErrorList from '@/components/ErrorList'
 import CCostTable from '@/components/CostTable'
-import {
-  PROVIDER_SAVE,
-  PROVIDER_EDIT,
-  PROVIDER_DELETE,
-  FETCH_PROVIDER,
-  PROVIDER_RESET_STATE
-} from '@/store/types/actions'
-import {
-  taxType,
-  idType
-} from '@/store/const'
+import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, FETCH_PROVIDER, PROVIDER_RESET_STATE } from '@/store/types/actions'
+import { taxTypes, idTypes } from '@/store/const'
 
 export default {
   name: 'v-provider',
@@ -212,11 +202,10 @@ export default {
   },
   data () {
     return {
-      checked: false,
       inProgress: false,
       errors: {},
-      taxTypes: taxType,
-      idTypes: idType
+      taxTypes: taxTypes,
+      idTypes: idTypes
     }
   },
   computed: {

@@ -68,13 +68,13 @@
 </template>
 
 <script>
-import { packageType } from '@/store/const'
+import { packageTypes } from '@/store/const'
 
 export default {
   name: 'c-shipping-package',
   data () {
     return {
-      packageTypes: packageType
+      packageTypes: packageTypes
     }
   }
 }
