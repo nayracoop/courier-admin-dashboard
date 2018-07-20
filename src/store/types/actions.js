@@ -17,6 +17,7 @@ export const PROVIDER_RESET_STATE = 'resetProviderState'
 /* Clients CRUD */
 export const FETCH_CLIENT = 'fetchClient'
 export const FETCH_CLIENTS = 'fetchClients'
+export const IMPORT_CLIENTS = 'importClients'
 export const CLIENT_SAVE = 'saveClient'
 export const CLIENT_DELETE = 'deleteClient'
 export const CLIENT_EDIT = 'editClient'
