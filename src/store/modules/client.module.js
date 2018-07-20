@@ -1,20 +1,7 @@
 import Vue from 'vue'
 import { ClientsService } from '@/api'
-import {
-  CLIENT_SAVE,
-  CLIENT_EDIT,
-  CLIENT_DELETE,
-  CLIENT_RESET_STATE,
-  FETCH_CLIENT,
-  FETCH_CLIENTS
-} from '@/store/types/actions'
-import {
-  RESET_STATE,
-  SET_CLIENT,
-  FETCH_START,
-  FETCH_CLIENTS_END
-  // UPDATE_CLIENT_IN_LIST
-} from '@/store/types/mutations'
+import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, CLIENT_RESET_STATE, FETCH_CLIENT, FETCH_CLIENTS } from '@/store/types/actions'
+import { RESET_STATE, SET_CLIENT, FETCH_START, FETCH_CLIENTS_END } from '@/store/types/mutations'
 
 const initialState = {
   client: {
@@ -32,7 +19,7 @@ const initialState = {
     country: '',
     externalId: '',
     province: '',
-    locality: '',
+    location: '',
     businessName: '',
     phone: '',
     userCode: '',
@@ -113,9 +100,6 @@ const getters = {
   },
   clientsCount (state) {
     return state.clientsCount
-  },
-  isLoading (state) {
-    return state.isLoading // el getter isLoading se usa en distintos lugares
   }
 }
 
@@ -125,88 +109,3 @@ export default {
   mutations,
   getters
 }
-/* ---- CLIENT MODULE ANTERIOR ----
-const state = Object.assign({
-  clients: [],
-  clientsCount: 0 }, initialState)
-
-export const actions = {
-  [FETCH_CLIENT] (context, clientId, prevClient) {
-    // avoid extronuous network call if article exists
-    if (prevClient !== undefined) {
-      return context.commit(SET_CLIENT, prevClient)
-    }
-    return ClientsService.get(clientId)
-      .then(data => {
-        context.commit(SET_CLIENT, data)
-        return data
-      })
-  },
-  [CLIENT_SAVE] ({ state }) {
-    return ClientsService.create(state.Client)
-  },
-  [CLIENT_DELETE] (context, id) {
-    return ClientsService.destroy(id)
-  },
-  [CLIENT_EDIT] ({ state }) {
-    return ClientsService.update(state.Client.id, state.Client)
-  },
-  [CLIENT_RESET_STATE] ({ commit }) {
-    commit(RESET_STATE)
-  },
-  [FETCH_CLIENTS] ({ commit }) {
-    commit(FETCH_START)
-    return ClientsService.getAll()
-      .then(data => {
-        commit(FETCH_CLIENTS_END, data)
-      })
-      .catch((error) => {
-        throw new Error(error)
-      })
-  }
-}
-*/
-/* eslint no-param-reassign: ["error", { "props": false }] */
-/*
-export const mutations = {
-  [SET_CLIENT] (state, Client) {
-    state.client = Client.toJSON()
-  },
-  [RESET_STATE] () {
-    for (let f in state) {
-      Vue.set(state, f, initialState[f])
-    }
-  },
-  [FETCH_START] (state) {
-    state.isLoading = true
-  },
-  [FETCH_CLIENTS_END] (state, clients) {
-    // con parse, cada posición del array es un Parse Object
-    // lo pasamos a json con map
-    state.clients = clients.map(function (e) {
-      return e.toJSON()
-    })
-    state.clientsCount = clients.length
-    state.isLoading = false
-  }
-}
-
-const getters = {
-  clients (state) {
-    return state.clients
-  },
-  client (state) {
-    return state.client
-  },
-  clientsCount (state) {
-    return state.clientsCount
-  }
-}
-
-export default {
-  state,
-  actions,
-  mutations,
-  getters
-}
-*/

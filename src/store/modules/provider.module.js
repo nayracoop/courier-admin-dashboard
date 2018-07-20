@@ -1,20 +1,7 @@
 import Vue from 'vue'
 import { ProvidersService } from '@/api'
-import {
-  PROVIDER_SAVE,
-  PROVIDER_EDIT,
-  PROVIDER_DELETE,
-  PROVIDER_RESET_STATE,
-  FETCH_PROVIDER,
-  FETCH_PROVIDERS
-} from '@/store/types/actions'
-import {
-  RESET_STATE,
-  SET_PROVIDER,
-  FETCH_START,
-  FETCH_PROVIDERS_END
-  // UPDATE_PROVIDER_IN_LIST
-} from '@/store/types/mutations'
+import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, PROVIDER_RESET_STATE, FETCH_PROVIDER, FETCH_PROVIDERS } from '@/store/types/actions'
+import { RESET_STATE, SET_PROVIDER, FETCH_START, FETCH_PROVIDERS_END } from '@/store/types/mutations'
 
 const initialState = {
   provider: {
@@ -29,7 +16,7 @@ const initialState = {
     address: 'Nogoyá',
     country: 'Argentina',
     province: 'Buenos Aires',
-    locality: '',
+    location: '',
     postalCode: '1234',
     email: 'pehuen@mil.net',
     phone: '0293219321',

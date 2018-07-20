@@ -25,7 +25,30 @@ const actions = {
       })
   },
   [CHECK_AUTH] (context) {
-    return Parse.User.current().authenticated()
+    let currentUser = Parse.User.current() // <- Object
+    let currentSession = Parse.Session.current() // <- Promise
+
+    return currentSession
+      .then(val => {
+        return currentUser.authenticated()
+      }, error => {
+        throw new Error(error)
+      })
+
+    // if (currentUser.authenticated()) {
+    //   return false
+    // } else {
+    //   return false
+    // }
+    // console.log('current')
+    // console.log()
+    // console.log('currentUser')
+    // console.log(currentUser)
+    // console.log('session token')
+    // console.log(currentUser.getSessionToken())
+    // console.log('is valid')
+    // console.log(currentUser.isValid())
+    // return Parse.User.current().authenticated()
   }
 }
 

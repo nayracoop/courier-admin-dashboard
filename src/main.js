@@ -39,6 +39,9 @@ router.beforeEach(
           } else {
             next({ name: 'Login' })
           }
+        }, error => {
+          console.log(error)
+          next({ name: 'Login' })
         })
     } else {
       next()

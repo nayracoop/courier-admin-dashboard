@@ -106,7 +106,7 @@
             <b-col sm="6">
               <b-form-group>
                 <label for="region" v-b-tooltip.hover title="">Localidad</label>
-            <b-form-input type="text" id="region" v-model="client.locality"></b-form-input>
+            <b-form-input type="text" id="region" v-model="client.location"></b-form-input>
               </b-form-group>
             </b-col>
           </b-row>
@@ -164,10 +164,7 @@ import {
   FETCH_CLIENT,
   CLIENT_RESET_STATE
 } from '@/store/types/actions'
-import {
-  taxType,
-  idType
-} from '@/store/const'
+import { taxTypes, idTypes } from '@/store/const'
 export default {
   name: 'v-client',
   components: { CErrorList },
@@ -203,8 +200,8 @@ export default {
     return {
       inProgress: false,
       errors: {},
-      taxTypes: taxType,
-      idTypes: idType
+      taxTypes: taxTypes,
+      idTypes: idTypes
     }
   },
   computed: {

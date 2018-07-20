@@ -1,10 +1,10 @@
 <template>
   <b-form v-on:submit.prevent>
-    <b-row class="actions-bar" v-if="isEdit">      
+    <b-row class="actions-bar" v-if="isEdit">
       <b-col sm="12">
         <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }"><i class="fa fa-plane"></i>Confeccionar envío</b-button>
         <b-button variant="outline-primary" disabled>Imprimir lista de precios</b-button>
-      </b-col>      
+      </b-col>
     </b-row>
     <b-row>
       <b-col sm="12" class="cont-is-shipping mb-3">
@@ -122,13 +122,6 @@
           <label label-for="notes">Observaciones</label>
           <b-form-textarea id="notes" :no-resize="true" :textarea="true" :rows="4" v-model="provider.observation"></b-form-textarea>
         </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row class="actions-bar">
-      <b-col sm="12">
-        <b-button variant="outline-primary" :disabled="inProgress" type="submit">Guardar</b-button>
-        <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
-        <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
       </b-col>
     </b-row>
   </b-form>
