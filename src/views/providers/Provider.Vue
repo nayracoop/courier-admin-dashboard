@@ -14,13 +14,11 @@
                 <c-cost-table :provider="provider"></c-cost-table>
               </b-tab>
           </b-tabs>
-          <b-row class="actions-bar">
-            <b-col sm="12">
-              <b-button variant="outline-primary" :disabled="inProgress" type="submit">Guardar</b-button>
-              <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
-              <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
-            </b-col>
-          </b-row>
+          <b-col class="actions-bar" sm="12">
+            <b-button variant="outline-primary" :disabled="inProgress" @click="saveProvider(provider.objectId, provider)">Guardar</b-button>
+            <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
+            <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
+          </b-col>
         </b-card>
       </b-col>
     </b-row>
@@ -83,10 +81,10 @@ export default {
     }
   },
   methods: {
-    onSave (id, provider) {
+    saveProvider (id, provider) {
       var $this = this
-      let action = id ? PROVIDER_EDIT : PROVIDER_SAVE
       $this.inProgress = true
+      let action = id ? PROVIDER_EDIT : PROVIDER_SAVE
       $this.$store
         .dispatch(action)
         .then(myProvider => {
@@ -98,16 +96,19 @@ export default {
             }
           })
         }, error => {
+          $this.inProgress = false
           console.log(error)
         })
     },
     deleteProvider (id) {
+      this.inProgress = true
       this.$store
         .dispatch(PROVIDER_DELETE, id)
         .then(res => {
+          this.inProgress = false
           this.$router.push('/proveedores')
         }, error => {
-          // mostrar errores
+          this.inProgress = false
           console.log('error')
           console.log(error)
         })

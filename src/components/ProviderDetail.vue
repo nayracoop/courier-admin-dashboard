@@ -1,5 +1,5 @@
 <template>
-  <b-form v-on:submit.prevent="onSave(provider.objectId, provider)">
+  <b-form v-on:submit.prevent>
     <b-row class="actions-bar" v-if="isEdit">
       <b-col sm="12">
         <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío</b-button>
