@@ -143,7 +143,7 @@
                 <b-button variant="primary" :disabled="inProgress" type="submit" >Guardar</b-button>
                 <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showModal()">Eliminar</b-button>
                 <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
-                <c-single-delete @confirm="deleteClient(client.objectId)" @cancel="hideModal()" ref="confirmationModal" />
+                <c-confirmation-modal @confirm="deleteClient(client.objectId)" @cancel="hideModal()" ref="confirmationModal" />
               </b-col>
             </b-row>
           </template>
@@ -158,7 +158,7 @@
 import { mapGetters } from 'vuex'
 import store from '@/store'
 import CErrorList from '@/components/ErrorList'
-import CSingleDelete from '@/components/DeleteConfirmationSingle'
+import CConfirmationModal from '@/components/DeleteConfirmation'
 import {
   CLIENT_SAVE,
   CLIENT_EDIT,
@@ -174,7 +174,7 @@ import {
 
 export default {
   name: 'v-client',
-  components: { CErrorList, CSingleDelete },
+  components: { CErrorList, CConfirmationModal },
   props: {
     previousClient: {
       type: Object,

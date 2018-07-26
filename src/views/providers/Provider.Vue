@@ -38,7 +38,7 @@ export default {
   components: {
     CErrorList,
     CCostTable,
-    CConfirmationModal
+    CConfirmationModal,
     CProviderDetail
   },
   props: {
