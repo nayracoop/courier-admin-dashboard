@@ -141,8 +141,9 @@
             <b-row class="actions-bar">
               <b-col sm="12">
                 <b-button variant="primary" :disabled="inProgress" type="submit" >Guardar</b-button>
-                <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="deleteClient(client.objectId)">Eliminar</b-button>
+                <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showModal()">Eliminar</b-button>
                 <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
+                <c-single-delete @confirm="deleteClient(client.objectId)" @cancel="hideModal()" ref="confirmationModal" />
               </b-col>
             </b-row>
           </template>
@@ -157,6 +158,7 @@
 import { mapGetters } from 'vuex'
 import store from '@/store'
 import CErrorList from '@/components/ErrorList'
+import CSingleDelete from '@/components/DeleteConfirmationSingle'
 import {
   CLIENT_SAVE,
   CLIENT_EDIT,
@@ -164,13 +166,15 @@ import {
   FETCH_CLIENT,
   CLIENT_RESET_STATE
 } from '@/store/types/actions'
+
 import {
-  taxType,
-  idType
+  idTypes,
+  taxTypes
 } from '@/store/const'
+
 export default {
   name: 'v-client',
-  components: { CErrorList },
+  components: { CErrorList, CSingleDelete },
   props: {
     previousClient: {
       type: Object,
@@ -203,8 +207,8 @@ export default {
     return {
       inProgress: false,
       errors: {},
-      taxTypes: taxType,
-      idTypes: idType
+      taxTypes: taxTypes,
+      idTypes: idTypes
     }
   },
   computed: {
@@ -232,7 +236,13 @@ export default {
           console.log(error)
         })
     },
-    deleteProvider (id) {
+    showModal () {
+      this.$refs.confirmationModal.$refs.deleteModal.show()
+    },
+    hideModal () {
+      this.$refs.confirmationModal.$refs.deleteModal.hide()
+    },
+    deleteClient (id) {
       this.$store
         .dispatch(CLIENT_DELETE, id)
         .then(res => {

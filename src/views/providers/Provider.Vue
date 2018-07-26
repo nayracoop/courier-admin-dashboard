@@ -12,7 +12,7 @@
                   <template v-if="isEdit">
                     <b-row class="actions-bar">
                       <b-col sm="12">
-                        <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }"><i class="fa fa-plane"></i>Confeccionar envío</b-button>
+                        <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío</b-button>
                         <b-button variant="outline-primary" disabled>Imprimir lista de precios</b-button>
                       </b-col>
                     </b-row>
@@ -61,7 +61,7 @@
                       <b-form-group>
                         <label for="ivaCond">Condición IVA</label>
                         <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado del proveedor"></i>
-                        <b-form-select id="ivaCond" :plain="true" :options="taxTypes" v-model="provider.taxType">
+                        <b-form-select id="ivaCond" :plain="true" :options="taxTypes" v-model="provider.taxTypes">
                         </b-form-select>
                       </b-form-group>
                     </b-col>
@@ -138,9 +138,10 @@
                   <template>
                     <b-row class="actions-bar">
                       <b-col sm="12">
-                        <b-button variant="outline-primary" :disabled="inProgress" type="submit">Guardar</b-button>
-                        <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
+                        <b-button variant="primary" :disabled="inProgress" type="submit">Guardar</b-button>
+                        <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showModal()">Eliminar</b-button>
                         <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
+                        <c-single-delete @confirm="deleteProvider(provider.objectId)" @cancel="hideModal()" ref="confirmationModal" />
                       </b-col>
                     </b-row>
                   </template>
@@ -162,6 +163,7 @@ import {
 import store from '@/store'
 import CErrorList from '@/components/ErrorList'
 import CCostTable from '@/components/CostTable'
+import CSingleDelete from '@/components/DeleteConfirmationSingle'
 import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, FETCH_PROVIDER, PROVIDER_RESET_STATE } from '@/store/types/actions'
 import { taxTypes, idTypes } from '@/store/const'
 
@@ -169,7 +171,8 @@ export default {
   name: 'v-provider',
   components: {
     CErrorList,
-    CCostTable
+    CCostTable,
+    CSingleDelete
   },
   props: {
     previousProvider: {
@@ -239,6 +242,12 @@ export default {
           console.log(error)
         })
     },
+    showModal () {
+      this.$refs.confirmationModal.$refs.deleteModal.show()
+    },
+    hideModal () {
+      this.$refs.confirmationModal.$refs.deleteModal.hide()
+    },
     deleteProvider (id) {
       this.$store
         .dispatch(PROVIDER_DELETE, id)
@@ -249,7 +258,18 @@ export default {
           console.log('error')
           console.log(error)
         })
-    }
+    }/*
+    deleteProvider (id) {
+      this.$store
+        .dispatch(PROVIDER_DELETE, id)
+        .then(res => {
+          this.$router.push('/proveedores')
+        }, error => {
+          // mostrar errores
+          console.log('error')
+          console.log(error)
+        })
+    } */
   }
 }
 </script>
