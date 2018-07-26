@@ -4,7 +4,7 @@
       <b-col sm="12">
         <b-card no-body>
           <b-tabs card>
-            <b-tab v-bind:title=" isEdit ? provider.name : 'Nuevo proveedor'" active>
+            <b-tab v-bind:title="isEdit ? provider.name : 'Nuevo proveedor'" active>
                 <div slot="header">
                   <strong>{{ isEdit ? provider.name : 'Nuevo proveedor' }}</strong>
                 </div>
@@ -34,6 +34,7 @@ import { mapGetters } from 'vuex'
 import store from '@/store'
 import CErrorList from '@/components/ErrorList'
 import CCostTable from '@/components/CostTable'
+import CConfirmationModal from '@/components/DeleteConfirmation'
 import CProviderDetail from '@/components/ProviderDetail'
 import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, FETCH_PROVIDER, PROVIDER_RESET_STATE } from '@/store/types/actions'
 
@@ -42,6 +43,7 @@ export default {
   components: {
     CErrorList,
     CCostTable,
+    CConfirmationModal,
     CProviderDetail
   },
   props: {
@@ -105,6 +107,12 @@ export default {
           console.log(error)
         })
     },
+    showModal () {
+      this.$refs.confirmationModal.$refs.deleteModal.show()
+    },
+    hideModal () {
+      this.$refs.confirmationModal.$refs.deleteModal.hide()
+    },
     deleteProvider (id) {
       this.inProgress = true
       this.$store
@@ -117,7 +125,18 @@ export default {
           console.log('error')
           console.log(error)
         })
-    }
+    }/*
+    deleteProvider (id) {
+      this.$store
+        .dispatch(PROVIDER_DELETE, id)
+        .then(res => {
+          this.$router.push('/proveedores')
+        }, error => {
+          // mostrar errores
+          console.log('error')
+          console.log(error)
+        })
+    } */
   }
 }
 </script>

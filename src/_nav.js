@@ -6,15 +6,18 @@ export default {
     },
     {
       name: 'Proveedores',
-      url: '/proveedores'
+      url: '/proveedores',
+      icon: 'fa fa-truck'
     },
     {
       name: 'Clientes',
-      url: '/clientes'
+      url: '/clientes',
+      icon: 'icon-people'
     },
     {
       name: 'Envios',
-      url: '/envios'
+      url: '/envios',
+      icon: 'fa fa-plane'
     }
   ]
 }
