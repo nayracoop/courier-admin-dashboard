@@ -11,6 +11,11 @@
                 <c-provider-detail :provider="provider" :isEdit="isEdit"></c-provider-detail>
               </b-tab>
               <b-tab title="Precios de venta" v-if="provider.isShipping">
+                <b-row class="actions-bar">
+                  <b-col sm="6">
+                    <b-button variant="outline-primary" disabled>Importar</b-button>
+                  </b-col>
+                </b-row>
                 <c-cost-table :provider="provider"></c-cost-table>
               </b-tab>
           </b-tabs>

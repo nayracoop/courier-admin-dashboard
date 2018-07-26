@@ -129,3 +129,9 @@ main {
 .list-group-item-bg{
   border-left: 4px solid #797979;
 }
+
+input:read-only {
+  cursor: default;
+  background: transparent !important;
+  border: none;
+}

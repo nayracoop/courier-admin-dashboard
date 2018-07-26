@@ -1,12 +1,5 @@
 <template>
     <b-form>
-      <template>
-        <b-row class="actions-bar">
-          <b-col sm="6">
-            <b-button variant="outline-primary" disabled>Importar</b-button>
-          </b-col>
-        </b-row>
-      </template>
       <b-row>
         <b-col sm="3">
           <b-form-group>
@@ -43,62 +36,66 @@
       </b-row>
       <b-row>
         <b-col sm="12">
-          <template>
-            <b-table :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="items"
-              :fields="fields" responsive="sm" foot-clone>
-              <template slot="weight" slot-scope="data">
-                {{ data.item.weight }}
-              </template>
-              <template slot="grossPrice" slot-scope="data">
-                <b-form-input type="text" placeholder="Precio bruto" v-model="data.item.grossPrice" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="saleDiscount" slot-scope="data">
-                <b-form-input type="text" placeholder="Descuento venta" v-model="data.item.saleDiscount" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="netPrice" slot-scope="data">
-                  {{ data.item.grossPrice - ((data.item.grossPrice * data.item.saleDiscount) / 100) }}
-              </template>
-              <template slot="costDiscount" slot-scope="data">
-                <b-form-input type="text" placeholder="% Descuento Costo" v-model="data.item.costDiscount" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="cost" slot-scope="data">
-                  {{ data.item.grossPrice - ((data.item.grossPrice * data.item.costDiscount) / 100) }}
-              </template>
-              <template slot="actions" slot-scope="data">
-                <!-- <b-button :small="true">
+          <b-table hover striped bordered small fixed :items="items" :fields="fields" responsive="sm" foot-clone>
+            <template slot="weight" slot-scope="data">
+              <b-form-input readonly type="text" placeholder="Hasta Kgs." v-model="data.item.weight"></b-form-input>
+            </template>
+            <template slot="grossPrice" slot-scope="data">
+              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="text" placeholder="Precio bruto" v-model="data.item.grossPrice"></b-form-input>
+            </template>
+            <template slot="saleDiscount" slot-scope="data">
+              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="text" placeholder="Descuento venta" v-model="data.item.saleDiscount"></b-form-input>
+            </template>
+            <template slot="netPrice" slot-scope="data">
+              <b-form-input readonly type="text" placeholder="Descuento venta" :value="data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)"></b-form-input>
+            </template>
+            <template slot="costDiscount" slot-scope="data">
+              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="text" placeholder="% Descuento Costo" v-model="data.item.costDiscount"></b-form-input>
+            </template>
+            <template slot="cost" slot-scope="data">
+              <b-form-input readonly type="text" placeholder="Descuento venta" :value="(data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)) - ((data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)) * data.item.costDiscount / 100)"></b-form-input>
+            </template>
+            <template slot="actions" slot-scope="data">
+              <template v-if="data.item.edit">
+                <b-button variant="warning" @click.prevent="revertEdit(data.index)">
                   <i class="fa fa-undo"></i>
-                </b-button> -->
-                <b-button :small="true" class="btn-danger" @click.prevent="remove(data.index)">
-                  <i class="fa fa-trash"></i>
                 </b-button>
-              </template>
-              <template slot="FOOT_weight" slot-scope="data">
-                <b-form-input type="text" placeholder="Hasta Kgs." v-model="newRow.weight" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="FOOT_grossPrice" slot-scope="data">
-                <b-form-input type="text" placeholder="Precio bruto" v-model="newRow.grossPrice" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="FOOT_saleDiscount" slot-scope="data">
-                <b-form-input type="text" placeholder="Descuento venta" v-model="newRow.saleDiscount" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="FOOT_netPrice" slot-scope="data">
-                <b-form-input type="text" placeholder="Descuento venta" v-model="newRow.netPrice" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="FOOT_costDiscount" slot-scope="data">
-                <b-form-input type="text" placeholder="% Descuento Costo" v-model="newRow.costDiscount" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="FOOT_cost" slot-scope="data">
-                <b-form-input type="text" placeholder="Descuento venta" v-model="newRow.cost" :disabled="inProgress"></b-form-input>
-              </template>
-              <template slot="FOOT_actions" slot-scope="data">
-                <b-button variant="primary" @click.prevent="add">
+                <b-button variant="primary" @click.prevent="applyEdit(data.index)">
                   <strong><i class="fa fa-check"></i></strong>
                 </b-button>
               </template>
-            </b-table>
-          </template>
+              <template v-else>
+                <b-button variant="primary" @click.prevent="enableEdit(data.index)">
+                  <strong><i class="fa fa-edit"></i></strong>
+                </b-button>
+              </template>
+            </template>
+            <template slot="FOOT_weight" slot-scope="data">
+              <b-form-input type="text" v-model="weight" readonly></b-form-input>
+            </template>
+            <template slot="FOOT_grossPrice" slot-scope="data">
+              <b-form-input type="text" placeholder="Precio bruto" v-model="newRow.grossPrice" :disabled="inProgress"></b-form-input>
+            </template>
+            <template slot="FOOT_saleDiscount" slot-scope="data">
+              <b-form-input type="text" placeholder="Descuento venta" v-model="newRow.saleDiscount" :disabled="inProgress"></b-form-input>
+            </template>
+            <template slot="FOOT_netPrice" slot-scope="data">
+              <b-form-input type="text" v-model="netPrice" readonly></b-form-input>
+            </template>
+            <template slot="FOOT_costDiscount" slot-scope="data">
+              <b-form-input type="text" placeholder="% Descuento Costo" v-model="newRow.costDiscount" :disabled="inProgress"></b-form-input>
+            </template>
+            <template slot="FOOT_cost" slot-scope="data">
+              <b-form-input type="text" v-model="cost" readonly></b-form-input>
+            </template>
+            <template slot="FOOT_actions" slot-scope="data">
+              <b-button variant="secondary" @click.prevent="add">
+                <strong><i class="fa fa-check"></i></strong>
+              </b-button>
+            </template>
+          </b-table>
         </b-col>
-     </b-row>
+      </b-row>
     </b-form>
 </template>
 <script>
@@ -118,18 +115,18 @@ export default {
         { key: 'cost', label: 'Costo' },
         { key: 'actions', label: 'Acciones' }
       ],
-      totalRows: 0,
       shippingTypes: shippingTypes,
       serviceTypes: serviceTypes,
       packageTypes: packageTypes,
       shippingZones: shippingZones,
-      costsTableIndex: 0,
-      items: this.provider.costsTable[0].costs,
+      // si el proveedor tiene costsTable, uso la primera posición
+      costsTableIndex: this.provider.costsTable.length > 0 ? 0 : -1,
+      items: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].costs : [],
       costsFilter: {
-        shippingType: this.provider.costsTable[0].shippingType,
-        serviceType: this.provider.costsTable[0].serviceType,
-        packageType: this.provider.costsTable[0].packageType,
-        shippingZone: this.provider.costsTable[0].shippingZone
+        shippingType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingType : 1,
+        serviceType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].serviceType : 1,
+        packageType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].packageType : 1,
+        shippingZone: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingZone : 1
       },
       newRow: {
         weight: null,
@@ -139,7 +136,11 @@ export default {
         costDiscount: null,
         cost: null
       },
-      inProgress: false
+      inProgress: false,
+      // inEdit tiene que compartirse con el parent
+      // para el botón guardar
+      inEdit: false,
+      oldRow: {}
     }
   },
   methods: {
@@ -149,18 +150,19 @@ export default {
         var costsFilter = $this.costsFilter
         $this.inProgress = true
         $this.costsTableIndex = -1
-
-        var filtered = $this.provider.costsTable.filter(
-          (cost, i) => {
-            if (cost.shippingType === costsFilter.shippingType &&
-            cost.serviceType === costsFilter.serviceType &&
-            cost.packageType === costsFilter.packageType &&
-            cost.shippingZone === costsFilter.shippingZone) {
-              $this.costsTableIndex = i
-              return true
-            }
-          })
-
+        var filtered = []
+        if ($this.provider.costsTable) {
+          filtered = $this.provider.costsTable.filter(
+            (cost, i) => {
+              if (cost.shippingType === costsFilter.shippingType &&
+              cost.serviceType === costsFilter.serviceType &&
+              cost.packageType === costsFilter.packageType &&
+              cost.shippingZone === costsFilter.shippingZone) {
+                $this.costsTableIndex = i
+                return true
+              }
+            })
+        }
         if (!filtered || filtered.length === 0 || !filtered[0]) {
           $this.items = []
         } else {
@@ -170,6 +172,10 @@ export default {
       })
     },
     add () {
+      if (this.newRow.grossPrice === undefined | this.newRow.grossPrice === null | this.newRow.grossPrice < 0) {
+        console.log('Ingrese un valor válido para Precio Bruto')
+        return
+      }
       if (this.costsTableIndex === -1) {
         this.provider.costsTable.push({
           shippingType: this.costsFilter.shippingType,
@@ -179,9 +185,9 @@ export default {
           costs: [{
             weight: this.newRow.weight,
             grossPrice: this.newRow.grossPrice,
-            saleDiscount: this.newRow.saleDiscount,
+            saleDiscount: this.newRow.saleDiscount | 0,
             netPrice: this.newRow.netPrice,
-            costDiscount: this.newRow.costDiscount,
+            costDiscount: this.newRow.costDiscount | 0,
             cost: this.newRow.cost
           }]
         })
@@ -190,16 +196,72 @@ export default {
         this.provider.costsTable[this.costsTableIndex].costs.push({
           weight: this.newRow.weight,
           grossPrice: this.newRow.grossPrice,
-          saleDiscount: this.newRow.saleDiscount,
+          saleDiscount: this.newRow.saleDiscount | 0,
           netPrice: this.newRow.netPrice,
-          costDiscount: this.newRow.costDiscount,
+          costDiscount: this.newRow.costDiscount | 0,
           cost: this.newRow.cost
         })
       }
+      this.newRow.grossPrice = null
+      this.newRow.saleDiscount = null
+      this.newRow.costDiscount = null
+      this.resetFilter()
     },
-    remove (index) {
-      if (index > -1) {
-        this.provider.costsTable[this.costsTableIndex].costs.splice(index, 1)
+    enableEdit (index) {
+      if (index !== undefined && index !== null && index > -1 && !this.inEdit) {
+        this.inEdit = true
+        Object.assign(this.oldRow, this.provider.costsTable[this.costsTableIndex].costs[index])
+        this.provider.costsTable[this.costsTableIndex].costs[index].edit = true
+        this.resetFilter()
+      } else {
+        console.log('No se pueden editar dos filas a la vez')
+      }
+    },
+    applyEdit (index) {
+      this.inEdit = false
+      if (index !== undefined && index !== null && index > -1) {
+        delete this.provider.costsTable[this.costsTableIndex].costs[index].edit
+        this.oldRow = {}
+        this.resetFilter()
+      }
+    },
+    revertEdit (index) {
+      this.inEdit = false
+      if (index !== undefined && index !== null && index > -1) {
+        Object.assign(this.provider.costsTable[this.costsTableIndex].costs[index], this.oldRow)
+        delete this.provider.costsTable[this.costsTableIndex].costs[index].edit
+        this.oldRow = {}
+        this.resetFilter()
+      }
+    }
+  },
+  computed: {
+    weight: {
+      get: function () {
+        let lastIndex = -1
+        if (this.costsTableIndex !== -1) {
+          lastIndex = this.provider.costsTable[this.costsTableIndex].costs.length - 1
+        }
+        return lastIndex === -1 ? 0.5 : this.provider.costsTable[this.costsTableIndex].costs[lastIndex].weight + 0.5
+      },
+      set: function (val) {
+        this.newRow.weight = val
+      }
+    },
+    netPrice: {
+      get: function () {
+        return this.newRow.grossPrice - (this.newRow.grossPrice * this.newRow.saleDiscount / 100)
+      },
+      set: function (val) {
+        this.newRow.netPrice = val
+      }
+    },
+    cost: {
+      get: function () {
+        return this.netPrice - (this.netPrice * this.newRow.costDiscount / 100)
+      },
+      set: function (val) {
+        this.newRow.cost = val
       }
     }
   }
