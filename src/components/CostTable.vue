@@ -90,7 +90,7 @@
             </template>
             <template slot="FOOT_actions" slot-scope="data">
               <b-button variant="secondary" @click.prevent="add">
-                <strong><i class="fa fa-check"></i></strong>
+                <strong><i class="fa fa-plus"></i></strong>
               </b-button>
             </template>
           </b-table>
