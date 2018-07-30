@@ -1,12 +1,11 @@
 <template>
-  <b-tabs>
-    <b-tab>
+  <div>
       <template slot="title">
         <i class='icon-list'></i>
       </template>
-      <b-list-group class="list-group-accent">
+      <b-list-group class="list-group-accent currency-list">
         <b-list-group-item class="list-group-item-accent-secondary bg-light text-center font-weight-bold text-muted text-uppercase small">
-          COTIZACIÓN DIVISAS
+          Cotización divisas
         </b-list-group-item>
         <b-list-group-item href="#" class="list-group-item-accent-warning list-group-item-gr list-group-item-divider">
           <div class="avatar float-right circular-icon-cont">
@@ -38,7 +37,7 @@
         </b-list-group-item>
         <hr class="transparent mx-3 my-0">
         <b-list-group-item class="list-group-item-accent-secondary bg-light text-center font-weight-bold text-muted text-uppercase small">
-          PRECIO COMBUSTIBLES
+          Precio combustibles
         </b-list-group-item>
         <b-list-group-item href="#" class="list-group-item-accent-warning list-group-item-bg list-group-item-divider">
           <div class="avatar float-right circular-icon-cont">
@@ -114,7 +113,6 @@
           </div>
         </b-list-group-item-->
       </b-list-group>
-    </b-tab>
     <!--b-tab>
       <template slot="title">
         <i class='icon-speech'></i>
@@ -259,7 +257,7 @@
         <small class="text-muted">25GB/256GB</small>
       </div>
     </b-tab-->
-  </b-tabs>
+  </div>
 </template>
 
 <script>

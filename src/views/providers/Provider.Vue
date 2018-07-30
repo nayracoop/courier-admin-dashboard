@@ -13,16 +13,16 @@
               <b-tab title="Precios de venta" v-if="provider.isShipping">
                 <b-row class="actions-bar">
                   <b-col sm="6">
-                    <b-button variant="outline-primary" disabled>Importar</b-button>
+                    <b-button variant="outline-primary" disabled>Importar <i class="fa fa-file ml-1"></i></b-button>
                   </b-col>
                 </b-row>
                 <c-cost-table :provider="provider"></c-cost-table>
               </b-tab>
           </b-tabs>
           <b-col class="actions-bar" sm="12">
-            <b-button variant="outline-primary" :disabled="inProgress" @click="saveProvider(provider.objectId, provider)">Guardar</b-button>
-            <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
-            <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
+            <b-button variant="primary" :disabled="inProgress" @click="saveProvider(provider.objectId, provider)">Guardar <i class="fa fa-floppy-o ml-1"></i></b-button>
+            <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+            <b-button variant="outline-primary" @click="$router.go(-1)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
           </b-col>
         </b-card>
       </b-col>

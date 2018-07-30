@@ -3,9 +3,9 @@
     <template>
       <b-row class="actions-bar">
         <b-col sm="6">
-          <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor</b-button>
-          <b-button variant="outline-danger" @click="showModal()" v-b-modal.modal-center>Eliminar</b-button>
-          <b-button variant="outline-primary" disabled>Importar</b-button>
+          <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor<i class="fa fa-plus-circle ml-1"></i></b-button>
+          <b-button variant="outline-danger" @click="showModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+          <b-button variant="outline-primary" disabled>Importar <i class="fa fa-file ml-1"></i></b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
           <b-input-group>
@@ -30,13 +30,13 @@
       </template>
 
       <template slot="actions" slot-scope="data">
-        <b-button variant="primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
+        <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
           <i class="fa fa-pencil"></i>
         </b-button>
-        <b-button :small="true" :to="{ name: 'Nuevo Envío' }">
+        <b-button v-b-tooltip.hover title="Nuevo envío" :small="true" :to="{ name: 'Nuevo Envío' }">
           <i class="fa fa-plane"></i>
         </b-button>
-        <b-button class="btn-danger" :small="true" @click="showModal(data.item.objectId)">
+        <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showModal(data.item.objectId)">
           <i class="fa fa-trash"></i>
         </b-button>
       </template>

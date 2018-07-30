@@ -104,21 +104,33 @@ main {
   position: absolute;
   margin: 0 auto;
 }
-
+.currency-list .list-group-item.list-group-item-divider::before{
+  background: #eee;
+  width: 100%;
+  left: 0;
+  z-index: 999;
+}
+.currency-list hr.transparent{
+  display: none;
+}
+.currency-list .list-group-item{
+  pointer-events: none;
+  margin-bottom: 0;
+}
 .list-group-item-gr{
-  border-left: 4px solid #278327;
+  border-left: 4px solid #4ca84c;
 }
 
 .circular-icon-cont i.fa-usd{
-  color: #278327;
+  color: #4ca84c;
 }
 
 .circular-icon-cont i.fa-eur{
-  color: #1d6dcd;
+  color: #628aba;
 }
 
 .list-group-item-bl{
-  border-left: 4px solid #1d6dcd;
+  border-left: 4px solid #628aba;
 }
 
 .circular-icon-cont i.fa-truck{
