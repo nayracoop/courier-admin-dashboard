@@ -10,9 +10,9 @@
           <template>
             <b-row class="actions-bar">
                 <b-col sm="12">
-              <b-button variant="outline-primary">Imprimir</b-button>
-              <b-button variant="outline-primary">Adjuntar</b-button>
-              <b-button variant="outline-primary">Ver historial</b-button>
+              <b-button disabled variant="outline-primary">Imprimir <i class="fa fa-print"></i></b-button>
+              <b-button disabled variant="outline-primary">Adjuntar <i class="fa fa-paperclip"></i></b-button>
+              <b-button disabled variant="outline-primary">Ver historial <i class="fa fa-history"></i></b-button>
                 </b-col>
           </b-row>
           </template>
@@ -140,9 +140,9 @@
           <template>
             <b-row class="actions-bar">
               <b-col sm="12">
-                <b-button variant="primary" :disabled="inProgress" type="submit" >Guardar</b-button>
-                <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showModal()">Eliminar</b-button>
-                <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
+                <b-button variant="primary" :disabled="inProgress" type="submit" >Guardar <i class="fa fa-save ml-1"></i></b-button>
+                <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showModal()">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+                <b-button variant="outline-primary" @click="$router.go(-1)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
                 <c-confirmation-modal @confirm="deleteClient(client.objectId)" @cancel="hideModal()" ref="confirmationModal" />
               </b-col>
             </b-row>

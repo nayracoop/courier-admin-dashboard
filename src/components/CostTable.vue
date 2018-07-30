@@ -57,15 +57,15 @@
             </template>
             <template slot="actions" slot-scope="data">
               <template v-if="data.item.edit">
-                <b-button variant="warning" @click.prevent="revertEdit(data.index)">
+                <b-button v-b-tooltip.hover title="Descartar cambios" variant="warning" @click.prevent="revertEdit(data.index)">
                   <i class="fa fa-undo"></i>
                 </b-button>
-                <b-button variant="primary" @click.prevent="applyEdit(data.index)">
+                <b-button v-b-tooltip.hover title="Aplicar cambios" variant="primary" @click.prevent="applyEdit(data.index)">
                   <strong><i class="fa fa-check"></i></strong>
                 </b-button>
               </template>
               <template v-else>
-                <b-button variant="primary" @click.prevent="enableEdit(data.index)">
+                <b-button  v-b-tooltip.hover title="Editar fila" variant="primary" @click.prevent="enableEdit(data.index)">
                   <strong><i class="fa fa-edit"></i></strong>
                 </b-button>
               </template>
@@ -89,7 +89,7 @@
               <b-form-input type="number" v-model="cost" readonly></b-form-input>
             </template>
             <template slot="FOOT_actions" slot-scope="data">
-              <b-button variant="secondary" @click.prevent="add">
+              <b-button v-b-tooltip.hover title="Guardar costo" variant="secondary" @click.prevent="add">
                 <strong><i class="fa fa-plus"></i></strong>
               </b-button>
             </template>
