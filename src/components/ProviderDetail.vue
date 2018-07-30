@@ -2,7 +2,7 @@
   <b-form v-on:submit.prevent>
     <b-row class="actions-bar" v-if="isEdit">
       <b-col sm="12">
-        <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }"><i class="fa fa-plane"></i>Confeccionar envío</b-button>
+        <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío <i class="fa fa-plane"></i></b-button>
         <b-button variant="outline-primary" disabled>Imprimir lista de precios</b-button>
       </b-col>
     </b-row>

@@ -36,9 +36,9 @@
       </b-row>
       <b-row>
         <b-col sm="12">
-          <b-table hover striped bordered small fixed :items="items" :fields="fields" responsive="sm" foot-clone>
+          <b-table hover striped bordered small fixed :items="items" :fields="fields" responsive="sm" :foot-clone="costsFilter.packageType === 1 || costsTableIndex === -1">  
             <template slot="weight" slot-scope="data">
-              <b-form-input readonly type="number" placeholder="Hasta Kgs." v-model="data.item.weight"></b-form-input>
+              <b-form-input readonly type="text" placeholder="Hasta Kgs." v-model="data.item.weight"></b-form-input>
             </template>
             <template slot="grossPrice" slot-scope="data">
               <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="number" placeholder="Precio bruto" v-model="data.item.grossPrice"></b-form-input>
@@ -71,7 +71,7 @@
               </template>
             </template>
             <template slot="FOOT_weight" slot-scope="data">
-              <b-form-input type="number" v-model="weight" readonly></b-form-input>
+              <b-form-input v-model="weight" readonly></b-form-input>
             </template>
             <template slot="FOOT_grossPrice" slot-scope="data">
               <b-form-input type="number" placeholder="Precio bruto" v-model="newRow.grossPrice" :disabled="inProgress"></b-form-input>
@@ -175,31 +175,25 @@ export default {
     },
     add () {
       if (!this.validateNumericValues(this.newRow)) return
+      let newRow = {
+        weight: this.costsFilter.packageType === 1 ? Number(this.newRow.weight) : this.newRow.weight,
+        grossPrice: Number(this.newRow.grossPrice),
+        saleDiscount: Number(this.newRow.saleDiscount) | 0,
+        netPrice: Number(this.newRow.netPrice),
+        costDiscount: Number(this.newRow.costDiscount) | 0,
+        cost: Number(this.newRow.cost)
+      }
       if (this.costsTableIndex === -1) {
         this.provider.costsTable.push({
           shippingType: this.costsFilter.shippingType,
           serviceType: this.costsFilter.serviceType,
           packageType: this.costsFilter.packageType,
           shippingZone: this.costsFilter.shippingZone,
-          costs: [{
-            weight: Number(this.newRow.weight),
-            grossPrice: Number(this.newRow.grossPrice),
-            saleDiscount: Number(this.newRow.saleDiscount) | 0,
-            netPrice: Number(this.newRow.netPrice),
-            costDiscount: Number(this.newRow.costDiscount) | 0,
-            cost: Number(this.newRow.cost)
-          }]
+          costs: [newRow]
         })
         this.costsTableIndex = this.provider.costsTable.length - 1
       } else {
-        this.provider.costsTable[this.costsTableIndex].costs.push({
-          weight: Number(this.newRow.weight),
-          grossPrice: Number(this.newRow.grossPrice),
-          saleDiscount: Number(this.newRow.saleDiscount) | 0,
-          netPrice: Number(this.newRow.netPrice),
-          costDiscount: Number(this.newRow.costDiscount) | 0,
-          cost: Number(this.newRow.cost)
-        })
+        this.provider.costsTable[this.costsTableIndex].costs.push(newRow)
       }
       this.newRow.grossPrice = null
       this.newRow.saleDiscount = null
@@ -263,11 +257,20 @@ export default {
   computed: {
     weight: {
       get: function () {
+        if (this.costsFilter.packageType !== 1) {
+          return '-'
+        }
+
+        let retVal = 0.5
         let lastIndex = -1
         if (this.costsTableIndex !== -1) {
           lastIndex = this.provider.costsTable[this.costsTableIndex].costs.length - 1
         }
-        return lastIndex === -1 ? 0.5 : this.provider.costsTable[this.costsTableIndex].costs[lastIndex].weight + 0.5
+        if (lastIndex !== -1) {
+          let thisWeight = this.provider.costsTable[this.costsTableIndex].costs[lastIndex].weight
+          retVal = thisWeight >= 71 ? thisWeight + 0.5 : thisWeight + 1
+        }
+        return retVal
       },
       set: function (val) {
         this.newRow.weight = val
