@@ -20,13 +20,14 @@
               </b-tab>
           </b-tabs>
           <b-col class="actions-bar" sm="12">
-            <b-button variant="outline-primary" :disabled="inProgress" @click="saveProvider(provider.objectId, provider)">Guardar</b-button>
-            <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="deleteProvider(provider.objectId)">Eliminar</b-button>
+            <b-button variant="outline-primary" :disabled="inProgress || !dirtyCheck" @click="saveProvider(provider.objectId, provider)">Guardar</b-button>
+            <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="showModal(provider.objectId)">Eliminar</b-button>
             <b-button variant="outline-primary" @click="$router.go(-1)">Volver</b-button>
           </b-col>
         </b-card>
       </b-col>
     </b-row>
+    <c-confirmation-modal @confirm="confirmDelete()" @cancel="hideModal()" :count="1" ref="confirmationModal" />
   </div>
 </template>
 <script>
@@ -78,20 +79,25 @@ export default {
   data () {
     return {
       inProgress: false,
-      errors: {}
+      errors: {},
+      originalProvider: this.provider,
+      deleteId: -1
     }
   },
   computed: {
-    ...mapGetters(['provider']),
+    ...mapGetters(['provider', 'cleanProvider']),
     isEdit () {
       return !!this.provider.objectId
+    },
+    dirtyCheck () {
+      return JSON.stringify(this.cleanProvider) !== JSON.stringify(this.provider)
     }
   },
   methods: {
     saveProvider (id, provider) {
       var $this = this
       $this.inProgress = true
-      let action = id ? PROVIDER_EDIT : PROVIDER_SAVE
+      let action = $this.isEdit ? PROVIDER_EDIT : PROVIDER_SAVE
       $this.$store
         .dispatch(action)
         .then(myProvider => {
@@ -102,41 +108,36 @@ export default {
               id: myProvider.id
             }
           })
+          store.dispatch(FETCH_PROVIDER, myProvider.id)
+          $this.$toasted.global.success_toast({ message: id ? 'Registro editado con éxito' : 'Registro creado con éxito' })
         }, error => {
           $this.inProgress = false
-          console.log(error)
+          $this.$toasted.global.error_toast({ message: error })
         })
     },
-    showModal () {
+    showModal (id) {
+      this.deleteId = id
       this.$refs.confirmationModal.$refs.deleteModal.show()
     },
     hideModal () {
+      this.deleteId = -1
       this.$refs.confirmationModal.$refs.deleteModal.hide()
     },
-    deleteProvider (id) {
+    confirmDelete () {
       this.inProgress = true
       this.$store
-        .dispatch(PROVIDER_DELETE, id)
+        .dispatch(PROVIDER_DELETE, this.deleteId)
         .then(res => {
           this.inProgress = false
+          this.deleteId = -1
           this.$router.push('/proveedores')
+          this.$toasted.global.success_toast({ message: 'Registro eliminado con éxito' })
         }, error => {
           this.inProgress = false
-          console.log('error')
-          console.log(error)
+          this.deleteId = -1
+          this.$toasted.global.error_toast({ message: error })
         })
-    }/*
-    deleteProvider (id) {
-      this.$store
-        .dispatch(PROVIDER_DELETE, id)
-        .then(res => {
-          this.$router.push('/proveedores')
-        }, error => {
-          // mostrar errores
-          console.log('error')
-          console.log(error)
-        })
-    } */
+    }
   }
 }
 </script>

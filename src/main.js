@@ -18,9 +18,12 @@ import ErrorFilter from '@/common/filters/error'
 import Parse from 'parse'
 import VueLocalStorage from 'vue-localstorage'
 import ToastHelper from '@/common/helpers/toast'
+
 Vue.use(VueLocalStorage)
 Vue.use(BootstrapVue)
+
 ToastHelper.init()
+
 Parse.initialize(process.env.PARSE_APP_ID, process.env.PARSE_JAVASCRIPT_KEY)
 Parse.serverURL = process.env.PARSE_URI
 

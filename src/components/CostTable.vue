@@ -38,22 +38,22 @@
         <b-col sm="12">
           <b-table hover striped bordered small fixed :items="items" :fields="fields" responsive="sm" foot-clone>
             <template slot="weight" slot-scope="data">
-              <b-form-input readonly type="text" placeholder="Hasta Kgs." v-model="data.item.weight"></b-form-input>
+              <b-form-input readonly type="number" placeholder="Hasta Kgs." v-model="data.item.weight"></b-form-input>
             </template>
             <template slot="grossPrice" slot-scope="data">
-              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="text" placeholder="Precio bruto" v-model="data.item.grossPrice"></b-form-input>
+              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="number" placeholder="Precio bruto" v-model="data.item.grossPrice"></b-form-input>
             </template>
             <template slot="saleDiscount" slot-scope="data">
-              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="text" placeholder="Descuento venta" v-model="data.item.saleDiscount"></b-form-input>
+              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="number" placeholder="% Descuento venta" v-model="data.item.saleDiscount"></b-form-input>
             </template>
             <template slot="netPrice" slot-scope="data">
-              <b-form-input readonly type="text" placeholder="Descuento venta" :value="data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)"></b-form-input>
+              <b-form-input readonly type="number" placeholder="Neto" :value="data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)"></b-form-input>
             </template>
             <template slot="costDiscount" slot-scope="data">
-              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="text" placeholder="% Descuento Costo" v-model="data.item.costDiscount"></b-form-input>
+              <b-form-input :readonly="(inProgress | !data.item.edit) ? true : false" type="number" placeholder="% Descuento Costo" v-model="data.item.costDiscount"></b-form-input>
             </template>
             <template slot="cost" slot-scope="data">
-              <b-form-input readonly type="text" placeholder="Descuento venta" :value="(data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)) - ((data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)) * data.item.costDiscount / 100)"></b-form-input>
+              <b-form-input readonly type="number" placeholder="Costo" :value="(data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)) - ((data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)) * data.item.costDiscount / 100)"></b-form-input>
             </template>
             <template slot="actions" slot-scope="data">
               <template v-if="data.item.edit">
@@ -71,22 +71,22 @@
               </template>
             </template>
             <template slot="FOOT_weight" slot-scope="data">
-              <b-form-input type="text" v-model="weight" readonly></b-form-input>
+              <b-form-input type="number" v-model="weight" readonly></b-form-input>
             </template>
             <template slot="FOOT_grossPrice" slot-scope="data">
-              <b-form-input type="text" placeholder="Precio bruto" v-model="newRow.grossPrice" :disabled="inProgress"></b-form-input>
+              <b-form-input type="number" placeholder="Precio bruto" v-model="newRow.grossPrice" :disabled="inProgress"></b-form-input>
             </template>
             <template slot="FOOT_saleDiscount" slot-scope="data">
-              <b-form-input type="text" placeholder="Descuento venta" v-model="newRow.saleDiscount" :disabled="inProgress"></b-form-input>
+              <b-form-input type="number" placeholder="% Descuento venta" v-model="newRow.saleDiscount" :disabled="inProgress"></b-form-input>
             </template>
             <template slot="FOOT_netPrice" slot-scope="data">
-              <b-form-input type="text" v-model="netPrice" readonly></b-form-input>
+              <b-form-input type="number" v-model="netPrice" readonly></b-form-input>
             </template>
             <template slot="FOOT_costDiscount" slot-scope="data">
-              <b-form-input type="text" placeholder="% Descuento Costo" v-model="newRow.costDiscount" :disabled="inProgress"></b-form-input>
+              <b-form-input type="number" placeholder="% Descuento Costo" v-model="newRow.costDiscount" :disabled="inProgress"></b-form-input>
             </template>
             <template slot="FOOT_cost" slot-scope="data">
-              <b-form-input type="text" v-model="cost" readonly></b-form-input>
+              <b-form-input type="number" v-model="cost" readonly></b-form-input>
             </template>
             <template slot="FOOT_actions" slot-scope="data">
               <b-button variant="secondary" @click.prevent="add">
@@ -96,6 +96,8 @@
           </b-table>
         </b-col>
       </b-row>
+      <!-- <pre>{{ JSON.stringify(this.provider.costsTable[this.costsTableIndex].costs[0], null, 2) }}</pre>
+      <pre>{{ JSON.stringify(this.oldRow, null, 2) }}</pre> -->
     </b-form>
 </template>
 <script>
@@ -172,10 +174,7 @@ export default {
       })
     },
     add () {
-      if (this.newRow.grossPrice === undefined | this.newRow.grossPrice === null | this.newRow.grossPrice < 0) {
-        console.log('Ingrese un valor válido para Precio Bruto')
-        return
-      }
+      if (!this.validateNumericValues(this.newRow)) return
       if (this.costsTableIndex === -1) {
         this.provider.costsTable.push({
           shippingType: this.costsFilter.shippingType,
@@ -183,23 +182,23 @@ export default {
           packageType: this.costsFilter.packageType,
           shippingZone: this.costsFilter.shippingZone,
           costs: [{
-            weight: this.newRow.weight,
-            grossPrice: this.newRow.grossPrice,
-            saleDiscount: this.newRow.saleDiscount | 0,
-            netPrice: this.newRow.netPrice,
-            costDiscount: this.newRow.costDiscount | 0,
-            cost: this.newRow.cost
+            weight: Number(this.newRow.weight),
+            grossPrice: Number(this.newRow.grossPrice),
+            saleDiscount: Number(this.newRow.saleDiscount) | 0,
+            netPrice: Number(this.newRow.netPrice),
+            costDiscount: Number(this.newRow.costDiscount) | 0,
+            cost: Number(this.newRow.cost)
           }]
         })
         this.costsTableIndex = this.provider.costsTable.length - 1
       } else {
         this.provider.costsTable[this.costsTableIndex].costs.push({
-          weight: this.newRow.weight,
-          grossPrice: this.newRow.grossPrice,
-          saleDiscount: this.newRow.saleDiscount | 0,
-          netPrice: this.newRow.netPrice,
-          costDiscount: this.newRow.costDiscount | 0,
-          cost: this.newRow.cost
+          weight: Number(this.newRow.weight),
+          grossPrice: Number(this.newRow.grossPrice),
+          saleDiscount: Number(this.newRow.saleDiscount) | 0,
+          netPrice: Number(this.newRow.netPrice),
+          costDiscount: Number(this.newRow.costDiscount) | 0,
+          cost: Number(this.newRow.cost)
         })
       }
       this.newRow.grossPrice = null
@@ -214,13 +213,19 @@ export default {
         this.provider.costsTable[this.costsTableIndex].costs[index].edit = true
         this.resetFilter()
       } else {
-        console.log('No se pueden editar dos filas a la vez')
+        this.$toasted.global.error_toast({ message: 'No se pueden editar dos filas a la vez' })
       }
     },
     applyEdit (index) {
+      if (!this.validateNumericValues(this.provider.costsTable[this.costsTableIndex].costs[index])) return
       this.inEdit = false
       if (index !== undefined && index !== null && index > -1) {
         delete this.provider.costsTable[this.costsTableIndex].costs[index].edit
+        if (this.provider.costsTable[this.costsTableIndex].costs[index].grossPrice !== this.oldRow.grossPrice ||
+          this.provider.costsTable[this.costsTableIndex].costs[index].saleDiscount !== this.oldRow.saleDiscount ||
+          this.provider.costsTable[this.costsTableIndex].costs[index].costDiscount !== this.oldRow.costDiscount) {
+          this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
+        }
         this.oldRow = {}
         this.resetFilter()
       }
@@ -233,6 +238,26 @@ export default {
         this.oldRow = {}
         this.resetFilter()
       }
+    },
+    validateNumericValues (row) {
+      let retVal = true
+      if (isNaN(row.grossPrice) | row.grossPrice === undefined | row.grossPrice === null | row.grossPrice <= 0) {
+        this.$toasted.global.error_toast({ message: 'Ingrese un valor válido para Precio Bruto' })
+        retVal = false
+      }
+      if (!row.saleDiscount) row.saleDiscount = 0
+      if (isNaN(row.saleDiscount) | row.saleDiscount === undefined |
+        row.saleDiscount === null | row.saleDiscount < 0 | row.saleDiscount > 100) {
+        this.$toasted.global.error_toast({ message: 'Ingrese un valor válido para % Descuento venta' })
+        retVal = false
+      }
+      if (!row.costDiscount) row.costDiscount = 0
+      if (isNaN(row.costDiscount) | row.costDiscount === undefined |
+        row.costDiscount === null | row.costDiscount < 0 | row.costDiscount > 100) {
+        this.$toasted.global.error_toast({ message: 'Ingrese un valor válido para % Descuento Costo' })
+        retVal = false
+      }
+      return retVal
     }
   },
   computed: {

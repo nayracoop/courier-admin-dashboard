@@ -31,7 +31,8 @@ const initialState = {
 const state = Object.assign({
   providers: [],
   isLoading: true, // isLoading se usa en distintos lugares
-  providersCount: 0 }, initialState)
+  providersCount: 0,
+  cleanProvider: {} }, initialState)
 
 export const actions = {
   [PROVIDER_SAVE] ({ state }) {
@@ -83,9 +84,12 @@ export const mutations = {
   },
   [SET_PROVIDER] (state, provider) {
     state.provider = provider.toJSON()
+    state.cleanProvider = provider.toJSON()
   },
   [RESET_STATE] () {
+    console.log(`estado inicial: ${JSON.stringify(initialState.provider)}`)
     for (let f in state) {
+      console.log(`estado actual: ${JSON.stringify(f)}`)
       Vue.set(state, f, initialState[f])
     }
   }
@@ -97,6 +101,9 @@ const getters = {
   },
   provider (state) {
     return state.provider
+  },
+  cleanProvider (state) {
+    return state.cleanProvider
   },
   providersCount (state) {
     return state.providersCount
