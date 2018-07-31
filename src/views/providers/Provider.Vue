@@ -13,7 +13,10 @@
               <b-tab title="Precios de venta" v-if="provider.isShipping">
                 <b-row class="actions-bar">
                   <b-col sm="6">
-                    <b-button variant="outline-primary" disabled>Importar <i class="fa fa-file ml-1"></i></b-button>
+                    <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                    <b-modal id="fileDialog" title="Importar">
+                      <c-file-dialog></c-file-dialog>
+                    </b-modal>
                   </b-col>
                 </b-row>
                 <c-cost-table :provider="provider"></c-cost-table>
@@ -37,6 +40,7 @@ import CErrorList from '@/components/ErrorList'
 import CCostTable from '@/components/CostTable'
 import CConfirmationModal from '@/components/DeleteConfirmation'
 import CProviderDetail from '@/components/ProviderDetail'
+import CFileDialog from '@/components/FileDialog'
 import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, FETCH_PROVIDER, PROVIDER_RESET_STATE } from '@/store/types/actions'
 
 export default {
@@ -45,7 +49,8 @@ export default {
     CErrorList,
     CCostTable,
     CConfirmationModal,
-    CProviderDetail
+    CProviderDetail,
+    CFileDialog
   },
   props: {
     previousProvider: {

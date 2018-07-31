@@ -3,7 +3,7 @@
     <template>
       <b-row class="actions-bar">
         <b-col sm="6">
-          <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor<i class="fa fa-plus-circle ml-1"></i></b-button>
+          <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor <i class="fa fa-plus-circle ml-1"></i></b-button>
           <b-button variant="outline-danger" @click="showModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
           <b-button variant="outline-primary" disabled>Importar <i class="fa fa-file ml-1"></i></b-button>
         </b-col>
@@ -118,25 +118,29 @@ export default {
       this.$refs.confirmationModal.$refs.deleteModal.hide()
     },
     confirmDelete () {
-      var promises = []
+      let promises = []
       if (this.deleteMultiple) {
-        for (var i = 0, len = this.checkedItems.length; i < len; i++) {
+        for (let i = 0, len = this.checkedItems.length; i < len; i++) {
           promises.push(
             this.$store.dispatch(PROVIDER_DELETE, this.checkedItems[i].objectId)
           )
         }
         Promise.all(promises).then(() => {
+          this.$toasted.global.success_toast({ message: `${this.checkedItems.length} registros eliminados con éxito` })
           this.fetchProviders()
           this.clearSelected()
+        }, error => {
+          this.$toasted.global.error_toast({ message: error })
         })
       } else {
         this.$store
           .dispatch(PROVIDER_DELETE, this.deleteId)
           .then(res => {
+            this.$toasted.global.success_toast({ message: 'Registro eliminado con éxito' })
             this.fetchProviders()
             this.clearSelected()
           }, error => {
-            console.log(error)
+            this.$toasted.global.error_toast({ message: error })
           })
       }
       this.$refs.confirmationModal.$refs.deleteModal.hide()

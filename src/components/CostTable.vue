@@ -36,7 +36,7 @@
       </b-row>
       <b-row>
         <b-col sm="12">
-          <b-table hover striped bordered small fixed :items="items" :fields="fields" responsive="sm" :foot-clone="costsFilter.packageType === 1 || costsTableIndex === -1">  
+          <b-table hover striped bordered small fixed :items="items" :fields="fields" responsive="sm" :foot-clone="costsFilter.packageType === 1 || costsTableIndex === -1">
             <template slot="weight" slot-scope="data">
               <b-form-input readonly type="text" placeholder="Hasta Kgs." v-model="data.item.weight"></b-form-input>
             </template>
@@ -198,6 +198,7 @@ export default {
       this.newRow.grossPrice = null
       this.newRow.saleDiscount = null
       this.newRow.costDiscount = null
+      this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
       this.resetFilter()
     },
     enableEdit (index) {

@@ -87,9 +87,7 @@ export const mutations = {
     state.cleanProvider = provider.toJSON()
   },
   [RESET_STATE] () {
-    console.log(`estado inicial: ${JSON.stringify(initialState.provider)}`)
     for (let f in state) {
-      console.log(`estado actual: ${JSON.stringify(f)}`)
       Vue.set(state, f, initialState[f])
     }
   }
