@@ -12,7 +12,7 @@
       <b-col sm="6">
         <label for="weight">Peso</label>
         <b-input-group>
-        <b-form-input horizontal type="text" id="weight" placeholder="" :value="weight"></b-form-input>
+        <b-form-input horizontal type="text" id="weight" placeholder=""></b-form-input>
         <b-input-group-append><b-input-group-text>kg</b-input-group-text></b-input-group-append>
         </b-input-group>
       </b-col>
@@ -22,14 +22,14 @@
         <b-form-group>
           <label for="packageValue">Valor declarado</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Valor declarado del paquete"></i>
-          <b-form-input type="text" id="packageValue  " placeholder="Ej: $2500" :value="_"></b-form-input>
+          <b-form-input type="text" id="packageValue" placeholder="Ej: $2500"></b-form-input>
         </b-form-group>
       </b-col>
       <b-col sm="6">
         <b-form-group>
           <label for="guideENumber">Número de referencia</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de referencia del envío"></i>
-          <b-form-input type="text" id="guideENumber" placeholder="Ej: 4172-1248-12" :value="_"></b-form-input>
+          <b-form-input type="text" id="guideENumber" placeholder="Ej: 4172-1248-12"></b-form-input>
         </b-form-group>
       </b-col>
       </b-row>
@@ -42,21 +42,21 @@
             <b-col sm="4">
               <label for="length">Largo</label>
               <b-input-group>
-              <b-form-input horizontal type="text" id="length" placeholder="" :value="weight"></b-form-input>
+              <b-form-input horizontal type="text" id="length" placeholder=""></b-form-input>
               <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
               </b-input-group>
             </b-col>
             <b-col sm="4">
               <label for="width">Ancho</label>
               <b-input-group>
-              <b-form-input horizontal type="text" id="width" placeholder="" :value="width"></b-form-input>
+              <b-form-input horizontal type="text" id="width" placeholder=""></b-form-input>
               <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
               </b-input-group>
             </b-col>
             <b-col sm="4">
               <label for="width">Alto</label>
               <b-input-group>
-              <b-form-input horizontal type="text" id="height" placeholder="" :value="height"></b-form-input>
+              <b-form-input horizontal type="text" id="height" placeholder=""></b-form-input>
               <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
               </b-input-group>
             </b-col>
