@@ -4,7 +4,7 @@
       <b-row class="actions-bar">
         <b-col sm="6">
           <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor <i class="fa fa-plus-circle ml-1"></i></b-button>
-          <b-button variant="outline-danger" @click="showModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+          <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
           <b-button variant="outline-primary" disabled>Importar <i class="fa fa-file ml-1"></i></b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
@@ -36,7 +36,7 @@
         <b-button v-b-tooltip.hover title="Nuevo envío" :small="true" :to="{ name: 'Nuevo Envío' }">
           <i class="fa fa-plane"></i>
         </b-button>
-        <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showModal(data.item.objectId)">
+        <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">
           <i class="fa fa-trash"></i>
         </b-button>
       </template>
@@ -46,20 +46,23 @@
       <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
         hide-goto-end-buttons @click.native="clearSelected" />
     </nav>
-    <c-confirmation-modal @confirm="confirmDelete()" @cancel="hideModal()" :count="checkedItems.length" ref="confirmationModal" />
+    <c-confirmation-modal :promptMessage="'¿Desea eliminar definitivamente ' + (checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
+      ref="deleteModal" title="Confirmación"
+      :confirmationMessage="'Sí, deseo eliminarlo' + (checkedItems.length > 1 ? 's' : '')"
+      cancellationMessage="No, volveré atrás"
+      confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
+      @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
   </b-card>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_PROVIDERS, IMPORT_PROVIDERS, PROVIDER_DELETE } from '@/store/types/actions'
-import CConfirmationModal from '@/components/DeleteConfirmation'
+import CConfirmationModal from '@/components/ConfirmationModal'
 
 export default {
   name: 'c-provider-list',
-  components: {
-    CConfirmationModal
-  },
+  components: { CConfirmationModal },
   props: { caption: { type: String, default: 'Proveedores' } },
   data: () => {
     return {
@@ -103,19 +106,21 @@ export default {
     importProviders () {
       this.$store.dispatch(IMPORT_PROVIDERS)
     },
-    showModal (id) {
+    showDeleteModal (id) {
       if (id) {
         this.deleteId = id
         this.deleteMultiple = false
-        this.$refs.confirmationModal.$refs.deleteModal.show()
+        this.$refs.deleteModal.$refs.confirmationModal.show()
       } else if (this.checkedItems.length > 0) {
         // si no hay id y no hay checkboxes seleccionados, ni muestro el modal
         this.deleteMultiple = true
-        this.$refs.confirmationModal.$refs.deleteModal.show()
+        this.$refs.deleteModal.$refs.confirmationModal.show()
+      } else {
+        this.$toasted.global.error_toast({ message: 'No hay filas seleccionadas' })
       }
     },
-    hideModal () {
-      this.$refs.confirmationModal.$refs.deleteModal.hide()
+    hideDeleteModal () {
+      this.$refs.deleteModal.$refs.confirmationModal.hide()
     },
     confirmDelete () {
       let promises = []
@@ -143,7 +148,7 @@ export default {
             this.$toasted.global.error_toast({ message: error })
           })
       }
-      this.$refs.confirmationModal.$refs.deleteModal.hide()
+      this.$refs.deleteModal.$refs.confirmationModal.hide()
     },
     toggleSelected () {
       this.allSelected = !this.allSelected
