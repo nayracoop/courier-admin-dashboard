@@ -141,9 +141,8 @@
             <b-row class="actions-bar">
               <b-col sm="12">
                 <b-button variant="primary" :disabled="inProgress" type="submit" >Guardar <i class="fa fa-save ml-1"></i></b-button>
-                <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showModal()">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+                <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(client.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
                 <b-button variant="outline-primary" @click="$router.go(-1)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
-                <c-confirmation-modal @confirm="deleteClient(client.objectId)" @cancel="hideModal()" ref="confirmationModal" />
               </b-col>
             </b-row>
           </template>
@@ -151,6 +150,11 @@
         </b-card>
       </b-col>
     </b-row>
+    <c-confirmation-modal promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
+      ref="deleteModal" title="Confirmación"
+      confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="No, volveré atrás"
+      confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
+      @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
   </div>
 </template>
 
@@ -158,14 +162,8 @@
 import { mapGetters } from 'vuex'
 import store from '@/store'
 import CErrorList from '@/components/ErrorList'
-import CConfirmationModal from '@/components/DeleteConfirmation'
-import {
-  CLIENT_SAVE,
-  CLIENT_EDIT,
-  CLIENT_DELETE,
-  FETCH_CLIENT,
-  CLIENT_RESET_STATE
-} from '@/store/types/actions'
+import CConfirmationModal from '@/components/ConfirmationModal'
+import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, FETCH_CLIENT, CLIENT_RESET_STATE } from '@/store/types/actions'
 import { taxTypes, idTypes } from '@/store/const'
 export default {
   name: 'v-client',
@@ -203,7 +201,8 @@ export default {
       inProgress: false,
       errors: {},
       taxTypes: taxTypes,
-      idTypes: idTypes
+      idTypes: idTypes,
+      deleteId: -1
     }
   },
   computed: {
@@ -231,21 +230,27 @@ export default {
           console.log(error)
         })
     },
-    showModal () {
-      this.$refs.confirmationModal.$refs.deleteModal.show()
+    showDeleteModal (id) {
+      this.deleteId = id
+      this.$refs.deleteModal.$refs.confirmationModal.show()
     },
-    hideModal () {
-      this.$refs.confirmationModal.$refs.deleteModal.hide()
+    hideDeleteModal () {
+      this.deleteId = -1
+      this.$refs.deleteModal.$refs.confirmationModal.hide()
     },
-    deleteClient (id) {
+    confirmDelete () {
+      this.inProgress = true
       this.$store
-        .dispatch(CLIENT_DELETE, id)
+        .dispatch(CLIENT_DELETE, this.deleteId)
         .then(res => {
+          this.inProgress = false
+          this.deleteId = -1
           this.$router.push('/clientes')
+          this.$toasted.global.success_toast({ message: 'Registro eliminado con éxito' })
         }, error => {
-          // mostrar errores
-          console.log('error')
-          console.log(error)
+          this.inProgress = false
+          this.deleteId = -1
+          this.$toasted.global.error_toast({ message: error })
         })
     }
   }

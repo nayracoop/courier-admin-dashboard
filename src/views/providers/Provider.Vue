@@ -14,8 +14,11 @@
                 <b-row class="actions-bar">
                   <b-col sm="6">
                     <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
-                    <b-modal id="fileDialog" title="Importar">
-                      <c-file-dialog></c-file-dialog>
+                    <b-modal id="fileDialog" ref="fileDialogModal"
+                      hide-footer centered title="Importar" >
+                      <c-csv-file-dialog confirmationMethod="confirmImport" cancellationMethod="cancelImport"
+                      :provider="provider"
+                      @confirmImport="confirmImport" @cancelImport="hideImportModal" />
                     </b-modal>
                   </b-col>
                 </b-row>
@@ -24,13 +27,22 @@
           </b-tabs>
           <b-col class="actions-bar" sm="12">
             <b-button variant="primary" :disabled="inProgress || !dirtyCheck" @click="saveProvider(provider.objectId, provider)">Guardar <i class="fa fa-floppy-o ml-1"></i></b-button>
-            <b-button variant="outline-primary" :disabled="inProgress" v-if="isEdit" @click="showModal(provider.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-            <b-button variant="outline-primary" @click="$router.go(-1)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
+            <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(provider.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+            <b-button variant="outline-primary" @click="goNavigate('/proveedores')">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
           </b-col>
         </b-card>
       </b-col>
     </b-row>
-    <c-confirmation-modal @confirm="confirmDelete()" @cancel="hideModal()" :count="1" ref="confirmationModal" />
+    <c-confirmation-modal promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
+      ref="deleteModal" title="Confirmación"
+      confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="No, volveré atrás"
+      confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
+      @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
+    <c-confirmation-modal promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
+      ref="returnModal" title="Confirmación"
+      confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="No, volveré a editar"
+      confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
+      @confirmReturn="confirmReturn" @cancelReturn="hideReturnModal" />
   </div>
 </template>
 <script>
@@ -38,20 +50,14 @@ import { mapGetters } from 'vuex'
 import store from '@/store'
 import CErrorList from '@/components/ErrorList'
 import CCostTable from '@/components/CostTable'
-import CConfirmationModal from '@/components/DeleteConfirmation'
+import CConfirmationModal from '@/components/ConfirmationModal'
 import CProviderDetail from '@/components/ProviderDetail'
-import CFileDialog from '@/components/FileDialog'
+import CCsvFileDialog from '@/components/CsvFileDialog'
 import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, FETCH_PROVIDER, PROVIDER_RESET_STATE } from '@/store/types/actions'
 
 export default {
   name: 'v-provider',
-  components: {
-    CErrorList,
-    CCostTable,
-    CConfirmationModal,
-    CProviderDetail,
-    CFileDialog
-  },
+  components: { CErrorList, CCostTable, CConfirmationModal, CProviderDetail, CCsvFileDialog },
   props: {
     previousProvider: {
       type: Object,
@@ -78,15 +84,22 @@ export default {
     return next()
   },
   async beforeRouteLeave (to, from, next) {
-    await store.dispatch(PROVIDER_RESET_STATE)
-    next()
+    if (!this.dirtyCheck || this.returnConfirmed) {
+      await store.dispatch(PROVIDER_RESET_STATE)
+      next()
+    } else {
+      this.showReturnModal(to.path)
+      next(false)
+    }
   },
   data () {
     return {
       inProgress: false,
       errors: {},
       originalProvider: this.provider,
-      deleteId: -1
+      deleteId: -1,
+      returnConfirmed: false,
+      returnTo: null
     }
   },
   computed: {
@@ -120,13 +133,13 @@ export default {
           $this.$toasted.global.error_toast({ message: error })
         })
     },
-    showModal (id) {
+    showDeleteModal (id) {
       this.deleteId = id
-      this.$refs.confirmationModal.$refs.deleteModal.show()
+      this.$refs.deleteModal.$refs.confirmationModal.show()
     },
-    hideModal () {
+    hideDeleteModal () {
       this.deleteId = -1
-      this.$refs.confirmationModal.$refs.deleteModal.hide()
+      this.$refs.deleteModal.$refs.confirmationModal.hide()
     },
     confirmDelete () {
       this.inProgress = true
@@ -142,6 +155,32 @@ export default {
           this.deleteId = -1
           this.$toasted.global.error_toast({ message: error })
         })
+    },
+    showReturnModal (returnTo) {
+      this.returnTo = returnTo
+      this.$refs.returnModal.$refs.confirmationModal.show()
+    },
+    hideReturnModal () {
+      this.returnConfirmed = false
+      this.$refs.returnModal.$refs.confirmationModal.hide()
+    },
+    confirmReturn () {
+      this.returnConfirmed = true
+      this.goNavigate()
+    },
+    confirmImport (event) {
+      console.log(event)
+    },
+    hideImportModal () {
+      this.$refs.fileDialogModal.hide()
+    },
+    goNavigate (returnTo) {
+      if (returnTo) this.returnTo = returnTo
+      if (!this.dirtyCheck || this.returnConfirmed) {
+        this.$router.push(this.returnTo)
+      } else {
+        this.showReturnModal()
+      }
     }
   }
 }

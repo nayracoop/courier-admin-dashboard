@@ -36,7 +36,7 @@
       </b-row>
       <b-row>
         <b-col sm="12">
-          <b-table hover striped bordered small fixed :items="items" :fields="fields" responsive="sm" :foot-clone="costsFilter.packageType === 1 || costsTableIndex === -1">
+          <b-table hover striped bordered small fixed :items="items" :fields="fields" responsive="sm" :foot-clone="hasWeight || costsTableIndex === -1">
             <template slot="weight" slot-scope="data">
               <b-form-input readonly type="text" placeholder="Hasta Kgs." v-model="data.item.weight"></b-form-input>
             </template>
@@ -89,7 +89,7 @@
               <b-form-input type="number" v-model="cost" readonly></b-form-input>
             </template>
             <template slot="FOOT_actions" slot-scope="data">
-              <b-button v-b-tooltip.hover title="Guardar costo" variant="secondary" @click.prevent="add">
+              <b-button v-b-tooltip.hover title="Añadir costo" variant="secondary" @click.prevent="add">
                 <strong><i class="fa fa-plus"></i></strong>
               </b-button>
             </template>
@@ -176,7 +176,7 @@ export default {
     add () {
       if (!this.validateNumericValues(this.newRow)) return
       let newRow = {
-        weight: this.costsFilter.packageType === 1 ? Number(this.newRow.weight) : this.newRow.weight,
+        weight: this.newRow.weight,
         grossPrice: Number(this.newRow.grossPrice),
         saleDiscount: Number(this.newRow.saleDiscount) | 0,
         netPrice: Number(this.newRow.netPrice),
@@ -256,9 +256,12 @@ export default {
     }
   },
   computed: {
+    hasWeight: function () {
+      return this.costsFilter.packageType !== 3
+    },
     weight: {
       get: function () {
-        if (this.costsFilter.packageType !== 1) {
+        if (!this.hasWeight) {
           return '-'
         }
 
@@ -269,7 +272,7 @@ export default {
         }
         if (lastIndex !== -1) {
           let thisWeight = this.provider.costsTable[this.costsTableIndex].costs[lastIndex].weight
-          retVal = thisWeight >= 71 ? thisWeight + 0.5 : thisWeight + 1
+          retVal = thisWeight >= 71 ? thisWeight + 1 : thisWeight + 0.5
         }
         return retVal
       },
