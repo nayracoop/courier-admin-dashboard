@@ -1,4 +1,4 @@
-// Estilos Custom
+// Estilos custom
 
 main {
     background: #fafafa;
@@ -91,7 +91,7 @@ main {
 
 /* Fin Dashboard index */
 
-/* Sidebar Derecho Cotizaciones */
+/* Sidebar derecho cotizaciones */
 .circular-icon-cont{
   width: 50px;
   height: 50px;
@@ -145,7 +145,7 @@ main {
   border-left: 4px solid #797979;
 }
 
-/* Fin Sidebar Derecho Cotizaciones */
+/* Fin Sidebar derecho cotizaciones */
 
 input:read-only {
   //cursor: default;
@@ -206,3 +206,14 @@ input:read-only {
   cursor: pointer;
 }
 /* Fin Datepicker */
+
+/* Validación campos formulario */
+.inv-feedback{
+  font-size: 80%;
+  margin-top: 5px;
+  color: #f86c6b;
+  width: 100%;
+  text-align: right;
+}
+
+/* Fin Validación campos formulario */
