@@ -120,9 +120,7 @@
             </b-col-->
             <b-col sm="6">
               <b-form-group label="Recibe percepciones?">
-                <b-form-checkbox id="perception"
-                     v-model="client.hasPerception">Sí
-                </b-form-checkbox>
+                <b-form-checkbox id="perception" v-model="client.hasPerception">Sí</b-form-checkbox>
               </b-form-group>
             </b-col>
           </b-row>
@@ -147,6 +145,7 @@
             </b-row>
           </template>
           </b-form>
+          <c-address newEntry :client="this.client" />
         </b-card>
       </b-col>
     </b-row>
@@ -163,11 +162,12 @@ import { mapGetters } from 'vuex'
 import store from '@/store'
 import CErrorList from '@/components/ErrorList'
 import CConfirmationModal from '@/components/ConfirmationModal'
+import CAddress from '@/components/Address'
 import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, FETCH_CLIENT, CLIENT_RESET_STATE } from '@/store/types/actions'
 import { taxTypes, idTypes } from '@/store/const'
 export default {
   name: 'v-client',
-  components: { CErrorList, CConfirmationModal },
+  components: { CErrorList, CConfirmationModal, CAddress },
   props: {
     previousClient: {
       type: Object,
@@ -219,13 +219,13 @@ export default {
       $this.$store
         .dispatch(action)
         .then(myClient => {
-          $this.inProgress = false
           $this.$router.push({
             name: 'Editar Cliente',
             params: {
               id: myClient.id
             }
           })
+          $this.inProgress = false
         }, error => {
           console.log(error)
         })

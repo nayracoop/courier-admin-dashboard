@@ -102,10 +102,10 @@
 </template>
 <script>
 import { shippingTypes, serviceTypes, packageTypes, shippingZones } from '@/store/const'
+import { mapGetters } from 'vuex'
 import Vue from 'vue'
 export default {
   name: 'c-cost-table',
-  props: [ 'provider' ],
   data () {
     return {
       fields: [
@@ -122,14 +122,9 @@ export default {
       packageTypes: packageTypes,
       shippingZones: shippingZones,
       // si el proveedor tiene costsTable, uso la primera posición
-      costsTableIndex: this.provider.costsTable.length > 0 ? 0 : -1,
-      items: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].costs : [],
-      costsFilter: {
-        shippingType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingType : 1,
-        serviceType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].serviceType : 1,
-        packageType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].packageType : 1,
-        shippingZone: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingZone : 1
-      },
+      costsTableIndex: -1,
+      items: [],
+      costsFilter: {},
       newRow: {
         weight: null,
         grossPrice: null,
@@ -143,6 +138,16 @@ export default {
       // para el botón guardar
       inEdit: false,
       oldRow: {}
+    }
+  },
+  created () {
+    this.costsTableIndex = this.provider.costsTable.length > 0 ? 0 : -1
+    this.items = this.provider.costsTable.length > 0 ? this.provider.costsTable[0].costs : []
+    this.costsFilter = {
+      shippingType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingType : 1,
+      serviceType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].serviceType : 1,
+      packageType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].packageType : 1,
+      shippingZone: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingZone : 1
     }
   },
   methods: {
@@ -256,6 +261,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['provider']),
     hasWeight: function () {
       return this.costsFilter.packageType !== 3
     },

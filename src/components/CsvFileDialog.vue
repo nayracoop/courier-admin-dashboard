@@ -26,7 +26,6 @@ export default {
     }
   },
   props: {
-    confirmationMethod: { type: String, default: 'confirm' },
     cancellationMethod: { type: String, default: 'cancel' },
     provider: null
   },

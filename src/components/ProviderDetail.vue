@@ -128,6 +128,7 @@
 </template>
 <script>
 import { taxTypes, idTypes } from '@/store/const'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'c-provider-detail',
@@ -140,8 +141,10 @@ export default {
     }
   },
   props: {
-    provider: { type: Object, required: true },
     isEdit: { required: true }
+  },
+  computed: {
+    ...mapGetters(['provider'])
   }
 }
 </script>
