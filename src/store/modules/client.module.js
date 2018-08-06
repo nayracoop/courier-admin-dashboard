@@ -24,7 +24,8 @@ const initialState = {
     phone: '',
     userCode: '',
     cbu: '',
-    hasPerception: ''
+    hasPerception: '',
+    addresses: []
   }
 }
 

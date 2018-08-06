@@ -8,7 +8,7 @@
                 <div slot="header">
                   <strong>{{ isEdit ? provider.name : 'Nuevo proveedor' }}</strong>
                 </div>
-                <c-provider-detail :provider="provider" :isEdit="isEdit"></c-provider-detail>
+                <c-provider-detail :isEdit="isEdit"></c-provider-detail>
               </b-tab>
               <b-tab title="Precios de venta" v-if="provider.isShipping">
                 <b-row class="actions-bar">
@@ -16,9 +16,8 @@
                     <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
                     <b-modal id="fileDialog" ref="fileDialogModal"
                       hide-footer centered title="Importar" >
-                      <c-csv-file-dialog confirmationMethod="confirmImport" cancellationMethod="cancelImport"
-                      :provider="provider"
-                      @confirmImport="confirmImport" @cancelImport="hideImportModal" />
+                      <c-csv-file-dialog cancellationMethod="cancelImport"
+                      :provider="provider" @cancelImport="hideImportModal" />
                     </b-modal>
                   </b-col>
                 </b-row>
@@ -26,7 +25,7 @@
               </b-tab>
           </b-tabs>
           <b-col class="actions-bar" sm="12">
-            <b-button variant="primary" :disabled="inProgress || !dirtyCheck" @click="saveProvider(provider.objectId, provider)">Guardar <i class="fa fa-floppy-o ml-1"></i></b-button>
+            <b-button variant="primary" :disabled="inProgress" @click="saveProvider(provider.objectId, provider)">Guardar <i class="fa fa-floppy-o ml-1"></i></b-button>
             <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(provider.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
             <b-button variant="outline-primary" @click="goNavigate('/proveedores')">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
           </b-col>
@@ -68,7 +67,7 @@ export default {
     // Reset state if user goes from /editor/:id to /editor
     // The component is not recreated so we use to hook to reset the state.
     await store.dispatch(PROVIDER_RESET_STATE)
-    return next()
+    next()
   },
   async beforeRouteEnter (to, from, next) {
     // SO: https://github.com/vuejs/vue-router/issues/1034
@@ -81,10 +80,12 @@ export default {
         to.params.previousProvider
       )
     }
-    return next()
+    next(vm => {
+      vm.cleanProvider = vm._.cloneDeep(vm.provider)
+    })
   },
   async beforeRouteLeave (to, from, next) {
-    if (!this.dirtyCheck || this.returnConfirmed) {
+    if (!this.dirtyCheck() || this.returnConfirmed) {
       await store.dispatch(PROVIDER_RESET_STATE)
       next()
     } else {
@@ -96,41 +97,42 @@ export default {
     return {
       inProgress: false,
       errors: {},
-      originalProvider: this.provider,
+      cleanProvider: this.provider,
       deleteId: -1,
       returnConfirmed: false,
       returnTo: null
     }
   },
   computed: {
-    ...mapGetters(['provider', 'cleanProvider']),
+    ...mapGetters(['provider']),
     isEdit () {
       return !!this.provider.objectId
-    },
-    dirtyCheck () {
-      return JSON.stringify(this.cleanProvider) !== JSON.stringify(this.provider)
     }
   },
   methods: {
     saveProvider (id, provider) {
-      var $this = this
+      let $this = this
+      if ($this.isEdit && !$this.dirtyCheck()) {
+        $this.$toasted.global.error_toast({ message: 'El registro no fue editado' })
+        return false
+      }
       $this.inProgress = true
       let action = $this.isEdit ? PROVIDER_EDIT : PROVIDER_SAVE
       $this.$store
         .dispatch(action)
         .then(myProvider => {
-          $this.inProgress = false
+          this.cleanProvider = this._.cloneDeep(this.provider)
           $this.$router.push({
             name: 'Editar Proveedor',
             params: {
               id: myProvider.id
             }
           })
-          store.dispatch(FETCH_PROVIDER, myProvider.id)
-          $this.$toasted.global.success_toast({ message: id ? 'Registro editado con éxito' : 'Registro creado con éxito' })
-        }, error => {
+          $this.$toasted.global.success_toast({ message: $this.isEdit ? 'Registro editado con éxito' : 'Registro creado con éxito' })
           $this.inProgress = false
+        }, error => {
           $this.$toasted.global.error_toast({ message: error })
+          $this.inProgress = false
         })
     },
     showDeleteModal (id) {
@@ -168,19 +170,19 @@ export default {
       this.returnConfirmed = true
       this.goNavigate()
     },
-    confirmImport (event) {
-      console.log(event)
-    },
     hideImportModal () {
       this.$refs.fileDialogModal.hide()
     },
     goNavigate (returnTo) {
       if (returnTo) this.returnTo = returnTo
-      if (!this.dirtyCheck || this.returnConfirmed) {
+      if (!this.dirtyCheck() || this.returnConfirmed) {
         this.$router.push(this.returnTo)
       } else {
-        this.showReturnModal()
+        this.showReturnModal(this.returnTo)
       }
+    },
+    dirtyCheck () {
+      return this.isEdit && JSON.stringify(this.cleanProvider) !== JSON.stringify(this.provider)
     }
   }
 }
