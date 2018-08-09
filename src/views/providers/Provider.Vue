@@ -96,7 +96,7 @@ export default {
   data () {
     return {
       inProgress: false,
-      errors: {},
+      // errors: {},
       cleanProvider: this.provider,
       deleteId: -1,
       returnConfirmed: false,
@@ -112,6 +112,7 @@ export default {
   methods: {
     saveProvider (id, provider) {
       let $this = this
+      $this.validateBeforeSubmit()
       if ($this.isEdit && !$this.dirtyCheck()) {
         $this.$toasted.global.error_toast({ message: 'El registro no fue editado' })
         return false
@@ -183,6 +184,16 @@ export default {
     },
     dirtyCheck () {
       return this.isEdit && JSON.stringify(this.cleanProvider) !== JSON.stringify(this.provider)
+    },
+    validateBeforeSubmit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          // eslint-disable-next-line
+          console.log(result)
+          return
+        }
+        console.log(result)
+      })
     }
   }
 }
