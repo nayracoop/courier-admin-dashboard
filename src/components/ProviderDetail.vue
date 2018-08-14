@@ -1,9 +1,9 @@
 <template>
-  <b-form v-on:submit.prevent>
+  <b-form v-on:submit.prevent data-vv-scope="form-1">
     <b-row class="actions-bar" v-if="isEdit">
       <b-col sm="12">
-        <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío <i class="fa fa-plane"></i></b-button>
-        <b-button variant="outline-primary" disabled>Imprimir lista de precios</b-button>
+        <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío <i class="fa fa-plane ml-1"></i></b-button>
+        <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
       </b-col>
     </b-row>
     <b-row>
@@ -16,23 +16,25 @@
       <b-col sm="6">
         <b-form-group>
           <label for="name">Nombre</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social de tu cliente"></i>
-          <b-form-input type="text" id="name" v-model="provider.name"></b-form-input>
+          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social del proveedor"></i>
+          <b-form-input v-validate="'required'" name="name" data-vv-as="nombre" type="text" id="name" v-model="provider.name"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('name')">{{ errors.first('name') }}</small></span>
         </b-form-group>
       </b-col>
       <b-col sm="6">
         <b-form-group>
           <label for="code">Código</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste al proveedor. Campo opcional"></i>
-          <b-form-input type="text" id="code" v-model="provider.userCode"></b-form-input>
-        </b-form-group>
+          <b-form-input v-validate="'numeric'" name="ucode" data-vv-as="código" type="text" id="code" v-model="provider.userCode"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('ucode')">{{ errors.first('ucode') }}</small></span>
+          </b-form-group>
       </b-col>
     </b-row>
     <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="idType">Tipo de identificación</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste a tu cliente. Campo opcional"></i>
+          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de identificación del proveedor"></i>
           <b-form-select id="idType" :plain="true" :options="idTypes" v-model="provider.taxCategory">
           </b-form-select>
         </b-form-group>
@@ -41,7 +43,8 @@
         <b-form-group>
           <label for="idNumber">N° de identificación</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número del DNI, CUIT, CUIL, etc"></i>
-          <b-form-input id="idNumber" type="text" pattern="[0-9]+" v-model="provider.taxId"></b-form-input>
+          <b-form-input v-validate="'numeric|min:8|max:15'" name="idNum" data-vv-as="número de identificación" id="idNumber" type="text" pattern="[0-9]+" v-model="provider.taxId"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('idNum')">{{ errors.first('idNum') }}</small></span>
         </b-form-group>
       </b-col>
     </b-row>
@@ -57,7 +60,8 @@
       <b-col sm="6">
         <b-form-group>
           <label for="email">Email</label>
-          <b-form-input id="email" type="email" autocomplete="email" v-model="provider.email"></b-form-input>
+          <b-form-input v-validate="{ email: true, regex: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ }" name="email" data-vv-as="email" id="email" type="email" autocomplete="email" v-model="provider.email"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('email')">{{ errors.first('email') }}</small></span>
         </b-form-group>
       </b-col>
     </b-row>
@@ -75,14 +79,16 @@
         <b-form-group>
           <label for="phone">Teléfono</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de teléfono del proveedor"></i>
-          <b-form-input type="tel" id="phone" pattern="[0-9]+" v-model="provider.phone"></b-form-input>
+          <b-form-input v-validate="'numeric|min:8'" name="phone" data-vv-as="teléfono" type="tel" id="phone" v-model="provider.phone"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('phone')">{{ errors.first('phone') }}</small></span>
         </b-form-group>
       </b-col>
       <b-col sm="6">
         <b-form-group>
           <label for="address">Domicilio</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Calle y número del proveedor"></i>
-          <b-form-input type="text" id="address" v-model="provider.address"></b-form-input>
+          <b-form-input v-validate="'alpha_num|alpha_spaces'" name="address" data-vv-as="domicilio" type="text" id="address" v-model="provider.address"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('address')">{{ errors.first('address') }}</small></span>
         </b-form-group>
       </b-col>
     </b-row>
@@ -90,7 +96,8 @@
       <b-col sm="6">
         <b-form-group>
           <label for="country">País</label>
-          <b-form-input type="text" id="country" v-model="provider.country"></b-form-input>
+          <b-form-input v-validate="'alpha_spaces'" name="country" data-vv-as="país" type="text" id="country" v-model="provider.country"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('country')">{{ errors.first('country') }}</small></span>
         </b-form-group>
       </b-col>
       <b-col sm="6">
@@ -104,7 +111,8 @@
       <b-col sm="6">
         <b-form-group>
           <label for="location">Localidad</label>
-          <b-form-input type="text" id="location" v-model="provider.location"></b-form-input>
+          <b-form-input v-validate="'alpha_num'" name="location" data-vv-as="localidad" type="text" id="location" v-model="provider.location"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('location')">{{ errors.first('location') }}</small></span>
         </b-form-group>
       </b-col>
       <!--b-col sm="6">

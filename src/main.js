@@ -18,12 +18,15 @@ import ErrorFilter from '@/common/filters/error'
 import Parse from 'parse'
 import VueLocalStorage from 'vue-localstorage'
 import ToastHelper from '@/common/helpers/toast'
-
+import es from 'vee-validate/dist/locale/es'
+import VeeValidate, { Validator } from 'vee-validate'
 import _ from 'lodash'
 
+Validator.localize('es', es)
 Vue.use(VueLocalStorage)
 Vue.use(BootstrapVue)
 Vue.set(Vue.prototype, '_', _)
+Vue.use(VeeValidate)
 
 ToastHelper.init()
 
