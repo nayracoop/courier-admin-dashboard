@@ -31,8 +31,7 @@ const initialState = {
 const state = Object.assign({
   providers: [],
   isLoading: true, // isLoading se usa en distintos lugares
-  providersCount: 0,
-  cleanProvider: {} }, initialState)
+  providersCount: 0 }, initialState)
 
 export const actions = {
   [PROVIDER_SAVE] ({ state }) {
@@ -84,7 +83,6 @@ export const mutations = {
   },
   [SET_PROVIDER] (state, provider) {
     state.provider = provider.toJSON()
-    state.cleanProvider = provider.toJSON()
   },
   [RESET_STATE] () {
     for (let f in state) {
@@ -99,9 +97,6 @@ const getters = {
   },
   provider (state) {
     return state.provider
-  },
-  cleanProvider (state) {
-    return state.cleanProvider
   },
   providersCount (state) {
     return state.providersCount

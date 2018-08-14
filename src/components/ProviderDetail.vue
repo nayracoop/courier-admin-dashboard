@@ -135,7 +135,6 @@ export default {
   data () {
     return {
       inProgress: false,
-      errors: {},
       taxTypes: taxTypes,
       idTypes: idTypes
     }

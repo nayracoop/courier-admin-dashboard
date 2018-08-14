@@ -2,26 +2,28 @@ import Parse from 'parse'
 
 export default {
   create (params) {
-    var Client = Parse.Object.extend('Client')
-    var client = new Client()
+    let Client = Parse.Object.extend('Client')
+    let client = new Client()
 
     return client.save(params)
   },
   getAll () {
-    var query = new Parse.Query('Client')
+    let query = new Parse.Query('Client')
     query.ascending('name')
+    query.doesNotExist('deletedAt')
 
     return query.find()
   },
   get (id) {
-    var query = new Parse.Query('Client')
+    let query = new Parse.Query('Client')
+    query.doesNotExist('deletedAt')
 
     return query.get(id)
   },
-  update (params, id) {
-    var query = new Parse.Query('Client')
+  update (id, params) {
+    let query = new Parse.Query('Client')
 
-    query.get(id, {
+    return query.get(id, {
       success: function (client) {
         return client.save(params)
       },
@@ -31,11 +33,14 @@ export default {
     })
   },
   delete (id) {
-    var query = new Parse.Query('Client')
+    let query = new Parse.Query('Client')
 
-    query.get(id, {
+    return query.get(id, {
       success: function (client) {
-        return client.destroy({})
+        let d = new Date()
+        let n = d.toISOString()
+        client.set('deletedAt', n)
+        return client.save()
       },
       error: function (client, error) {
         return error

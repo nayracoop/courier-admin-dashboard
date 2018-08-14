@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { LOGIN } from '@/store/types/actions'
 
 export default {
@@ -47,19 +46,15 @@ export default {
   },
   methods: {
     onSubmit (username, password) {
-      this.$store
+      let $this = this
+      $this.$store
         .dispatch(LOGIN, { username, password })
         .then(() => {
-          this.$router.push({ name: 'Home' })
+          $this.$router.push({ name: 'Home' })
         }, error => {
-          console.log(error)
+          $this.$toasted.global.error_toast({ message: error })
         })
     }
-  },
-  computed: {
-    ...mapState({
-      errors: state => state.auth.errors
-    })
   }
 }
 </script>

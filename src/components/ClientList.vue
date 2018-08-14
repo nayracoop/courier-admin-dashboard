@@ -48,7 +48,7 @@
     </nav>
     <c-confirmation-modal :promptMessage="'¿Desea eliminar definitivamente ' + (checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
       ref="deleteModal" title="Confirmación"
-      :confirmationMessage="'Sí, deseo eliminarlo' + (count > 1 ? 's' : '')"
+      :confirmationMessage="'Sí, deseo eliminarlo' + (checkedItems.length > 1 ? 's' : '')"
       cancellationMessage="No, volveré atrás"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
@@ -62,9 +62,7 @@ import CConfirmationModal from '@/components/ConfirmationModal'
 
 export default {
   name: 'c-client-list',
-  components: {
-    CConfirmationModal
-  },
+  components: { CConfirmationModal },
   props: { caption: { type: String, default: 'Clientes' } },
   data: () => {
     return {
@@ -125,25 +123,29 @@ export default {
       this.$refs.deleteModal.$refs.confirmationModal.hide()
     },
     confirmDelete () {
-      var promises = []
+      let promises = []
       if (this.deleteMultiple) {
-        for (var i = 0, len = this.checkedItems.length; i < len; i++) {
+        for (let i = 0, len = this.checkedItems.length; i < len; i++) {
           promises.push(
             this.$store.dispatch(CLIENT_DELETE, this.checkedItems[i].objectId)
           )
         }
         Promise.all(promises).then(() => {
+          this.$toasted.global.success_toast({ message: `${this.checkedItems.length} registros eliminados con éxito` })
           this.fetchClients()
           this.clearSelected()
+        }, error => {
+          this.$toasted.global.error_toast({ message: error })
         })
       } else {
         this.$store
           .dispatch(CLIENT_DELETE, this.deleteId)
           .then(res => {
+            this.$toasted.global.success_toast({ message: 'Registro eliminado con éxito' })
             this.fetchClients()
             this.clearSelected()
           }, error => {
-            console.log(error)
+            this.$toasted.global.error_toast({ message: error })
           })
       }
       this.$refs.deleteModal.$refs.confirmationModal.hide()
