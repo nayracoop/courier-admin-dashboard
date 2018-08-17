@@ -9,7 +9,8 @@ module.exports = {
       env: {
         COMMON_VARIABLE: 'true',
         PM2_SERVE_PATH: './dist',
-        PM2_SERVE_PORT: 8081
+        PM2_SERVE_PORT: 8081,
+        NODE_ENV: 'production'
       },
       env_production : {
         NODE_ENV: 'production'
