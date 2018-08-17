@@ -127,7 +127,7 @@
       <b-row v-show="saveAddress || !isShipping">
         <b-col sm="6">
           <b-form-group label="Dirección por defecto?">
-            <b-check id="defaultAddress" v-model="currentAddress.isDefault" @input="changeDefault">Sí</b-check>
+            <b-check id="defaultAddress" v-model="currentAddress.isDefault" @change="changeDefault">Sí</b-check>
           </b-form-group>
         </b-col>
         <b-col sm="6">
@@ -278,7 +278,7 @@ export default {
       this.setAddressList()
     },
     changeDefault (checked) {
-      if (this.client.addresses.length && checked && this.selAddressId !== -1) {
+      if (this.client.addresses.length && checked) {
         for (let i = 0; i < this.client.addresses.length; i++) {
           if (i !== this.selAddressId) {
             this.client.addresses[i].isDefault = false
