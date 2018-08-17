@@ -1,12 +1,12 @@
 <template>
   <b-form v-on:submit.prevent>
-    <b-row class="actions-bar">
+    <!-- <b-row class="actions-bar">
       <b-col sm="12">
         <b-button disabled variant="outline-primary">Imprimir <i class="fa fa-print"></i></b-button>
         <b-button disabled variant="outline-primary">Adjuntar <i class="fa fa-paperclip"></i></b-button>
         <b-button disabled variant="outline-primary">Ver historial <i class="fa fa-history"></i></b-button>
       </b-col>
-    </b-row>
+    </b-row> -->
     <b-row>
       <b-col sm="6">
         <b-form-group>
@@ -65,14 +65,19 @@
         </b-form-group>
       </b-col>
       <b-col sm="6">
+        <b-form-group label="Recibe notificaciones?">
+          <b-form-checkbox id="notifications" v-model="client.notifications">Sí</b-form-checkbox>
+        </b-form-group>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col sm="6">
         <b-form-group>
           <label for="phone">Teléfono</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de teléfono del cliente"></i>
           <b-form-input type="tel" id="phone" pattern="[0-9]+" v-model="client.phone"></b-form-input>
         </b-form-group>
       </b-col>
-    </b-row>
-    <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="address">Domicilio</label>
@@ -80,34 +85,29 @@
           <b-form-input type="text" id="address" v-model="client.address"></b-form-input>
         </b-form-group>
       </b-col>
+    </b-row>
+    <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="country">País</label>
           <b-form-input type="text" id="country" v-model="client.country"></b-form-input>
         </b-form-group>
       </b-col>
-    </b-row>
-    <b-row>
       <b-col sm="6">
-        <b-form-group label="Provincia" label-for="state" :label-cols="3" :horizontal="false">
-          <b-form-select id="state" :plain="true" :options="['province']" v-model="client.province" />
+        <b-form-group>
+          <label for="province">Province</label>
+          <b-form-input v-validate="'alpha_spaces'" name="province" data-vv-as="país" type="text" id="province" v-model="client.province"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('province')">{{ errors.first('province') }}</small></span>
         </b-form-group>
       </b-col>
+    </b-row>
+    <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="region" v-b-tooltip.hover title="">Localidad</label>
           <b-form-input type="text" id="region" v-model="client.location"></b-form-input>
         </b-form-group>
       </b-col>
-    </b-row>
-    <b-row>
-    <!--b-col sm="6">
-        <b-form-group label="Es proveedor?">
-        <b-form-checkbox id="isProvider"
-                value="ok">Sí
-        </b-form-checkbox>
-        </b-form-group>
-    </b-col-->
       <b-col sm="6">
         <b-form-group label="Recibe percepciones?">
           <b-form-checkbox id="perception" v-model="client.hasPerception">Sí</b-form-checkbox>

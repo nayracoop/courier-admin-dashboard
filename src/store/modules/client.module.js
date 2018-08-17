@@ -13,6 +13,7 @@ const initialState = {
     saleAccount: '',
     address: '',
     email: '',
+    notifications: false,
     taxType: '',
     name: '',
     observation: '',
@@ -24,7 +25,7 @@ const initialState = {
     phone: '',
     userCode: '',
     cbu: '',
-    hasPerception: '',
+    hasPerception: false,
     addresses: []
   }
 }

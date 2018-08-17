@@ -3,7 +3,6 @@
     <b-row class="actions-bar" v-if="isEdit">
       <b-col sm="12">
         <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío <i class="fa fa-plane ml-1"></i></b-button>
-        <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
       </b-col>
     </b-row>
     <b-row>
@@ -101,9 +100,10 @@
         </b-form-group>
       </b-col>
       <b-col sm="6">
-        <b-form-group label="Provincia" label-for="state" :label-cols="3" :horizontal="false">
-          <b-form-select id="state" :plain="true" :options="['province']" v-model="provider.province">
-          </b-form-select>
+        <b-form-group>
+          <label for="province">Province</label>
+          <b-form-input v-validate="'alpha_spaces'" name="province" data-vv-as="país" type="text" id="province" v-model="provider.province"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('province')">{{ errors.first('province') }}</small></span>
         </b-form-group>
       </b-col>
     </b-row>
