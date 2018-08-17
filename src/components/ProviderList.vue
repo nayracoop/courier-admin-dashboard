@@ -33,7 +33,7 @@
         <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
           <i class="fa fa-pencil"></i>
         </b-button>
-        <b-button v-b-tooltip.hover title="Nuevo envío" :small="true" :to="{ name: 'Nuevo Envío' }">
+        <b-button v-b-tooltip.hover title="Nuevo envío" :small="true" :to="{ name: 'Nuevo Envío' }" :disabled="!data.item.isShipping">
           <i class="fa fa-plane"></i>
         </b-button>
         <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">

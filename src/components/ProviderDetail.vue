@@ -1,6 +1,6 @@
 <template>
   <b-form v-on:submit.prevent data-vv-scope="form-1">
-    <b-row class="actions-bar" v-if="isEdit">
+    <b-row class="actions-bar" v-if="isEdit && provider.isShipping">
       <b-col sm="12">
         <b-button variant="outline-primary" :to="{ name: 'Nuevo Envío', params: { provider: provider } }">Confeccionar envío <i class="fa fa-plane ml-1"></i></b-button>
       </b-col>
