@@ -46,9 +46,9 @@
       <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
         hide-goto-end-buttons @click.native="clearSelected" />
     </nav>
-    <c-confirmation-modal :promptMessage="'¿Desea eliminar definitivamente ' + (checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
+    <c-confirmation-modal :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
       ref="deleteModal" title="Confirmación"
-      :confirmationMessage="'Sí, deseo eliminarlo' + (checkedItems.length > 1 ? 's' : '')"
+      :confirmationMessage="'Sí, deseo eliminarlo' + (deleteMultiple && checkedItems.length > 1 ? 's' : '')"
       cancellationMessage="No, volveré atrás"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
@@ -108,6 +108,7 @@ export default {
     },
     showDeleteModal (id) {
       if (id) {
+        this.clearSelected()
         this.deleteId = id
         this.deleteMultiple = false
         this.$refs.deleteModal.$refs.confirmationModal.show()
