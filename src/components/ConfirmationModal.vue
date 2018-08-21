@@ -1,11 +1,11 @@
 <template>
   <b-modal id="modal-confirm" ref="confirmationModal" hide-footer centered :title="title">
-    <p class="my-2 mb-4 text-center">{{ promptMessage }}</p>
+    <p class="mt-3 mb-4 text-center">{{ promptMessage }}</p>
     <!-- ¿Desea eliminar definitivamente {{ count > 1 ? `los ${count} registros seleccionados` : 'el registro seleccionado' }}? -->
     <b-row>
       <b-col sm="12 text-center" slot="modal-footer">
-        <b-button variant="primary" @click="onConfirm">{{ confirmationMessage }}</b-button>
-        <b-button variant="danger" @click="onCancel">{{ cancellationMessage }}</b-button>
+        <b-button class="mb-2" variant="secondary" @click="onCancel">{{ cancellationMessage }}</b-button>
+        <b-button class="mb-2" variant="danger" @click="onConfirm">{{ confirmationMessage }}</b-button>
         <!-- Sí, deseo eliminarlo{{ count > 1 ? 's' : '' }} -->
       </b-col>
     </b-row>

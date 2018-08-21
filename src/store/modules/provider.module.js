@@ -11,7 +11,7 @@ const initialState = {
     name: '',
     businessName: '',
     taxId: '',
-    taxCategory: -1,
+    taxCategory: null,
     taxType: -1, // capaz condition?
     address: '',
     country: '',

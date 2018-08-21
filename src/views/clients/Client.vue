@@ -6,7 +6,7 @@
           <div slot="header">
             <strong>{{ isEdit ? client.name : 'Nuevo cliente' }}</strong>
           </div>
-          <c-client-detail :isEdit="isEdit"></c-client-detail>
+          <c-client-detail ref="clientDetail" :isEdit="isEdit"></c-client-detail>
           <c-address :newEntry="!isEdit" />
         </b-card>
       </b-col>
@@ -114,7 +114,13 @@ export default {
   },
   methods: {
     saveClient (client) {
-      this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
+      this.$refs.clientDetail.validateBeforeSubmit().then(res => {
+        if (!res) {
+          this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Corríjalos y vuelva a guardar' })
+          return false
+        }
+        this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
+      })
     },
     deleteClient () {
       this.deleteEl(CLIENT_DELETE, '/clientes')

@@ -8,7 +8,7 @@
               <div slot="header">
                 <strong>{{ isEdit ? provider.name : 'Nuevo proveedor' }}</strong>
               </div>
-              <c-provider-detail :isEdit="isEdit"></c-provider-detail>
+              <c-provider-detail ref="providerDetail" :isEdit="isEdit"></c-provider-detail>
             </b-tab>
             <b-tab title="Precios de venta" v-if="provider.isShipping">
               <b-row class="actions-bar">
@@ -132,7 +132,13 @@ export default {
   },
   methods: {
     saveProvider (provider) {
-      this.save(provider, this.isEdit ? PROVIDER_EDIT : PROVIDER_SAVE, 'Editar Proveedor')
+      this.$refs.providerDetail.validateBeforeSubmit().then(res => {
+        if (!res) {
+          this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Corríjalos y vuelva a guardar' })
+          return false
+        }
+        this.save(provider, this.isEdit ? PROVIDER_EDIT : PROVIDER_SAVE, 'Editar Proveedor')
+      })
     },
     deleteProvider () {
       this.deleteEl(PROVIDER_DELETE, '/proveedores')
