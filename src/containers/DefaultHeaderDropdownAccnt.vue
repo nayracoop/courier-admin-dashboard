@@ -35,22 +35,30 @@
       </b-dropdown-item>
       <b-dropdown-divider />
       <b-dropdown-item><i class="fa fa-shield" /> Lock Account</b-dropdown-item-->
-      <b-dropdown-item><i class="fa fa-sign-out" /> Cerrar sesión</b-dropdown-item>
+      <b-dropdown-item @click="logout"><i class="fa fa-sign-out" /> Cerrar sesión</b-dropdown-item>
     </template>
   </AppHeaderDropdown>
 </template>
 
 <script>
 import { HeaderDropdown as AppHeaderDropdown } from '@coreui/vue'
+import { LOGOUT } from '@/store/types/actions'
 export default {
   name: 'DefaultHeaderDropdownAccnt',
   components: {
     AppHeaderDropdown
-  }/*
-  ,
-  data: () => {
-    return { itemsCount: 42 }
+  },
+  methods: {
+    logout () {
+      let $this = this
+      $this.$store
+        .dispatch(LOGOUT)
+        .then(val => {
+          $this.$router.push({ name: 'Login' })
+        }, error => {
+          $this.$toasted.global.error_toast({ message: error })
+        })
+    }
   }
-  */
 }
 </script>

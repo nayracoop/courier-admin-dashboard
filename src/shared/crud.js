@@ -16,6 +16,7 @@ export default {
           name: redirectTo,
           params: { id: savedObject.id }
         })
+        $this.$eventHub.$emit('saveSuccess', savedObject)
         $this.$toasted.global.success_toast({ message: $this.isEdit ? 'Registro editado con éxito' : 'Registro creado con éxito' })
         $this.inProgress = false
       }, error => {

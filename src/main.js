@@ -25,8 +25,12 @@ import _ from 'lodash'
 Validator.localize('es', es)
 Vue.use(VueLocalStorage)
 Vue.use(BootstrapVue)
+Vue.use(VeeValidate, { fieldsBagName: 'veeFields' })
+
 Vue.set(Vue.prototype, '_', _)
-Vue.use(VeeValidate)
+// esto es una superposición con Vuex
+// ¿algún alma caritativa lo corregirá en el futuro?
+Vue.set(Vue.prototype, '$eventHub', new Vue())
 
 ToastHelper.init()
 

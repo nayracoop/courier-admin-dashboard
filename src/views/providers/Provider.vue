@@ -14,6 +14,7 @@
               <b-row class="actions-bar">
                 <b-col sm="6">
                   <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                  <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
                   <b-modal id="fileDialog" ref="fileDialogModal"
                     hide-footer centered title="Importar" >
                     <c-csv-file-dialog cancellationMethod="cancelImport"
@@ -41,7 +42,7 @@
       ref="returnModal" title="Confirmación"
       confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="No, volveré a editar"
       confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
-      @confirmReturn="confirmReturn(this.returnTo, this.provider)" @cancelReturn="hideReturnModal()" />
+      @confirmReturn="confirmReturn(returnTo, provider)" @cancelReturn="hideReturnModal()" />
     <!-- <pre>{{ JSON.stringify(this.provider, null, 2) }}</pre>
     <pre>{{ JSON.stringify(this.cleanObject, null, 2) }}</pre> -->
   </div>

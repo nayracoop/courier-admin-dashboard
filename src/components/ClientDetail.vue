@@ -1,12 +1,12 @@
 <template>
   <b-form v-on:submit.prevent>
-    <b-row class="actions-bar">
+    <!-- <b-row class="actions-bar">
       <b-col sm="12">
         <b-button disabled variant="outline-primary">Imprimir <i class="fa fa-print"></i></b-button>
         <b-button disabled variant="outline-primary">Adjuntar <i class="fa fa-paperclip"></i></b-button>
         <b-button disabled variant="outline-primary">Ver historial <i class="fa fa-history"></i></b-button>
       </b-col>
-    </b-row>
+    </b-row> -->
     <b-row>
       <b-col sm="6">
         <b-form-group>
@@ -75,6 +75,13 @@
         </b-form-group>
       </b-col>
       <b-col sm="6">
+        <b-form-group label="Recibe notificaciones?">
+          <b-form-checkbox id="notifications" v-model="client.notifications">Sí</b-form-checkbox>
+        </b-form-group>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col sm="6">
         <b-form-group>
           <label for="phone">Teléfono</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de teléfono del cliente. Este campo debe tener al menos 8 dígitos y no puede contener espacios ni letras"></i>
@@ -83,8 +90,6 @@
           <span><small class="inv-feedback" v-show="errors.has('phone')">{{ errors.first('phone') }}</small></span>
         </b-form-group>
       </b-col>
-    </b-row>
-    <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="address">Domicilio</label>
@@ -93,6 +98,8 @@
           <span><small class="inv-feedback" v-show="errors.has('address')">{{ errors.first('address') }}</small></span>
         </b-form-group>
       </b-col>
+    </b-row>
+    <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="country">País</label>
@@ -102,13 +109,15 @@
           <span><small class="inv-feedback" v-show="errors.has('country')">{{ errors.first('country') }}</small></span>
         </b-form-group>
       </b-col>
-    </b-row>
-    <b-row>
       <b-col sm="6">
-        <b-form-group label="Provincia" label-for="state" :label-cols="3" :horizontal="false">
-          <b-form-select id="state" :plain="true" :options="['province']" v-model="client.province" />
+        <b-form-group>
+          <label for="province">Province</label>
+          <b-form-input v-validate="'alpha_spaces'" name="province" data-vv-as="país" type="text" id="province" v-model="client.province"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('province')">{{ errors.first('province') }}</small></span>
         </b-form-group>
       </b-col>
+    </b-row>
+    <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="location">Localidad</label>
@@ -117,8 +126,6 @@
           <span><small class="inv-feedback" v-show="errors.has('location')">{{ errors.first('location') }}</small></span>
         </b-form-group>
       </b-col>
-    </b-row>
-    <b-row>
       <b-col sm="6">
         <b-form-group label="Recibe percepciones?">
           <b-form-checkbox id="perception" v-model="client.hasPerception">Sí</b-form-checkbox>

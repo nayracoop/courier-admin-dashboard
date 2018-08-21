@@ -13,6 +13,9 @@ main {
 .fade-leave-to {
   opacity: 0;
 }
+::placeholder {
+  color: #ddd !important;
+}
 .actions-bar {
   margin-top: 0px;
   margin-bottom: 15px;

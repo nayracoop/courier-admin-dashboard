@@ -3,35 +3,36 @@ import { ProvidersService } from '@/api'
 import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, PROVIDER_RESET_STATE, FETCH_PROVIDER, FETCH_PROVIDERS } from '@/store/types/actions'
 import { RESET_STATE, SET_PROVIDER, FETCH_START, FETCH_PROVIDERS_END } from '@/store/types/mutations'
 
-const initialState = {
-  provider: {
-    // id: '',
-    externalId: '',
-    userCode: '',
-    name: '',
-    businessName: '',
-    taxId: '',
-    taxCategory: null,
-    taxType: -1, // capaz condition?
-    address: '',
-    country: '',
-    province: '',
-    location: '',
-    postalCode: '',
-    email: '',
-    phone: '',
-    observation: '',
-    purchaseAccount: '',
-    saleAccount: '',
-    isShipping: null,
-    costsTable: []
+const getInitialState = () => {
+  return {
+    provider: {
+      externalId: '',
+      userCode: '',
+      name: '',
+      businessName: '',
+      taxId: '',
+      taxCategory: -1,
+      taxType: -1, // capaz condition?
+      address: '',
+      country: '',
+      province: '',
+      location: '',
+      postalCode: '',
+      email: '',
+      phone: '',
+      observation: '',
+      purchaseAccount: '',
+      saleAccount: '',
+      isShipping: null,
+      costsTable: []
+    },
+    providers: [],
+    isLoading: false,
+    providersCount: 0
   }
 }
 
-const state = Object.assign({
-  providers: [],
-  isLoading: true, // isLoading se usa en distintos lugares
-  providersCount: 0 }, initialState)
+const state = getInitialState()
 
 export const actions = {
   [PROVIDER_SAVE] ({ state }) {
@@ -85,6 +86,7 @@ export const mutations = {
     state.provider = provider.toJSON()
   },
   [RESET_STATE] () {
+    const initialState = getInitialState()
     for (let f in state) {
       Vue.set(state, f, initialState[f])
     }

@@ -5,13 +5,13 @@
         <b-form-group>
           <label for="myAddresses">Direcciones guardadas</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
-          <b-form-select id="myAddresses" :plain="true" :options="addressList" v-model="selAddressId" @input="changeAddress()" />
+          <b-form-select id="myAddresses" :plain="true" :options="addressList" v-model="selAddressId" @input="changeAddress" />
         </b-form-group>
         <b-form-group v-show="!isNew">
           <b-list-group class="info-address">
             <b-list-group-item>{{ `${currentAddress.name}, ${currentAddress.contactName}` }}</b-list-group-item>
-            <b-list-group-item>{{ `${currentAddress.address1}, ${currentAddress.address2}, CP: ${currentAddress.postalCode}, ${currentAddress.city}, ${currentAddress.province}` }}</b-list-group-item>
-            <b-list-group-item>{{ currentAddress.countryIso }}</b-list-group-item>
+            <b-list-group-item>{{ `${currentAddress.address1}, ${currentAddress.address2}, CP: ${currentAddress.postalCode}, ${currentAddress.city}, ${currentAddress.state}` }}</b-list-group-item>
+            <b-list-group-item>{{ this.selectedCountry && this.selectedCountry.alpha2Code }}</b-list-group-item>
             <b-list-group-item>{{ `${currentAddress.email}, ${currentAddress.phone}` }}</b-list-group-item>
           </b-list-group>
           <b-link @click.prevent="edit=true">Editar dirección <i class="fa fa-pencil"></i></b-link>
@@ -24,7 +24,7 @@
           <b-form-group>
             <label for="countryIso">Sigla del país</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="ISO 3 del país"></i>
-            <b-form-select id="countryIso" :plain="true" :options="countryIsoList" v-model="currentAddress.countryIso" />
+            <b-form-select id="countryIso" :plain="true" :options="countryIsoList" v-model="currentAddress.country" />
           </b-form-group>
         </b-col>
         <b-col sm="9">
@@ -81,26 +81,27 @@
           <b-form-group>
             <label for="province">Provincia</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
-            <b-form-input type="text" id="province" placeholder="Ej: Buenos Aires" v-model="currentAddress.state" />
+            <b-form-input type="text" id="province" v-model="currentAddress.state" placeholder="Ej: Buenos Aires" />
+            <!-- -->
           </b-form-group>
         </b-col>
       </b-row>
       <b-row>
         <b-col sm="6">
         <b-form-group>
-          <label for="location">Localidad</label>
-          <b-form-input v-validate="{ regex: /[^\s*]$/ }" name="location" data-vv-as="localidad" type="text" id="location" v-model="currentAddress.city" placeholder="Ej: San Justo"></b-form-input>
+          <label for="city">Localidad</label>
+          <b-form-input v-validate="{ regex: /[^\s*]$/ }" name="city" data-vv-as="localidad" type="text" id="city" v-model="currentAddress.city" placeholder="Ej: San Justo"></b-form-input>
           <!-- No puede tener espacios en blanco intermedios ni puede ser únicamente un espacio en blanco  -->
-          <span><small class="inv-feedback" v-show="errors.has('location')">{{ errors.first('location') }}</small></span>
+          <span><small class="inv-feedback" v-show="errors.has('city')">{{ errors.first('city') }}</small></span>
         </b-form-group>
         </b-col>
         <b-col sm="6">
           <b-form-group>
             <label for="region">Código postal</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
-            <b-form-input v-validate="'numeric'" name="region" type="text" id="region" placeholder="Ej: 1182" v-model="currentAddress.postalCode" />
+            <b-form-input v-validate="'alpha_num'" name="postalCode" type="text" id="postalCode" placeholder="Ej: 1182" v-model="currentAddress.postalCode" />
           <!-- Debe contener caracteres numéricos -->
-          <span><small class="inv-feedback" v-show="errors.has('region')">{{ errors.first('region') }}</small></span>
+          <span><small class="inv-feedback" v-show="errors.has('postalCode')">{{ errors.first('postalCode') }}</small></span>
           </b-form-group>
         </b-col>
       </b-row>
@@ -130,29 +131,30 @@
         </b-form-group>
         </b-col>
       </b-row>
-      <b-row>
+      <b-row v-show="isShipping">
         <b-col sm="6">
           <b-form-group label="Guardar dirección?">
             <b-check id="saveAddress" v-model="saveAddress">Sí</b-check>
           </b-form-group>
         </b-col>
       </b-row>
-      <b-row v-show="saveAddress">
+      <b-row v-show="saveAddress || !isShipping">
         <b-col sm="6">
           <b-form-group label="Dirección por defecto?">
-            <b-check id="defaultAddress" v-model="currentAddress.isDefault">Sí</b-check>
+            <b-check id="defaultAddress" v-model="currentAddress.isDefault" @change="changeDefault">Sí</b-check>
           </b-form-group>
         </b-col>
         <b-col sm="6">
           <b-form-group>
             <label for="alias">Alias</label>
-            <b-form-input id="alias" type="text" placeholder="Ej: Dirección de casa" v-model="currentAddress.alias" />
+            <b-form-input id="alias" type="text" v-model="currentAddress.alias" placeholder="Ej: Depósito" />
+            <!-- -->
           </b-form-group>
         </b-col>
       </b-row>
     </b-form-group>
-    <pre>{{ JSON.stringify(currentAddress, null, 4) }}</pre>
-    <pre>{{ JSON.stringify(this.client.addresses, null, 4) }}</pre>
+    <!-- <pre>{{ JSON.stringify(currentAddress, null, 4) }}</pre>
+    <pre>{{ JSON.stringify(client.addresses, null, 4) }}</pre> -->
   </b-form>
 </template>
 
@@ -163,7 +165,7 @@ import { countries } from '@/store/const'
 export default {
   name: 'c-address',
   props: {
-    newEntry: {
+    isShipping: {
       type: Boolean,
       default: false
     }
@@ -177,7 +179,6 @@ export default {
       countryList: [],
       edit: false,
       currentAddress: {
-        countryIso: '',
         country: '',
         name: '',
         contactName: '',
@@ -197,32 +198,26 @@ export default {
   },
   created () {
     // cargo la lista de direcciones
-    let addressList = [{ value: -1, text: 'Nueva dirección' }]
-    if (this.client.addresses.length) {
-      this.client.addresses.map((el, index) => {
-        addressList.push({ value: index, text: el.alias || el.name })
-
-        if (el.default) {
-          this.selAddressId = index
-          this.currentAddress = this.client.addresses[index]
-        }
-      })
-    } else {
-      // la lista está vacía
-      this.client.addresses[0] = this.currentAddress
-    }
-    this.addressList = addressList
-
+    this.$eventHub.$on('saveSuccess', this.saveSuccess)
+    this.setAddressList()
     // cargo las listas de país ISO y nombre
     countries.map(el => {
-      this.countryIsoList.push({ value: el.alpha2Code, text: el.alpha2Code })
+      this.countryIsoList.push({ value: el.numericCode, text: el.alpha2Code })
       this.countryList.push({ value: el.numericCode, text: el.translations.es || el.name })
     })
+  },
+  beforeDestroy: function () {
+    this.$eventHub.$off('saveSuccess', this.saveSuccess)
   },
   computed: {
     ...mapGetters(['client']),
     isNew: function () {
       return this.selAddressId === -1
+    },
+    selectedCountry: function () {
+      return countries.find(el => {
+        return el.numericCode === this.currentAddress.country
+      })
     }
   },
   methods: {
@@ -230,8 +225,13 @@ export default {
       this.edit = false
       if (this.selAddressId === -1) {
         let newIndex = this.client.addresses.length
+        // valido que la posición anterior no esté vacía
+        let hasName = this.client.addresses[newIndex - 1].name !== ''
+        let hasAlias = this.client.addresses[newIndex - 1].alias !== ''
+        if (!hasName && !hasAlias) {
+          --newIndex
+        }
         this.currentAddress = {
-          countryIso: '',
           country: '',
           name: '',
           contactName: '',
@@ -251,6 +251,53 @@ export default {
         this.client.addresses[newIndex] = this.currentAddress
       } else {
         this.currentAddress = this.client.addresses[this.selAddressId]
+      }
+    },
+    setAddressList: function () {
+      let addressList = [{ value: -1, text: 'Nueva dirección' }]
+      if (this.client.addresses.length) {
+        // si está recargando la página no quiero volver a meter un registro
+        // evaluo la primer posición a ver si está vacía
+        let text = ''
+        let hasName = this.client.addresses[0].name !== ''
+        let hasAlias = this.client.addresses[0].alias !== ''
+
+        if (hasName || hasAlias) {
+          this.client.addresses.map((el, index) => {
+            if (el.alias === undefined || el.alias === '' || el.alias === null) {
+              text = el.name
+            } else {
+              text = el.alias
+            }
+
+            if (el.isDefault) {
+              this.selAddressId = index
+              this.currentAddress = this.client.addresses[index]
+            }
+            if (el.alias !== '' || el.name !== '') {
+              addressList.push({ value: index, text: text })
+            }
+          })
+        } else {
+          // la lista está vacía
+          this.client.addresses[0] = this.currentAddress
+        }
+      } else {
+        // la lista está vacía
+        this.client.addresses[0] = this.currentAddress
+      }
+      this.addressList = addressList
+    },
+    saveSuccess (savedObject) {
+      this.setAddressList()
+    },
+    changeDefault (checked) {
+      if (this.client.addresses.length && checked) {
+        for (let i = 0; i < this.client.addresses.length; i++) {
+          if (i !== this.selAddressId) {
+            this.client.addresses[i].isDefault = false
+          }
+        }
       }
     }
   }

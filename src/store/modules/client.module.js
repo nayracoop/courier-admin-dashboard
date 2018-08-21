@@ -3,36 +3,38 @@ import { ClientsService } from '@/api'
 import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, CLIENT_RESET_STATE, FETCH_CLIENT, FETCH_CLIENTS } from '@/store/types/actions'
 import { RESET_STATE, SET_CLIENT, FETCH_START, FETCH_CLIENTS_END } from '@/store/types/mutations'
 
-const initialState = {
-  client: {
-    // id: -1,
-    vatId: '',
-    taxCategory: '',
-    postalCode: '',
-    purchaseAccount: '',
-    saleAccount: '',
-    address: '',
-    email: '',
-    taxType: '',
-    name: '',
-    observation: '',
-    country: '',
-    externalId: '',
-    province: '',
-    location: '',
-    businessName: '',
-    phone: '',
-    userCode: '',
-    cbu: '',
-    hasPerception: '',
-    addresses: []
+const getInitialState = () => {
+  return {
+    client: {
+      vatId: '',
+      taxCategory: -1,
+      postalCode: '',
+      purchaseAccount: '',
+      saleAccount: '',
+      address: '',
+      email: '',
+      notifications: false,
+      taxType: -1,
+      name: '',
+      observation: '',
+      country: '',
+      externalId: '',
+      province: '',
+      location: '',
+      businessName: '',
+      phone: '',
+      userCode: '',
+      cbu: '',
+      hasPerception: false,
+      addresses: []
+    },
+    clients: [],
+    isLoading: false, // isLoading se usa en distintos lugares
+    clientsCount: 0
   }
 }
 
-const state = Object.assign({
-  clients: [],
-  isLoading: true, // isLoading se usa en distintos lugares
-  clientsCount: 0 }, initialState)
+const state = getInitialState()
 
 export const actions = {
   [CLIENT_SAVE] ({ state }) {
@@ -86,6 +88,7 @@ export const mutations = {
     state.client = client.toJSON()
   },
   [RESET_STATE] () {
+    const initialState = getInitialState()
     for (let f in state) {
       Vue.set(state, f, initialState[f])
     }

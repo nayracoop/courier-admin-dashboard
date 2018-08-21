@@ -7,10 +7,21 @@
             <strong>{{ isEdit ? client.name : 'Nuevo cliente' }}</strong>
           </div>
           <c-client-detail ref="clientDetail" :isEdit="isEdit"></c-client-detail>
-          <c-address :newEntry="!isEdit" />
         </b-card>
       </b-col>
     </b-row>
+    <div role="tablist" class="mb-3">
+      <b-card no-body class="mb-1">
+        <b-card-header header-tag="header" class="p-1" role="tab">
+          <b-btn block href="#" v-b-toggle.accordion1>Direcciones</b-btn>
+        </b-card-header>
+        <b-collapse id="accordion1" accordion="my-accordion" role="tabpanel">
+          <b-card-body>
+            <c-address />
+          </b-card-body>
+        </b-collapse>
+      </b-card>
+    </div>
     <b-row class="actions-bar">
       <b-col sm="12">
         <b-button variant="primary" :disabled="inProgress" @click="saveClient(client)">Guardar <i class="fa fa-save ml-1"></i></b-button>
@@ -18,6 +29,8 @@
         <b-button variant="outline-primary" @click="goNavigate('/clientes', client)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
       </b-col>
     </b-row>
+    <!-- <pre>{{ JSON.stringify(cleanObject, null, 4) }}</pre>
+    <pre>{{ JSON.stringify(client, null, 4) }}</pre> -->
     <c-confirmation-modal promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
       ref="deleteModal" title="Confirmación"
       confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="No, volveré atrás"
@@ -27,7 +40,7 @@
       ref="returnModal" title="Confirmación"
       confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="No, volveré a editar"
       confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
-      @confirmReturn="confirmReturn(this.returnTo, this.client)" @cancelReturn="hideReturnModal()" />
+      @confirmReturn="confirmReturn(returnTo, client)" @cancelReturn="hideReturnModal()" />
   </div>
 </template>
 
@@ -53,7 +66,7 @@ export default {
       required: false
     }
   },
-  mounted () {
+  created () {
     this.cleanObject = this._.cloneDeep(this.client)
     this.showDeleteModal = modals.showDeleteModal.bind(this)
     this.hideDeleteModal = modals.hideDeleteModal.bind(this)

@@ -1,5 +1,5 @@
 import { UsersService } from '@/api'
-import { LOGIN, CHECK_AUTH } from '@/store/types/actions'
+import { LOGIN, LOGOUT, CHECK_AUTH } from '@/store/types/actions'
 import { SET_ERROR } from '@/store/types/mutations'
 import Parse from 'parse'
 
@@ -24,6 +24,12 @@ const actions = {
         return data
       })
   },
+  [LOGOUT] () {
+    return UsersService.logout()
+      .then(data => {
+        return data
+      })
+  },
   [CHECK_AUTH] (context) {
     let currentUser = Parse.User.current() // <- Object
     let currentSession = Parse.Session.current() // <- Promise
@@ -34,21 +40,6 @@ const actions = {
       }, error => {
         throw new Error(error)
       })
-
-    // if (currentUser.authenticated()) {
-    //   return false
-    // } else {
-    //   return false
-    // }
-    // console.log('current')
-    // console.log()
-    // console.log('currentUser')
-    // console.log(currentUser)
-    // console.log('session token')
-    // console.log(currentUser.getSessionToken())
-    // console.log('is valid')
-    // console.log(currentUser.isValid())
-    // return Parse.User.current().authenticated()
   }
 }
 
