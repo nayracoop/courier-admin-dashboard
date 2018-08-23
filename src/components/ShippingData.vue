@@ -10,16 +10,14 @@
               <b-form-group>
                 <label for="clientName">Cliente</label>
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social del cliente"></i>
-                <b-form-select id="clientName" :plain="true" :options="['Sivori','AT Capital']" value="1">
-                </b-form-select>
+                <b-form-select id="clientName" :plain="true" :options="clientList" v-model="shipping.client" @input="fetchClient" />
               </b-form-group>
             </b-col>
             <b-col sm="6">
               <b-form-group>
                 <label for="providerName">Proveedor</label>
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social del proveedor"></i>
-                <b-form-select id="providerName" :plain="true" :options="['Sivori','AT Capital']" value="Nombre Proveedor">
-                </b-form-select>
+                <b-form-select id="providerName" :plain="true" :options="providerList" v-model="shipping.provider" @input="fetchProvider" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -28,16 +26,14 @@
               <b-form-group>
                 <label for="shippingType">Tipo de envío</label>
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Elegir tipo de envío"></i>
-                <b-form-select id="shippubgType" :plain="true" :options="shippingTypes" value="1">
-                </b-form-select>
+                <b-form-select id="shippingType" :plain="true" :options="shippingTypes" v-model="shipping.shippingType" />
               </b-form-group>
             </b-col>
             <b-col sm="6">
               <b-form-group>
                 <label for="serviceType">Servicio</label>
                 <i class="fa fa-question-circle fa-sm"></i>
-                <b-form-select id="serviceType" :plain="true" :options="serviceTypes" value="Tipo de servicio">
-                </b-form-select>
+                <b-form-select id="serviceType" :plain="true" :options="serviceTypes" value="Tipo de servicio" v-model="shipping.serviceType" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -48,7 +44,7 @@
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
                 <div class="input-group datepicker-group">
               <flat-pickr
-                v-model="adate"
+                v-model="shipping.initialDate"
                 id="actualDate"
                 class="form-control"
                 :config="config"
@@ -64,7 +60,7 @@
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
                 <div class="input-group datepicker-group">
               <flat-pickr
-                v-model="cdate"
+                v-model="shipping.closeDate"
                 id="closeDate"
                 class="form-control"
                 :config="config"
@@ -80,9 +76,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import { shippingTypes, serviceTypes } from '@/store/const'
+// import { FETCH_CLIENT } from '@/store/types/actions'
+import { FETCH_CLIENT, FETCH_PROVIDER } from '@/store/types/actions'
+
 import flatPickr from 'vue-flatpickr-component'
-import {Spanish} from 'flatpickr/dist/l10n/es'
+import { Spanish } from 'flatpickr/dist/l10n/es'
 
 export default {
   name: 'c-shipping-data',
@@ -93,13 +94,30 @@ export default {
     return {
       shippingTypes: shippingTypes,
       serviceTypes: serviceTypes,
-      adate: null,
-      fdate: null,
+      cleanObject: null,
       config: {
         wrap: true,
         dateFormat: 'd-m-Y',
         locale: Spanish
       }
+    }
+  },
+  props: {
+    clientList: { type: Array },
+    providerList: { type: Array }
+  },
+  computed: {
+    ...mapGetters([ 'isLoading', 'clients', 'providers', 'shipping', 'client', 'provider' ]),
+    isEdit () {
+      return !!this.shipping.objectId
+    }
+  },
+  methods: {
+    fetchClient (id) {
+      this.$store.dispatch(FETCH_CLIENT, id, null)
+    },
+    fetchProvider (id) {
+      this.$store.dispatch(FETCH_PROVIDER, id, null)
     }
   }
 }

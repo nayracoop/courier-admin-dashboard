@@ -6,6 +6,7 @@ import { API_URL } from '@/common/config'
 
 import provider from './provider.service'
 import client from './client.service'
+import shipping from './shipping.service'
 import user from './user.service'
 
 const ApiService = {
@@ -63,3 +64,4 @@ export default ApiService
 export const ProvidersService = provider
 export const ClientsService = client
 export const UsersService = user
+export const ShippingService = shipping

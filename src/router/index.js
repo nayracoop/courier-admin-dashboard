@@ -55,8 +55,8 @@ import Provider from '@/views/providers/Provider'
 import Clients from '@/views/clients/Clients'
 import Client from '@/views/clients/Client'
 
-import Shippings from '@/views/courier/Shippings'
-import Shipping from '@/views/courier/Shipping'
+import Shippings from '@/views/shippings/Shippings'
+import Shipping from '@/views/shippings/Shipping'
 
 // import Providers from '@/views/providers/ProviderList'
 // import ProviderSingle from '@/views/providers/ProviderSingle'
@@ -121,7 +121,7 @@ export default new Router({
         },
         {
           path: 'envios',
-          name: 'Envios',
+          name: 'Envíos',
           component: Shippings
         },
         {

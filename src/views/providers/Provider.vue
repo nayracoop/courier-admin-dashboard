@@ -118,7 +118,6 @@ export default {
   },
   data () {
     return {
-      inProgress: false,
       cleanObject: null,
       deleteId: -1,
       returnConfirmed: false,

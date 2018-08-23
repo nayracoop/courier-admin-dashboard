@@ -22,3 +22,12 @@ export const CLIENT_SAVE = 'saveClient'
 export const CLIENT_DELETE = 'deleteClient'
 export const CLIENT_EDIT = 'editClient'
 export const CLIENT_RESET_STATE = 'resetClientState'
+
+/* Shippings CRUD */
+export const FETCH_SHIPPING = 'fetchShipping'
+export const FETCH_SHIPPINGS = 'fetchShippings'
+export const IMPORT_SHIPPINGS = 'importShippings'
+export const SHIPPING_SAVE = 'saveShipping'
+export const SHIPPING_DELETE = 'deleteShipping'
+export const SHIPPING_EDIT = 'editShipping'
+export const SHIPPING_RESET_STATE = 'resetShippingState'
