@@ -1,5 +1,6 @@
 // Estilos custom
 
+/* Rules generales */
 main {
     background: #fafafa;
 }
@@ -69,7 +70,7 @@ main {
 }
 
 .custom-file-label::after{
-  content: "Examinar";
+  content: "Elegir archivo";
 } 
 
 .tab-content{
@@ -80,6 +81,12 @@ main {
 .cont-is-shipping .custom-control label::after{
   top: 0.6rem!important;
 }
+
+::placeholder{ /* Firefox 18- */
+  color: #ddd!important;
+}
+
+/* Fin Rules generales */
 
 /* Dashboard index */
 
@@ -218,5 +225,34 @@ input:read-only {
   // width: 100%;
   text-align: right;
 }
+input[aria-invalid=true],
+select[aria-invalid=true]{
+  border-color: #f86c6b;  
+}
+/*.required-i::after{
+  content: "(*)";
+  color: #f86c6b;  
+  margin-left: 10px;
+}
 
 /* Fin Validación campos formulario */
+
+/* Estilos modal */
+div[slot="modal-footer"]{
+  border-top: 1px solid #dadada;
+  padding-top: 1em;
+}
+.modal-header{
+  background: #c8ced3;
+}
+/*.modal header{
+  color: #ffff;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
+
+.delete-modal header{
+  background: linear-gradient(to right, #ff5150 0%,#fb7979 100%);
+}*/
+
+/* Fin Estilos modal */

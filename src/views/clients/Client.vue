@@ -6,7 +6,7 @@
           <div slot="header">
             <strong>{{ isEdit ? client.name : 'Nuevo cliente' }}</strong>
           </div>
-          <c-client-detail :isEdit="isEdit"></c-client-detail>
+          <c-client-detail ref="clientDetail" :isEdit="isEdit"></c-client-detail>
         </b-card>
       </b-col>
     </b-row>
@@ -32,13 +32,13 @@
     <!-- <pre>{{ JSON.stringify(cleanObject, null, 4) }}</pre>
     <pre>{{ JSON.stringify(client, null, 4) }}</pre> -->
     <c-confirmation-modal promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
-      ref="deleteModal" title="Confirmación"
-      confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="No, volveré atrás"
+      ref="deleteModal" title="Eliminar registro"
+      confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="Cancelar"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="deleteClient()" @cancelDelete="hideDeleteModal()" />
     <c-confirmation-modal promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
       ref="returnModal" title="Confirmación"
-      confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="No, volveré a editar"
+      confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="Cancelar"
       confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
       @confirmReturn="confirmReturn(returnTo, client)" @cancelReturn="hideReturnModal()" />
   </div>
@@ -127,7 +127,13 @@ export default {
   },
   methods: {
     saveClient (client) {
-      this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
+      this.$refs.clientDetail.validateBeforeSubmit().then(res => {
+        if (!res) {
+          this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Corríjalos y vuelva a guardar' })
+          return false
+        }
+        this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
+      })
     },
     deleteClient () {
       this.deleteEl(CLIENT_DELETE, '/clientes')

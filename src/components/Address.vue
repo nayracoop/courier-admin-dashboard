@@ -40,17 +40,19 @@
           <b-form-group>
             <label for="addressName">Nombre o compañía</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Ingrese un nombre para identificar la dirección"></i>
-            <b-form-input type="text" id="addressName" v-model="currentAddress.name" placeholder="Ej: Depósito San Justo" />
-            <!-- -->
+            <b-form-input :class="{ danger: errors.has('addressName') }" v-validate="'required'" name="addressName" data-vv-as="nombre de dirección" type="text" id="addressName" v-model="currentAddress.name" placeholder="Ej: Depósito Ramos"></b-form-input>
+          <!-- El campo es requerido, no puede estar vacío -->
+          <span><small class="inv-feedback" v-show="errors.has('addressName')">{{ errors.first('addressName') }}</small></span>
           </b-form-group>
         </b-col>
         <b-col sm="6">
           <b-form-group>
             <label for="contactName">Nombre del contacto</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre de contacto"></i>
-            <b-form-input type="text" id="contactName" v-model="currentAddress.contactName" placeholder="Ej: Juan Perez" />
-            <!-- -->
-          </b-form-group>
+            <b-form-input :class="{ danger: errors.has('name') }" v-validate="'required'" name="contactName" data-vv-as="nombre del contacto" type="text" id="contactName" v-model="currentAddress.contactName" placeholder="Ej: Ricardo Romero"></b-form-input>
+            <!-- El campo es requerido, no puede estar vacío -->
+            <span><small class="inv-feedback" v-show="errors.has('contactName')">{{ errors.first('contactName') }}</small></span>
+        </b-form-group>
         </b-col>
       </b-row>
       <b-row>
@@ -58,12 +60,21 @@
           <b-form-group>
             <label for="address1">Dirección</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Calle y número, edificio, departamento, etcétera"></i>
-            <b-form-input type="text" id="address1" v-model="currentAddress.address1" placeholder="Calle y número" />
-            <!-- -->
-            <b-form-input type="text" id="address2" v-model="currentAddress.address2" placeholder="Unidad, edificio, piso, departamento, etcétera" />
-            <!-- -->
-            <b-form-input type="text" id="address3" v-model="currentAddress.address3" placeholder="Sección o departamento, ℅ (a nombre de), etcétera" />
-            <!-- -->
+            <div class="form-group">
+              <div sm="12">
+                <b-form-input v-validate="{ regex: /[^\s*]$/ }" type="text" id="address1" placeholder="Calle y número" v-model="currentAddress.address1" />
+              </div>
+            </div>
+            <div class="form-group">
+              <div sm="12">
+                <b-form-input type="text" id="address2" placeholder="Unidad, edificio, piso, departamento, etcétera"  v-model="currentAddress.address2" />
+              </div>
+            </div>
+            <div class="form-group">
+              <div sm="12">
+               <b-form-input type="text" id="address3" placeholder="Sección o departamento, ℅ (a nombre de), etcétera" v-model="currentAddress.address3" />
+              </div>
+            </div>
           </b-form-group>
         </b-col>
         <b-col sm="6">
@@ -77,19 +88,20 @@
       </b-row>
       <b-row>
         <b-col sm="6">
-          <b-form-group>
-            <label for="country">Localidad</label>
-            <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
-            <b-form-input type="text" id="country" v-model="currentAddress.city" placeholder="Ej: San Justo" />
-            <!-- -->
-          </b-form-group>
+        <b-form-group>
+          <label for="city">Localidad</label>
+          <b-form-input v-validate="{ regex: /[^\s*]$/ }" name="city" data-vv-as="localidad" type="text" id="city" v-model="currentAddress.city" placeholder="Ej: San Justo"></b-form-input>
+          <!-- No puede tener espacios en blanco intermedios ni puede ser únicamente un espacio en blanco  -->
+          <span><small class="inv-feedback" v-show="errors.has('city')">{{ errors.first('city') }}</small></span>
+        </b-form-group>
         </b-col>
         <b-col sm="6">
           <b-form-group>
             <label for="region">Código postal</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
-            <b-form-input type="text" id="region" v-model="currentAddress.postalCode" placeholder="Ej: 1182" />
-            <!-- -->
+            <b-form-input v-validate="'alpha_num'" name="postalCode" type="text" id="postalCode" placeholder="Ej: 1182" v-model="currentAddress.postalCode" />
+          <!-- Debe contener caracteres numéricos -->
+          <span><small class="inv-feedback" v-show="errors.has('postalCode')">{{ errors.first('postalCode') }}</small></span>
           </b-form-group>
         </b-col>
       </b-row>
@@ -103,18 +115,20 @@
       <b-row>
         <b-col sm="6">
           <b-form-group>
-            <label for="email">Email</label>
-            <b-form-input id="email" type="email" autocomplete="email" v-model="currentAddress.email" placeholder="Ej: envios@empresa.com" />
-            <!-- -->
-          </b-form-group>
+          <label for="email">Email</label>
+          <b-form-input v-validate="{ email: true, regex: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ }" name="email" data-vv-as="email" id="email" type="email" autocomplete="email" v-model="currentAddress.email" placeholder="Ej: envios@empresa.com"></b-form-input>
+          <!-- Debe ser un email válido (Matchea mínimo de caracteres, caracteres inválidos, etc)  -->
+          <span><small class="inv-feedback" v-show="errors.has('email')">{{ errors.first('email') }}</small></span>
+        </b-form-group>
         </b-col>
         <b-col sm="6">
           <b-form-group>
             <label for="phone">Teléfono</label>
-            <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de teléfono"></i>
-            <b-form-input type="tel" id="phone" v-model="currentAddress.phone" placeholder="Ej: 4892-1242" />
-            <!-- -->
-          </b-form-group>
+            <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de teléfono del cliente. Este campo debe tener al menos 8 dígitos y no puede contener espacios ni letras"></i>
+            <b-form-input v-validate="{ min: 8, regex: /^[^a-zA-Z\s][0-9\-\.\(\)]+$/ }" name="phone" data-vv-as="teléfono" type="tel" id="phone" v-model="currentAddress.phone" placeholder="Ej: 4892-1242"></b-form-input>
+            <!-- Debe tener mínimo 8 caracteres y no puede tener espacios ni caracteres alfabéticos -->
+            <span><small class="inv-feedback" v-show="errors.has('phone')">{{ errors.first('phone') }}</small></span>
+        </b-form-group>
         </b-col>
       </b-row>
       <b-row v-show="isShipping">

@@ -12,7 +12,7 @@
       <b-col sm="6">
         <label for="weight">Peso</label>
         <b-input-group>
-        <b-form-input horizontal type="text" id="weight" placeholder=""></b-form-input>
+        <b-form-input horizontal type="text" id="weight" placeholder="Peso en kilogramos"></b-form-input>
         <b-input-group-append><b-input-group-text>kg</b-input-group-text></b-input-group-append>
         </b-input-group>
       </b-col>
@@ -42,21 +42,21 @@
             <b-col sm="4">
               <label for="length">Largo</label>
               <b-input-group>
-              <b-form-input horizontal type="text" id="length" placeholder=""></b-form-input>
+              <b-form-input horizontal type="text" id="length" placeholder="Largo en centímetros"></b-form-input>
               <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
               </b-input-group>
             </b-col>
             <b-col sm="4">
               <label for="width">Ancho</label>
               <b-input-group>
-              <b-form-input horizontal type="text" id="width" placeholder=""></b-form-input>
+              <b-form-input horizontal type="text" id="width" placeholder="Ancho en centímetros"></b-form-input>
               <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
               </b-input-group>
             </b-col>
             <b-col sm="4">
               <label for="width">Alto</label>
               <b-input-group>
-              <b-form-input horizontal type="text" id="height" placeholder=""></b-form-input>
+              <b-form-input horizontal type="text" id="height" placeholder="Alto en centímetros"></b-form-input>
               <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
               </b-input-group>
             </b-col>
