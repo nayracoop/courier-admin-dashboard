@@ -5,7 +5,7 @@
         <b-col sm="6">
           <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor <i class="fa fa-plus-circle ml-1"></i></b-button>
           <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-          <b-button variant="outline-primary" disabled>Importar <i class="fa fa-file ml-1"></i></b-button>
+          <b-button variant="outline-primary">Importar <i class="fa fa-file ml-1"></i></b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
           <b-input-group>
@@ -47,9 +47,9 @@
         hide-goto-end-buttons @click.native="clearSelected" />
     </nav>
     <c-confirmation-modal :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
-      ref="deleteModal" title="Confirmación"
+      ref="deleteModal" title="Eliminar registro"
       :confirmationMessage="'Sí, deseo eliminarlo' + (deleteMultiple && checkedItems.length > 1 ? 's' : '')"
-      cancellationMessage="No, volveré atrás"
+      cancellationMessage="Cancelar"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
   </b-card>

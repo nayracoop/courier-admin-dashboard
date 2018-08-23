@@ -1,12 +1,13 @@
 <template>
   <div>
-    <div class="my-2 mb-4">
-      <b-form-file :disabled="inProgress" @input="processCsv" id="fileDialog" ref="fileDialog" v-model="file" :state="Boolean(file)" accept="text/csv" placeholder="Seleccione un archivo..."></b-form-file>
+    <div class="mt-1 mb-4">
+      <span class="mb-4"> Elija un archivo para importar las tablas de costos. Sólo se permiten archivos .CSV</span>
+      <b-form-file class="mt-4" :disabled="inProgress" @input="processCsv" id="fileDialog" ref="fileDialog" v-model="file" :state="Boolean(file)" accept="text/csv" placeholder="Seleccione un archivo..."></b-form-file>
     </div>
     <b-row>
-      <b-col sm="12 text-center" slot="modal-footer">
+      <b-col sm="12 text-right" slot="modal-footer">
+        <b-button variant="secondary" @click="onCancel" :disabled="inProgress">Cancelar</b-button>
         <b-button variant="primary" @click="onConfirm" :disabled="count === 0 || inProgress">{{ buttonText }} <i v-show="inProgress" class="fa fa-cog fa-spin ml-1"></i></b-button>
-        <b-button variant="danger" @click="onCancel" :disabled="inProgress">Cancelar</b-button>
       </b-col>
     </b-row>
   </div>

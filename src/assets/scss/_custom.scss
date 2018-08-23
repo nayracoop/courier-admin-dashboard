@@ -69,7 +69,7 @@ main {
 }
 
 .custom-file-label::after{
-  content: "Examinar";
+  content: "Elegir archivo";
 } 
 
 .tab-content{
@@ -220,3 +220,23 @@ input:read-only {
 }
 
 /* Fin Validación campos formulario */
+
+/* Estilos modal */
+div[slot="modal-footer"]{
+  border-top: 1px solid #dadada;
+  padding-top: 1em;
+}
+.modal-header{
+  background: #c8ced3;
+}
+/*.modal header{
+  color: #ffff;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
+
+.delete-modal header{
+  background: linear-gradient(to right, #ff5150 0%,#fb7979 100%);
+}*/
+
+/* Fin Estilos modal */
