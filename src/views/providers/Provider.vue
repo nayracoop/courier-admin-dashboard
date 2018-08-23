@@ -16,7 +16,7 @@
                   <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
                   <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
                   <b-modal id="fileDialog" ref="fileDialogModal"
-                    hide-footer centered title="Importar" >
+                    hide-footer centered title="Importar desde un archivo CSV" >
                     <c-csv-file-dialog cancellationMethod="cancelImport"
                     :provider="provider" @cancelImport="hideImportModal" />
                   </b-modal>
@@ -34,13 +34,13 @@
       </b-col>
     </b-row>
     <c-confirmation-modal promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
-      ref="deleteModal" title="Confirmación"
-      confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="No, volveré atrás"
+      ref="deleteModal" title="Eliminar registro"
+      confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="Cancelar"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="deleteProvider()" @cancelDelete="hideDeleteModal()" />
     <c-confirmation-modal promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
       ref="returnModal" title="Confirmación"
-      confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="No, volveré a editar"
+      confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="Cancelar"
       confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
       @confirmReturn="confirmReturn(returnTo, provider)" @cancelReturn="hideReturnModal()" />
     <!-- <pre>{{ JSON.stringify(this.provider, null, 2) }}</pre>
