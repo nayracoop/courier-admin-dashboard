@@ -141,13 +141,13 @@ export default {
     }
   },
   created () {
-    this.costsTableIndex = this.provider.costsTable.length > 0 ? 0 : -1
-    this.items = this.provider.costsTable.length > 0 ? this.provider.costsTable[0].costs : []
+    this.costsTableIndex = (this.provider.costsTable && this.provider.costsTable.length > 0 ? 0 : -1)
+    this.items = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].costs : [])
     this.costsFilter = {
-      shippingType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingType : 1,
-      serviceType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].serviceType : 1,
-      packageType: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].packageType : 1,
-      shippingZone: this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingZone : 1
+      shippingType: (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingType : 1),
+      serviceType: (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].serviceType : 1),
+      packageType: (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].packageType : 1),
+      shippingZone: (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingZone : 1)
     }
   },
   methods: {
