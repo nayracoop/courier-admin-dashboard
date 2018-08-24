@@ -3,7 +3,7 @@
     <template>
       <b-row class="actions-bar">
         <b-col sm="6">
-          <b-button variant="primary" :to="{ name: 'Nuevo Envío' }">Nuevo Envío <i class="fa fa-plus-circle ml-1"></i></b-button>
+          <b-button variant="primary" :to="{ name: 'Nuevo Envío' }">Nuevo envío <i class="fa fa-plus-circle ml-1"></i></b-button>
           <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">

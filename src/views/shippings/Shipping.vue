@@ -81,6 +81,10 @@ export default {
   computed: {
     ...mapGetters([ 'isLoading', 'clients', 'providers', 'shipping' ])
   },
+  props: {
+    clientId: { type: String, default: null },
+    providerId: { type: String, default: null }
+  },
   mounted () {
     this.isEdit = !!this.shipping.objectId
     this.cleanObject = this._.cloneDeep(this.shipping)
@@ -89,6 +93,14 @@ export default {
     if (this.isEdit) {
       this.fetchProvider(this.shipping.provider)
       this.fetchClient(this.shipping.client)
+    }
+    if (this.clientId) {
+      this.fetchClient(this.clientId)
+      this.shipping.client = this.clientId
+    }
+    if (this.providerId) {
+      this.fetchProvider(this.providerId)
+      this.shipping.provider = this.providerId
     }
     this.showDeleteModal = modals.showDeleteModal.bind(this)
     this.hideDeleteModal = modals.hideDeleteModal.bind(this)
