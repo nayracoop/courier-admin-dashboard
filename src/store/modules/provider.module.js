@@ -1,34 +1,36 @@
 import Vue from 'vue'
 import { ProvidersService } from '@/api'
-import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, PROVIDER_RESET_STATE, FETCH_PROVIDER, FETCH_PROVIDERS } from '@/store/types/actions'
-import { RESET_STATE, SET_PROVIDER, FETCH_START, FETCH_PROVIDERS_END } from '@/store/types/mutations'
+import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, PROVIDER_RESET_STATE, FETCH_PROVIDER, FETCH_PROVIDERS, FETCH_SHIPPING_PROVIDERS, FETCH_SYNC_PROVIDERS } from '@/store/types/actions'
+import { RESET_STATE, SET_PROVIDER, FETCH_START, FETCH_PROVIDERS_END, FETCH_SYNC_PROVIDERS_END } from '@/store/types/mutations'
 
 const getInitialState = () => {
   return {
     provider: {
-      externalId: '',
+      taxCategory: null, // categoría, condición frente al IVA
+      docType: null, // CUIT, DNI, etcétera
+      docValue: '', // número de DNI, CUIT, etcétera
+      externalId: null,
       userCode: '',
       name: '',
       businessName: '',
-      taxId: '',
-      taxCategory: -1,
-      taxType: -1, // capaz condition?
       address: '',
-      country: '',
-      province: '',
-      location: '',
+      country: null,
+      province: null,
+      location: null,
       postalCode: '',
       email: '',
       phone: '',
       observation: '',
-      purchaseAccount: '',
-      saleAccount: '',
+      purchaseAccount: null,
+      saleAccount: null,
       isShipping: null,
       costsTable: []
     },
     providers: [],
+    syncProviders: [],
     isLoading: false,
-    providersCount: 0
+    providersCount: 0,
+    syncProvidersCount: 0
   }
 }
 
@@ -48,6 +50,26 @@ export const actions = {
         throw new Error(error)
       })
   },
+  [FETCH_SHIPPING_PROVIDERS] ({ commit }) {
+    commit(FETCH_START)
+    return ProvidersService.getShipping()
+      .then(data => {
+        commit(FETCH_PROVIDERS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_SYNC_PROVIDERS] ({ commit }) {
+    commit(FETCH_START)
+    return ProvidersService.getSyncProviders()
+      .then(data => {
+        commit(FETCH_SYNC_PROVIDERS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
   [FETCH_PROVIDER] (context, providerId, prevProvider) {
     // avoid extronuous network call if object exists
     if (prevProvider !== undefined) {
@@ -59,8 +81,12 @@ export const actions = {
         return data
       })
   },
-  [PROVIDER_EDIT] ({ state }) {
+  [PROVIDER_EDIT] ({ commit, state }) {
     return ProvidersService.update(state.provider.objectId, state.provider)
+      .then(data => {
+        commit(SET_PROVIDER, data)
+        return data
+      })
   },
   [PROVIDER_DELETE] (context, id) {
     return ProvidersService.delete(id)
@@ -77,9 +103,22 @@ export const mutations = {
   },
   [FETCH_PROVIDERS_END] (state, providers) {
     state.providers = providers.map(function (e) {
+      if (e.constructor === Object) {
+        return e
+      }
       return e.toJSON()
     })
     state.providersCount = providers.length
+    state.isLoading = false
+  },
+  [FETCH_SYNC_PROVIDERS_END] (state, providers) {
+    state.syncProviders = providers.map(function (e) {
+      if (e.constructor === Object) {
+        return e
+      }
+      return e.toJSON()
+    })
+    state.syncProvidersCount = providers.length
     state.isLoading = false
   },
   [SET_PROVIDER] (state, provider) {
@@ -97,11 +136,17 @@ const getters = {
   providers (state) {
     return state.providers
   },
+  syncProviders (state) {
+    return state.syncProviders
+  },
   provider (state) {
     return state.provider
   },
   providersCount (state) {
     return state.providersCount
+  },
+  syncProvidersCount (state) {
+    return state.syncProvidersCount
   },
   isLoading (state) {
     return state.isLoading // el getter isLoading se usa en distintos lugares

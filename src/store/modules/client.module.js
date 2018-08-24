@@ -6,26 +6,26 @@ import { RESET_STATE, SET_CLIENT, FETCH_START, FETCH_CLIENTS_END } from '@/store
 const getInitialState = () => {
   return {
     client: {
-      vatId: '',
-      taxCategory: -1,
+      taxCategory: -1, // categoría, condición frente al IVA
+      docType: -1, // CUIT, DNI, etcétera
+      docValue: '', // número de DNI, CUIT, etcétera
+      externalId: '',
+      userCode: '',
+      name: '',
+      businessName: '',
       postalCode: '',
-      purchaseAccount: '',
-      saleAccount: '',
+      purchaseAccount: -1,
+      saleAccount: -1,
       address: '',
       email: '',
-      notifications: false,
-      taxType: -1,
-      name: '',
+      notifications: null,
       observation: '',
-      country: '',
-      externalId: '',
-      province: '',
-      location: '',
-      businessName: '',
+      country: -1,
+      province: -1,
+      location: -1,
       phone: '',
-      userCode: '',
       cbu: '',
-      hasPerception: false,
+      hasPerception: null,
       addresses: []
     },
     clients: [],
@@ -61,8 +61,12 @@ export const actions = {
         return data
       })
   },
-  [CLIENT_EDIT] ({ state }) {
+  [CLIENT_EDIT] ({ commit, state }) {
     return ClientsService.update(state.client.objectId, state.client)
+      .then(data => {
+        commit(SET_CLIENT, data)
+        return data
+      })
   },
   [CLIENT_DELETE] (context, id) {
     return ClientsService.delete(id)

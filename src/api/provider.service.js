@@ -14,6 +14,14 @@ export default {
 
     return query.find()
   },
+  getShipping () {
+    let query = new Parse.Query('Provider')
+    query.ascending('name')
+    query.doesNotExist('deletedAt')
+    query.equalTo('isShipping', true)
+
+    return query.find()
+  },
   get (id) {
     let query = new Parse.Query('Provider')
     query.doesNotExist('deletedAt')
@@ -46,5 +54,8 @@ export default {
         return error
       }
     })
+  },
+  getSyncProviders () {
+    return Parse.Cloud.run('ProviderSync', {})
   }
 }

@@ -40,8 +40,6 @@
         <breadcrumb :list="list"/>
         <div class="container-fluid">
           <router-view></router-view>
-          <router-view name="plural"></router-view>
-          <router-view name="single"></router-view>
         </div>
       </main>
       <AppAside fixed>

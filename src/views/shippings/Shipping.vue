@@ -1,7 +1,5 @@
 <template>
   <div class="animated fadeIn">
-    <pre>{{ JSON.stringify(this.shipping, null, 2) }}</pre>
-    <pre>{{ JSON.stringify(this.cleanObject, null, 2) }}</pre>
     <c-shipping-data :clientList="clientList" :providerList="providerList"/>
     <div role="tablist" class="mb-3">
       <b-card no-body class="mb-1">
@@ -10,7 +8,7 @@
         </b-card-header>
         <b-collapse id="accordion1" visible accordion="my-accordion" role="tabpanel">
           <b-card-body>
-            <c-address></c-address>
+            <c-address isShipping ref="addressFrom"></c-address>
           </b-card-body>
         </b-collapse>
       </b-card>
@@ -20,7 +18,7 @@
         </b-card-header>
         <b-collapse id="accordion2" accordion="my-accordion" role="tabpanel">
           <b-card-body>
-            <c-address></c-address>
+            <c-address isShipping ref="addressTo"></c-address>
           </b-card-body>
         </b-collapse>
       </b-card>
@@ -65,7 +63,7 @@ import modals from '@/shared/modals'
 import common from '@/shared/common'
 import crud from '@/shared/crud'
 
-import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, FETCH_SHIPPING, FETCH_PROVIDERS, FETCH_CLIENTS, FETCH_CLIENT, FETCH_PROVIDER, SHIPPING_RESET_STATE } from '@/store/types/actions'
+import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, FETCH_SHIPPING, FETCH_SHIPPING_PROVIDERS, FETCH_CLIENTS, FETCH_CLIENT, FETCH_PROVIDER, SHIPPING_RESET_STATE } from '@/store/types/actions'
 
 import CShippingData from '@/components/ShippingData'
 import CAddress from '@/components/Address'
@@ -160,13 +158,15 @@ export default {
       return this.$store.dispatch(FETCH_CLIENTS)
     },
     fetchProviders () {
-      return this.$store.dispatch(FETCH_PROVIDERS)
+      return this.$store.dispatch(FETCH_SHIPPING_PROVIDERS)
     },
     fetchProvider (id) {
       this.$store.dispatch(FETCH_PROVIDER, id, null)
     },
     fetchClient (id) {
-      this.$store.dispatch(FETCH_CLIENT, id, null)
+      this.$store.dispatch(FETCH_CLIENT, id, null).then(() => {
+        this.$eventHub.$emit('refreshAddresses')
+      })
     },
     saveShipping (shipping) {
       this.save(shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')

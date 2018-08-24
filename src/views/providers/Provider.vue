@@ -18,7 +18,7 @@
                   <b-modal id="fileDialog" ref="fileDialogModal"
                     hide-footer centered title="Importar desde un archivo CSV" >
                     <c-csv-file-dialog cancellationMethod="cancelImport"
-                    :provider="provider" @cancelImport="hideImportModal" />
+                    :provider="provider" @cancelImport="hideImportModal()" />
                   </b-modal>
                 </b-col>
               </b-row>
@@ -118,6 +118,7 @@ export default {
   },
   data () {
     return {
+      inProgress: false,
       cleanObject: null,
       deleteId: -1,
       returnConfirmed: false,

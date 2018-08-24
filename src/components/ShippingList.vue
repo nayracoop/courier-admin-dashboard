@@ -65,7 +65,7 @@ export default {
       fields: [ 'selection',
         { key: 'providerName', label: 'Proveedor', sortable: true },
         { key: 'clientName', label: 'Cliente', sortable: true },
-        { key: 'clientTaxId', label: 'CUIT', sortable: true },
+        { key: 'clientDocType', label: 'CUIT / Nº doc.', sortable: true },
         { key: 'destinationCountry', label: 'País de destino' },
         { key: 'cost', label: 'Costo final' }
       ],

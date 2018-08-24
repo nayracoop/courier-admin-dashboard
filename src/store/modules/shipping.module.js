@@ -54,8 +54,12 @@ export const actions = {
         return data
       })
   },
-  [SHIPPING_EDIT] ({ state }) {
+  [SHIPPING_EDIT] ({ commit, state }) {
     return ShippingService.update(state.shipping.objectId, state.shipping)
+      .then(data => {
+        commit(SET_SHIPPING, data)
+        return data
+      })
   },
   [SHIPPING_DELETE] (context, id) {
     return ShippingService.delete(id)
@@ -74,7 +78,7 @@ export const mutations = {
     state.shippings = shippings.map(function (e) {
       return e.toJSON()
     })
-    state.shippings = shippings.length
+    state.shippingsCount = shippings.length
     state.isLoading = false
   },
   [SET_SHIPPING] (state, shipping) {

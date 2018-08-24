@@ -8,7 +8,7 @@
     <b-row>
       <b-col sm="12" class="cont-is-shipping mb-3">
         <label for="isShipping">¿Es proveedor de tipo envíos?</label>
-          <b-form-checkbox id="isShipping" v-model="provider.isShipping"></b-form-checkbox>
+        <b-form-checkbox id="isShipping" v-model="provider.isShipping"></b-form-checkbox>
       </b-col>
     </b-row>
     <b-row>
@@ -23,39 +23,39 @@
       </b-col>
       <b-col sm="6">
         <b-form-group>
-          <label for="code">Código</label>
+          <label for="userCode">Código</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste al proveedor."></i>
-          <b-form-input v-validate="'alpha_num'" name="ucode" data-vv-as="código" type="text" id="code" v-model="provider.userCode" placeholder="227716623"></b-form-input>
+          <b-form-input v-validate="'alpha_num'" name="userCode" data-vv-as="código" type="text" id="userCode" v-model="provider.userCode" placeholder="227716623"></b-form-input>
           <!-- Debe contener caracteres alfanuméricos  -->
-          <span><small class="inv-feedback" v-show="errors.has('ucode')">{{ errors.first('ucode') }}</small></span>
+          <span><small class="inv-feedback" v-show="errors.has('userCode')">{{ errors.first('userCode') }}</small></span>
           </b-form-group>
       </b-col>
     </b-row>
     <b-row>
       <b-col sm="6">
         <b-form-group>
-          <label for="idType">Tipo de identificación</label>
+          <label for="docType">Tipo de identificación</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de identificación del proveedor"></i>
-          <b-form-select id="idType" :plain="true" :options="idTypes" v-model="provider.taxCategory">
+          <b-form-select id="docType" :plain="true" :options="docTypes" v-model="provider.docType">
           </b-form-select>
         </b-form-group>
       </b-col>
       <b-col sm="6">
         <b-form-group>
-          <label for="idNumber">N° de identificación</label>
+          <label for="docValue">N° de identificación</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de DNI, CUIT, CUIL. Este campo solo puede contener números y tiene que tener un mínimo de 8 dígitos"></i>
-          <b-form-input v-validate="'numeric|min:8|max:20'" name="idNum" data-vv-as="número de identificación" id="idNumber" type="text" v-model="provider.taxId" placeholder="Ej: 20320508742"></b-form-input>
+          <b-form-input v-validate="'alpha_dash|min:8|max:20'" name="docValue" data-vv-as="número de identificación" id="docValue" type="text" v-model="provider.docValue" placeholder="Ej: 20320508742"></b-form-input>
           <!-- Debe ser numérico, tener un mínimo de 8 caracteres y un máximo de 20 -->
-          <span><small class="inv-feedback" v-show="errors.has('idNum')">{{ errors.first('idNum') }}</small></span>
+          <span><small class="inv-feedback" v-show="errors.has('docValue')">{{ errors.first('docValue') }}</small></span>
         </b-form-group>
       </b-col>
     </b-row>
     <b-row>
       <b-col sm="6">
         <b-form-group>
-          <label for="ivaCond">Condición IVA</label>
+          <label for="taxCategory">Condición IVA</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado del proveedor"></i>
-          <b-form-select id="ivaCond" :plain="true" :options="taxTypes" v-model="provider.taxType">
+          <b-form-select id="taxCategory" :plain="true" :options="taxCategories" v-model="provider.taxCategory">
           </b-form-select>
         </b-form-group>
       </b-col>
@@ -93,15 +93,15 @@
         <b-form-group>
           <label for="country">País</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre del país. Este campo solo puede contener letras y espacios"></i>
-          <b-form-input v-validate="'alpha'" name="country" data-vv-as="país" type="text" id="country" v-model="provider.country" placeholder="Ej: Argentina"></b-form-input>
+          <b-form-input v-validate="''" name="country" data-vv-as="país" type="text" id="country" v-model="provider.country" placeholder="Ej: Argentina"></b-form-input>
           <!-- Debe contener caracteres alfabéticos -->
           <span><small class="inv-feedback" v-show="errors.has('country')">{{ errors.first('country') }}</small></span>
         </b-form-group>
       </b-col>
       <b-col sm="6">
         <b-form-group>
-          <label for="province">Province</label>
-          <b-form-input v-validate="'alpha_spaces'" name="province" data-vv-as="país" type="text" id="province" v-model="provider.province"></b-form-input>
+          <label for="province">Provincia</label>
+          <b-form-input v-validate="''" name="province" data-vv-as="país" type="text" id="province" v-model="provider.province"></b-form-input>
           <span><small class="inv-feedback" v-show="errors.has('province')">{{ errors.first('province') }}</small></span>
         </b-form-group>
       </b-col>
@@ -119,15 +119,15 @@
     <b-row>
       <b-col sm="12">
         <b-form-group>
-          <label label-for="notes">Observaciones</label>
-          <b-form-textarea id="notes" :no-resize="true" :textarea="true" :rows="4" v-model="provider.observation" placeholder="Escriba una observación..."></b-form-textarea>
+          <label label-for="observation">Observaciones</label>
+          <b-form-textarea id="observation" :no-resize="true" :textarea="true" :rows="4" v-model="provider.observation" placeholder="Escriba una observación..."></b-form-textarea>
         </b-form-group>
       </b-col>
     </b-row>
   </b-form>
 </template>
 <script>
-import { taxTypes, idTypes } from '@/store/const'
+import { taxCategories, docTypes } from '@/store/const'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -135,8 +135,8 @@ export default {
   data () {
     return {
       inProgress: false,
-      taxTypes: taxTypes,
-      idTypes: idTypes
+      taxCategories: taxCategories,
+      docTypes: docTypes
     }
   },
   props: {
