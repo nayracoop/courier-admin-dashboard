@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="mt-1 mb-4">
-      <span class="mb-4"> Elija un archivo para importar las tablas de costos. Sólo se permiten archivos .CSV</span>
+      <span class="mb-4"> Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv</span>
       <b-form-file class="mt-4" :disabled="inProgress" @input="processCsv" id="fileDialog" ref="fileDialog" v-model="file" :state="Boolean(file)" accept="text/csv" placeholder="Seleccione un archivo..."></b-form-file>
     </div>
     <b-row>

@@ -28,6 +28,11 @@
       <template slot="selection" slot-scope="data">
         <input type="checkbox" name="checked" :key="data.index" :value="data.item" @click.stop v-model="checkedItems" />
       </template>
+      <template slot="name" slot-scope="data">
+        <b-button variant="link" :to="{ name: 'Editar Cliente', params: { id: data.item.objectId } }">
+          {{ data.item.name }}
+        </b-button>
+      </template>
 
       <template slot="actions" slot-scope="data">
         <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Cliente', params: { id: data.item.objectId } }">
