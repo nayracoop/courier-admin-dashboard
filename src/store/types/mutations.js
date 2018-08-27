@@ -9,6 +9,7 @@ export const SET_AUTH = 'setUser'
 
 /* Providers mutations */
 export const FETCH_PROVIDERS_END = 'setProviders'
+export const FETCH_SYNC_PROVIDERS_END = 'setSyncProviders'
 export const SET_PROVIDER = 'setProvider'
 export const UPDATE_PROVIDER_IN_LIST = 'updateProviderInList'
 
@@ -16,3 +17,8 @@ export const UPDATE_PROVIDER_IN_LIST = 'updateProviderInList'
 export const FETCH_CLIENTS_END = 'setClients'
 export const SET_CLIENT = 'setClient'
 export const UPDATE_CLIENT_IN_LIST = 'updateClientInList'
+
+/* Shippings mutations */
+export const FETCH_SHIPPINGS_END = 'setShippings'
+export const SET_SHIPPING = 'setShipping'
+export const UPDATE_SHIPPING_IN_LIST = 'updateShippingInList'

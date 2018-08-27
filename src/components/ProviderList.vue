@@ -5,7 +5,10 @@
         <b-col sm="6">
           <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor <i class="fa fa-plus-circle ml-1"></i></b-button>
           <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-          <b-button variant="outline-primary">Importar <i class="fa fa-file ml-1"></i></b-button>
+          <b-button variant="outline-primary" @click="showImportModal()">
+            Importar <i v-if="!isLoading" class="fa fa-file ml-1"></i>
+            <i v-else class="fa fa-cog fa-spin ml-1"></i>
+          </b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
           <b-input-group>
@@ -38,7 +41,7 @@
         <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
           <i class="fa fa-pencil"></i>
         </b-button>
-        <b-button v-b-tooltip.hover title="Nuevo envío" :small="true" :to="{ name: 'Nuevo Envío' }" :disabled="!data.item.isShipping">
+        <b-button v-b-tooltip.hover title="Nuevo envío" :small="true" :to="{ name: 'Nuevo Envío', params: { providerId: data.item.objectId } }" :disabled="!data.item.isShipping">
           <i class="fa fa-plane"></i>
         </b-button>
         <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">
@@ -57,12 +60,19 @@
       cancellationMessage="Cancelar"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
+    <c-confirmation-modal :promptMessage="'¿Desea importar ' + (syncProvidersCount && syncProvidersCount > 1 ? `${syncProvidersCount} registros` : 'un registro') + '?'"
+      ref="importModal" title="Confirmar importación"
+      :confirmationMessage="'Sí, deseo importarlo' + (syncProvidersCount && syncProvidersCount > 1 ? 's' : '')"
+      cancellationMessage="Cancelar"
+      confirmationMethod="confirmImport" cancellationMethod="cancelImport"
+      @confirmImport="confirmImport" @cancelImport="hideImportModal" />
   </b-card>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_PROVIDERS, IMPORT_PROVIDERS, PROVIDER_DELETE } from '@/store/types/actions'
+import { FETCH_PROVIDERS, FETCH_SYNC_PROVIDERS, PROVIDER_DELETE } from '@/store/types/actions'
+import { ProvidersService } from '@/api'
 import CConfirmationModal from '@/components/ConfirmationModal'
 
 export default {
@@ -74,8 +84,8 @@ export default {
       fields: [ 'selection',
         { key: 'name', label: 'Nombre', sortable: true, editable: true },
         // { key: 'userCode', label: 'Código', sortable: true },
-        { key: 'taxId', label: 'CUIT', sortable: true },
-        // { key: 'taxType', label: 'CondiciónIVA' },
+        { key: 'docValue', label: 'CUIT / Nº doc.', sortable: true },
+        // { key: 'taxCategory', label: 'CondiciónIVA' },
         { key: 'phone', label: 'Teléfono' },
         { key: 'address', label: 'Dirección' },
         { key: 'email', label: 'Email', sortable: true },
@@ -94,7 +104,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([ 'providersCount', 'isLoading', 'providers' ])
+    ...mapGetters([ 'providersCount', 'isLoading', 'providers', 'syncProviders', 'syncProvidersCount' ])
   },
   mounted () {
     this.fetchProviders()
@@ -108,8 +118,30 @@ export default {
     fetchProviders () {
       this.$store.dispatch(FETCH_PROVIDERS)
     },
-    importProviders () {
-      this.$store.dispatch(IMPORT_PROVIDERS)
+    showImportModal () {
+      this.$store.dispatch(FETCH_SYNC_PROVIDERS).then(() => {
+        if (this.syncProvidersCount && this.syncProvidersCount > 0) {
+          this.$refs.importModal.$refs.confirmationModal.show()
+        } else {
+          this.$toasted.global.error_toast({ message: 'No hay nuevos registros para importar' })
+        }
+      })
+    },
+    hideImportModal () {
+      this.$refs.importModal.$refs.confirmationModal.hide()
+    },
+    confirmImport () {
+      let promises = []
+      for (const provider of this.syncProviders) {
+        promises.push(ProvidersService.create(provider))
+      }
+      Promise.all(promises).then(() => {
+        this.$toasted.global.success_toast({ message: `${this.syncProvidersCount} registros importados con éxito` })
+        this.fetchProviders()
+      }, error => {
+        this.$toasted.global.error_toast({ message: error })
+      })
+      this.$refs.importModal.$refs.confirmationModal.hide()
     },
     showDeleteModal (id) {
       if (id) {

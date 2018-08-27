@@ -1,7 +1,7 @@
 <template>
 
   <div class="home-global">
-    <c-provider-list type="all" />
+    <c-provider-list></c-provider-list>
   </div>
 
 </template>

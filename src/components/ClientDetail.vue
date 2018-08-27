@@ -32,17 +32,17 @@
         <b-form-group>
           <label for="idType">Tipo de identificación</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de identificación del cliente"></i>
-          <b-form-select id="idType" :plain="true" :options="idTypes" v-model="client.taxCategory">
+          <b-form-select id="idType" :plain="true" :options="docTypes" v-model="client.docType">
           </b-form-select>
         </b-form-group>
       </b-col>
       <b-col sm="6">
         <b-form-group>
-          <label for="idNumber">N° de identificación</label>
+          <label for="docValue">N° de identificación</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de DNI, CUIT, CUIL. Este campo solo puede contener números y tiene que tener un mínimo de 8 dígitos"></i>
-          <b-form-input v-validate="'numeric|min:8|max:20'" name="idNum" data-vv-as="número de identificación" id="idNumber" type="text" v-model="client.taxId" placeholder="Ej: 20320508742"></b-form-input>
+          <b-form-input v-validate="'numeric|min:8|max:20'" name="docValue" data-vv-as="número de identificación" id="docValue" type="text" v-model="client.docValue" placeholder="Ej: 20320508742"></b-form-input>
           <!-- Debe ser numérico, tener un mínimo de 8 caracteres y un máximo de 20 -->
-          <span><small class="inv-feedback" v-show="errors.has('idNum')">{{ errors.first('idNum') }}</small></span>
+          <span><small class="inv-feedback" v-show="errors.has('docValue')">{{ errors.first('docValue') }}</small></span>
         </b-form-group>
       </b-col>
     </b-row>
@@ -51,7 +51,7 @@
         <b-form-group>
           <label for="ivaCond">Condición IVA</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado del cliente"></i>
-          <b-form-select id="ivaCond" :plain="true" :options="taxTypes" v-model="client.taxType">
+          <b-form-select id="ivaCond" :plain="true" :options="taxCategories" v-model="client.taxCategory">
           </b-form-select>
         </b-form-group>
       </b-col>
@@ -111,7 +111,7 @@
       </b-col>
       <b-col sm="6">
         <b-form-group>
-          <label for="province">Province</label>
+          <label for="province">Provincia</label>
           <b-form-input v-validate="'alpha_spaces'" name="province" data-vv-as="país" type="text" id="province" v-model="client.province"></b-form-input>
           <span><small class="inv-feedback" v-show="errors.has('province')">{{ errors.first('province') }}</small></span>
         </b-form-group>
@@ -142,7 +142,7 @@
   </b-form>
 </template>
 <script>
-import { taxTypes, idTypes } from '@/store/const'
+import { taxCategories, docTypes } from '@/store/const'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -150,8 +150,8 @@ export default {
   data () {
     return {
       inProgress: false,
-      taxTypes: taxTypes,
-      idTypes: idTypes
+      taxCategories: taxCategories,
+      docTypes: docTypes
     }
   },
   props: {

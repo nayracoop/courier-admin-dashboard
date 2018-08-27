@@ -18,7 +18,7 @@
                   <b-modal id="fileDialog" ref="fileDialogModal"
                     hide-footer centered title="Importar precios de venta" >
                     <c-csv-file-dialog cancellationMethod="cancelImport"
-                    :provider="provider" @cancelImport="hideImportModal" />
+                    :provider="provider" @cancelImport="hideImportModal()" />
                   </b-modal>
                 </b-col>
               </b-row>
