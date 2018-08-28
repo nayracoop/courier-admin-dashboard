@@ -29,7 +29,7 @@
               <b-dropdown-item>Agregar un nuevo cliente</b-dropdown-item>
             </b-dropdown>
             <h4 class="mb-0 p-title">1400</h4>
-            <i class="fa fa-user fa-sm lg-card-icon"></i>
+            <i class="icon-people lg-card-icon"></i>
             <p>Clientes activos</p>
           </b-card-body>
           <card-line1-chart-example chartId="card-chart-01" class="chart-wrapper px-3" style="height:70px;" :height="70"/>
@@ -46,7 +46,7 @@
               <b-dropdown-item>Agregar un nuevo proveedor</b-dropdown-item>
             </b-dropdown>
             <h4 class="mb-0 p-title">1250</h4>
-            <i class="fa fa-user lg-card-icon"></i>
+            <i class="fa fa-truck lg-card-icon"></i>
             <p>Proveedores activos</p>
           </b-card-body>
           <card-line2-chart-example chartId="card-chart-02" class="chart-wrapper px-3" style="height:70px;" :height="70"/>

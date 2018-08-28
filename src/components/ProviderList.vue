@@ -31,6 +31,11 @@
       <template slot="selection" slot-scope="data">
         <input type="checkbox" name="checked" :key="data.index" :value="data.item" @click.stop v-model="checkedItems" />
       </template>
+      <template slot="name" slot-scope="data">
+        <b-button variant="link" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
+          {{ data.item.name }}
+        </b-button>
+      </template>
 
       <template slot="actions" slot-scope="data">
         <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
@@ -73,7 +78,7 @@ import CConfirmationModal from '@/components/ConfirmationModal'
 export default {
   name: 'c-provider-list',
   components: { CConfirmationModal },
-  props: { caption: { type: String, default: 'Proveedores' } },
+  props: { caption: { type: String, default: 'Proveedores' }, clase: {type: String} },
   data: () => {
     return {
       fields: [ 'selection',

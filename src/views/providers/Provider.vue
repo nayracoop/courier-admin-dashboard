@@ -16,7 +16,7 @@
                   <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
                   <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
                   <b-modal id="fileDialog" ref="fileDialogModal"
-                    hide-footer centered title="Importar desde un archivo CSV" >
+                    hide-footer centered title="Importar precios de venta" >
                     <c-csv-file-dialog cancellationMethod="cancelImport"
                     :provider="provider" @cancelImport="hideImportModal()" />
                   </b-modal>
