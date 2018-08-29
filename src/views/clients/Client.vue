@@ -31,13 +31,13 @@
     </b-row>
     <!-- <pre>{{ JSON.stringify(cleanObject, null, 4) }}</pre>
     <pre>{{ JSON.stringify(client, null, 4) }}</pre> -->
-    <c-confirmation-modal promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
-      ref="deleteModal" title="Eliminar registro"
+    <c-confirmation-modal classModal="delete-modal" promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
+      ref="deleteModal" :modalTitle="'Eliminar cliente ' + client.name"
       confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="Cancelar"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="deleteClient()" @cancelDelete="hideDeleteModal()" />
-    <c-confirmation-modal promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
-      ref="returnModal" title="Confirmación"
+    <c-confirmation-modal classModal="return-modal" promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
+      ref="returnModal" modalTitle="Confirmación"
       confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="Cancelar"
       confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
       @confirmReturn="confirmReturn(returnTo, client)" @cancelReturn="hideReturnModal()" />

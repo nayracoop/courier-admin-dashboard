@@ -42,10 +42,9 @@
       <b-pagination :total-rows="shippingsCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
         hide-goto-end-buttons @click.native="clearSelected" />
     </nav>
-    <c-confirmation-modal :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
-      ref="deleteModal" title="Confirmación"
+    <c-confirmation-modal classModal="delete-modal" :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
+      ref="deleteModal" modalTitle="Eliminar registro"
       :confirmationMessage="'Sí, deseo eliminarlo' + (deleteMultiple && checkedItems.length > 1 ? 's' : '')"
-      cancellationMessage="No, volveré atrás"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
   </b-card>

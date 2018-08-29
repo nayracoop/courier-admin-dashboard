@@ -21,7 +21,7 @@
       </b-row>
     </template>
     <!-- tabla -->
-    <b-table :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="providers" :fields="fields"
+    <b-table class="list-table" :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="providers" :fields="fields"
       :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
 
       <template slot="HEAD_selection" slot-scope="head">
@@ -54,16 +54,14 @@
       <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
         hide-goto-end-buttons @click.native="clearSelected" />
     </nav>
-    <c-confirmation-modal :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
+    <c-confirmation-modal classModal="delete-modal" :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
       ref="deleteModal" title="Eliminar registro"
       :confirmationMessage="'Sí, deseo eliminarlo' + (deleteMultiple && checkedItems.length > 1 ? 's' : '')"
-      cancellationMessage="Cancelar"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
-    <c-confirmation-modal :promptMessage="'¿Desea importar ' + (syncProvidersCount && syncProvidersCount > 1 ? `${syncProvidersCount} registros` : 'un registro') + '?'"
+    <c-confirmation-modal classModal="import-modal" :promptMessage="'¿Desea importar ' + (syncProvidersCount && syncProvidersCount > 1 ? `${syncProvidersCount} registros` : 'un registro') + '?'"
       ref="importModal" title="Confirmar importación"
       :confirmationMessage="'Sí, deseo importarlo' + (syncProvidersCount && syncProvidersCount > 1 ? 's' : '')"
-      cancellationMessage="Cancelar"
       confirmationMethod="confirmImport" cancellationMethod="cancelImport"
       @confirmImport="confirmImport" @cancelImport="hideImportModal" />
   </b-card>
@@ -81,7 +79,7 @@ export default {
   props: { caption: { type: String, default: 'Proveedores' }, clase: {type: String} },
   data: () => {
     return {
-      fields: [ 'selection',
+      fields: [ { key: 'selection', class: 'selection' },
         { key: 'name', label: 'Nombre', sortable: true, editable: true },
         // { key: 'userCode', label: 'Código', sortable: true },
         { key: 'docValue', label: 'CUIT / Nº doc.', sortable: true },

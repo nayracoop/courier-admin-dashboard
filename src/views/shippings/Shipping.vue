@@ -2,9 +2,9 @@
   <div class="animated fadeIn">
     <c-shipping-data :clientList="clientList" :providerList="providerList"/>
     <div role="tablist" class="mb-3">
-      <b-card no-body class="mb-1">
+      <b-card no-body class="mb-1 bl-accordion">
         <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn block href="#" v-b-toggle.accordion1>Enviar desde</b-btn>
+          <b-btn  block href="#" v-b-toggle.accordion1>Enviar desde</b-btn>
         </b-card-header>
         <b-collapse id="accordion1" visible accordion="my-accordion" role="tabpanel">
           <b-card-body>
@@ -12,9 +12,9 @@
           </b-card-body>
         </b-collapse>
       </b-card>
-      <b-card no-body class="mb-1">
+      <b-card no-body class="mb-1 bl-accordion">
         <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn block href="#" v-b-toggle.accordion2>Enviar hasta</b-btn>
+          <b-btn  block href="#" v-b-toggle.accordion2>Enviar hasta</b-btn>
         </b-card-header>
         <b-collapse id="accordion2" accordion="my-accordion" role="tabpanel">
           <b-card-body>
@@ -22,9 +22,9 @@
           </b-card-body>
         </b-collapse>
       </b-card>
-      <b-card no-body class="mb-1">
+      <b-card no-body class="mb-1 bl-accordion">
         <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn block href="#" v-b-toggle.accordion3>Información del paquete</b-btn>
+          <b-btn  block href="#" v-b-toggle.accordion3>Información del paquete</b-btn>
         </b-card-header>
         <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
           <b-card-body>
@@ -32,9 +32,9 @@
           </b-card-body>
         </b-collapse>
       </b-card>
-      <b-card no-body class="mb-1">
+      <b-card no-body class="mb-1 bl-accordion">
         <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn block href="#" v-b-toggle.accordion4>Información de seguimiento</b-btn>
+          <b-btn  block href="#" v-b-toggle.accordion4>Información de seguimiento</b-btn>
         </b-card-header>
         <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
           <b-card-body>
@@ -46,9 +46,9 @@
     <template>
       <b-row class="actions-bar">
         <b-col sm="12">
-          <b-button variant="outline-primary" type="submit">Guardar</b-button>
-          <b-button variant="outline-danger">Eliminar</b-button>
-          <b-button variant="outline-primary">Volver</b-button>
+          <b-button variant="primary" type="submit">Guardar <i class="fa fa-save ml-1"></i></b-button>
+          <b-button variant="outline-danger">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+          <b-button variant="outline-primary">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
         </b-col>
       </b-row>
     </template>

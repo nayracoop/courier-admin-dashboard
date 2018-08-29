@@ -109,13 +109,13 @@ export default {
   data () {
     return {
       fields: [
-        { key: 'weight', label: 'Hasta Kgs.' },
+        { key: 'weight', label: 'Hasta Kgs.', class: 'cost-weight' },
         { key: 'grossPrice', label: 'Precio Bruto' },
-        { key: 'saleDiscount', label: '% Descuento Venta' },
+        { key: 'saleDiscount', label: '% Descuento Venta', class: 'cost-discount' },
         { key: 'netPrice', label: 'Neto' },
-        { key: 'costDiscount', label: '% Descuento Costo' },
+        { key: 'costDiscount', label: '% Descuento Costo', class: 'cost-discount' },
         { key: 'cost', label: 'Costo' },
-        { key: 'actions', label: 'Acciones' }
+        { key: 'actions', label: 'Acciones', class: 'cost-actions' }
       ],
       shippingTypes: shippingTypes,
       serviceTypes: serviceTypes,

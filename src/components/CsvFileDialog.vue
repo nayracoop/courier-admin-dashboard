@@ -1,15 +1,11 @@
 <template>
   <div>
-    <div class="mt-1 mb-4">
-      <span class="mb-4"> Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv</span>
-      <b-form-file class="mt-4" :disabled="inProgress" @input="processCsv" id="fileDialog" ref="fileDialog" v-model="file" :state="Boolean(file)" accept="text/csv" placeholder="Seleccione un archivo..."></b-form-file>
-    </div>
-    <b-row>
-      <b-col sm="12 text-right" slot="modal-footer">
-        <b-button variant="secondary" @click="onCancel" :disabled="inProgress">Cancelar</b-button>
+    <p>{{ bodyMessage }}</p>
+    <b-form-file class="mt-4" :disabled="inProgress" @input="processCsv" id="fileDialog" ref="fileDialog" v-model="file" :state="Boolean(file)" accept=".csv, text/plain, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" placeholder="Seleccione un archivo..."></b-form-file>
+    <div class="modal-footer pb-0 mt-4" slot="modal-footer">
+        <b-button variant="secondary" @click="onCancel" :disabled="inProgress">{{ cancellationMessage }}</b-button>
         <b-button variant="primary" @click="onConfirm" :disabled="count === 0 || inProgress">{{ buttonText }} <i v-show="inProgress" class="fa fa-cog fa-spin ml-1"></i></b-button>
-      </b-col>
-    </b-row>
+    </div>
   </div>
 </template>
 
@@ -24,10 +20,19 @@ export default {
       parsedFile: '',
       count: 0,
       inProgress: false
+
     }
   },
   props: {
+    /*
+    classModal: { type: String, default: 'default-modal' },
     cancellationMethod: { type: String, default: 'cancel' },
+    provider: null,
+    bodyMessage: { type: String },
+    cancellationMessage: { type: String, default: 'Cancelar' } */
+    cancellationMethod: { type: String, default: 'cancel' },
+    cancellationMessage: { type: String },
+    bodyMessage: { type: String },
     provider: null
   },
   computed: {
@@ -133,6 +138,7 @@ export default {
     onCancel () {
       this.count = 0
       this.parsedFile = null
+      // this.$refs.fileDialog.reset()
       this.$refs.fileDialog.reset()
       this.$emit(this.cancellationMethod)
     }

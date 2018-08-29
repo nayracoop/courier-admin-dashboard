@@ -18,7 +18,7 @@
       </b-row>
     </template>
     <!-- tabla -->
-    <b-table :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="clients" :fields="fields"
+    <b-table class="list-table" :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="clients" :fields="fields"
       :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
 
       <template slot="HEAD_selection" slot-scope="head">
@@ -51,10 +51,9 @@
       <b-pagination :total-rows="clientsCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
         hide-goto-end-buttons @click.native="clearSelected" />
     </nav>
-    <c-confirmation-modal :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
-      ref="deleteModal" title="Confirmación"
+    <c-confirmation-modal classModal="delete-modal" :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
+      ref="deleteModal" modalTitle="Eliminar registro"
       :confirmationMessage="'Sí, deseo eliminarlo' + (deleteMultiple && checkedItems.length > 1 ? 's' : '')"
-      cancellationMessage="No, volveré atrás"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
   </b-card>
@@ -71,7 +70,7 @@ export default {
   props: { caption: { type: String, default: 'Clientes' } },
   data: () => {
     return {
-      fields: [ 'selection',
+      fields: [ { key: 'selection', class: 'selection' },
         { key: 'name', label: 'Nombre', sortable: true, editable: true },
         // { key: 'userCode', label: 'Código', sortable: true },
         { key: 'docValue', label: 'CUIT / Nº doc.', sortable: true },
