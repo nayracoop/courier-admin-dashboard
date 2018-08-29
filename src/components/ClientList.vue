@@ -79,7 +79,7 @@ export default {
         { key: 'phone', label: 'Teléfono' },
         { key: 'address', label: 'Dirección' },
         { key: 'email', label: 'Email', sortable: true },
-        { key: 'province', label: 'Provincia' },
+        // { key: 'province', label: 'Provincia' },
         { key: 'actions', label: 'Acciones' }
       ],
       allSelected: false,

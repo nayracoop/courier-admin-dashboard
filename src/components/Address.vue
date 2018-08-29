@@ -10,7 +10,7 @@
         <b-form-group v-show="!isNew">
           <b-list-group class="info-address">
             <b-list-group-item>{{ `${currentAddress.name ? currentAddress.name : ''}${currentAddress.contactName ? ', ' + currentAddress.contactName : ''}` }}</b-list-group-item>
-            <b-list-group-item>{{ `${currentAddress.address1 ? currentAddress.address1 : ''}${currentAddress.address2 ? ', ' + currentAddress.address2 : ''}${currentAddress.postalCode ? ', CP: ' + currentAddress.postalCode : ''}${currentAddress.city ? ', ' + currentAddress.city : ''} ${currentAddress.state ? ', ' + currentAddress.state : ''}` }}</b-list-group-item>
+            <b-list-group-item>{{ `${currentAddress.address1 ? currentAddress.address1 : ''}${currentAddress.address2 ? ', ' + currentAddress.address2 : ''}${currentAddress.postalCode ? ', CP: ' + currentAddress.postalCode : ''}${currentAddress.location ? ', ' + currentAddress.location : ''} ${currentAddress.state ? ', ' + currentAddress.state : ''}` }}</b-list-group-item>
             <b-list-group-item>{{ this.selectedCountry && this.selectedCountry.alpha2Code ? this.selectedCountry.alpha2Code : '' }}</b-list-group-item>
             <b-list-group-item>{{ `${currentAddress.email ? currentAddress.email : ''}${currentAddress.phone ? ', ' + currentAddress.phone : ''}` }}</b-list-group-item>
           </b-list-group>
@@ -79,21 +79,25 @@
           </b-form-group>
         </b-col>
         <b-col sm="6">
-          <b-form-group>
-            <label :for="id + '_province'">Provincia</label>
+          <b-form-group v-if="currentAddress.country === '032'">
+            <label :for="id + '_province'">Provincia / estado</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
-            <b-form-input type="text" :id="id + '_province'" v-model="currentAddress.state" placeholder="Ej: Buenos Aires" />
-            <!-- -->
+            <b-form-select :id="id + '_province'" :plain="true" :options="argProvinceList" v-model="currentAddress.province"></b-form-select>
+          </b-form-group>
+          <b-form-group v-else>
+            <label :for="id + '_state'">Provincia / estado</label>
+            <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
+            <b-form-input type="text" :id="id + '_state'" v-model="currentAddress.state" placeholder="Ej: Buenos Aires" />
           </b-form-group>
         </b-col>
       </b-row>
       <b-row>
         <b-col sm="6">
         <b-form-group>
-          <label :for="id + '_city'">Localidad</label>
-          <b-form-input v-validate="{ required: true, regex: /[^\s*]$/ }" :name="id + '_city'" data-vv-as="localidad" type="text" :id="id + '_city'" v-model="currentAddress.city" placeholder="Ej: San Justo"></b-form-input>
+          <label :for="id + '_location'">Localidad / ciudad</label>
+          <b-form-input v-validate="{ required: true, regex: /[^\s*]$/ }" :name="id + '_location'" data-vv-as="localidad" type="text" :id="id + '_location'" v-model="currentAddress.location" placeholder="Ej: San Justo"></b-form-input>
           <!-- No puede tener espacios en blanco intermedios ni puede ser únicamente un espacio en blanco  -->
-          <span><small class="inv-feedback" v-show="errors.has(id + '_city')">{{ errors.first(id + '_city') }}</small></span>
+          <span><small class="inv-feedback" v-show="errors.has(id + '_location')">{{ errors.first(id + '_location') }}</small></span>
         </b-form-group>
         </b-col>
         <b-col sm="6">
@@ -161,7 +165,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { countries } from '@/store/const'
+import { countries, argProvinces } from '@/store/const'
 
 export default {
   name: 'c-address',
@@ -178,6 +182,7 @@ export default {
       addressList: [],
       countryIsoList: [],
       countryList: [],
+      argProvinceList: [],
       edit: false,
       currentAddress: {
         country: '',
@@ -187,8 +192,9 @@ export default {
         address2: '',
         address3: '',
         postalCode: '',
-        city: '',
         state: '',
+        province: '',
+        location: '',
         isResidential: false,
         email: '',
         phone: '',
@@ -209,6 +215,9 @@ export default {
     countries.map(el => {
       this.countryIsoList.push({ value: el.numericCode, text: el.alpha2Code })
       this.countryList.push({ value: el.numericCode, text: el.translations.es || el.name })
+    })
+    argProvinces.map(el => {
+      this.argProvinceList.push({ value: el.provincia_id, text: el.provincia_nombre })
     })
   },
   beforeDestroy: function () {
@@ -246,7 +255,7 @@ export default {
           address3: '',
           province: '',
           postalCode: '',
-          city: '',
+          location: '',
           state: '',
           isResidential: false,
           email: '',
