@@ -15,8 +15,9 @@ const getInitialState = () => {
       businessName: '',
       address: '',
       country: null,
-      province: null,
-      location: null,
+      province: null, // usamos province cuando el country es argentina. Si no state
+      state: null,
+      city: null,
       postalCode: '',
       email: '',
       phone: '',

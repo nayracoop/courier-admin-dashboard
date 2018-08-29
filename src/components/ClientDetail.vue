@@ -1,12 +1,5 @@
 <template>
   <b-form v-on:submit.prevent>
-    <!-- <b-row class="actions-bar">
-      <b-col sm="12">
-        <b-button disabled variant="outline-primary">Imprimir <i class="fa fa-print"></i></b-button>
-        <b-button disabled variant="outline-primary">Adjuntar <i class="fa fa-paperclip"></i></b-button>
-        <b-button disabled variant="outline-primary">Ver historial <i class="fa fa-history"></i></b-button>
-      </b-col>
-    </b-row> -->
     <b-row>
       <b-col sm="6">
         <b-form-group>
@@ -40,7 +33,7 @@
         <b-form-group>
           <label for="docValue">N° de identificación</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de DNI, CUIT, CUIL. Este campo solo puede contener números y tiene que tener un mínimo de 8 dígitos"></i>
-          <b-form-input v-validate="'numeric|min:8|max:20'" name="docValue" data-vv-as="número de identificación" id="docValue" type="text" v-model="client.docValue" placeholder="Ej: 20320508742"></b-form-input>
+          <b-form-input v-validate="'alpha_dash|min:8|max:20'" name="docValue" data-vv-as="número de identificación" id="docValue" type="text" v-model="client.docValue" placeholder="Ej: 20320508742"></b-form-input>
           <!-- Debe ser numérico, tener un mínimo de 8 caracteres y un máximo de 20 -->
           <span><small class="inv-feedback" v-show="errors.has('docValue')">{{ errors.first('docValue') }}</small></span>
         </b-form-group>
@@ -104,16 +97,21 @@
         <b-form-group>
           <label for="country">País</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre del país. Este campo solo puede contener letras y espacios"></i>
-          <b-form-input v-validate="'alpha'" name="country" data-vv-as="país" type="text" id="country" v-model="client.country" placeholder="Ej: Argentina"></b-form-input>
+          <b-form-select id="country" :plain="true" :options="countryList" v-model="client.country"></b-form-select>
           <!-- Debe contener caracteres alfabéticos -->
           <span><small class="inv-feedback" v-show="errors.has('country')">{{ errors.first('country') }}</small></span>
         </b-form-group>
       </b-col>
       <b-col sm="6">
-        <b-form-group>
-          <label for="province">Provincia</label>
-          <b-form-input v-validate="'alpha_spaces'" name="province" data-vv-as="país" type="text" id="province" v-model="client.province"></b-form-input>
+        <b-form-group v-if="client.country === '032'">
+          <label for="province">Provincia / estado</label>
+          <b-form-select id="province" :plain="true" :options="argProvinceList" v-model="client.province"></b-form-select>
           <span><small class="inv-feedback" v-show="errors.has('province')">{{ errors.first('province') }}</small></span>
+        </b-form-group>
+        <b-form-group v-else>
+          <label for="state">Provincia / estado</label>
+          <b-form-input v-validate="''" name="state" data-vv-as="país" type="text" id="state" v-model="client.state"></b-form-input>
+          <span><small class="inv-feedback" v-show="errors.has('state')">{{ errors.first('state') }}</small></span>
         </b-form-group>
       </b-col>
     </b-row>
@@ -142,7 +140,7 @@
   </b-form>
 </template>
 <script>
-import { taxCategories, docTypes } from '@/store/const'
+import { taxCategories, docTypes, countries, argProvinces } from '@/store/const'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -151,8 +149,18 @@ export default {
     return {
       inProgress: false,
       taxCategories: taxCategories,
-      docTypes: docTypes
+      docTypes: docTypes,
+      countryList: [],
+      argProvinceList: []
     }
+  },
+  created () {
+    countries.map(el => {
+      this.countryList.push({ value: el.numericCode, text: el.translations.es || el.name })
+    })
+    argProvinces.map(el => {
+      this.argProvinceList.push({ value: el.provincia_id, text: el.provincia_nombre })
+    })
   },
   props: {
     isEdit: { required: true }

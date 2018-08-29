@@ -9,7 +9,7 @@ const state = {
 
 const getters = {
   currentUser () {
-    return Parse.current()
+    return Parse.User.current()
   },
   isAuthenticated () {
     let currentUser = Parse.User.current()

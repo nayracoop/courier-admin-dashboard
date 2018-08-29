@@ -98,7 +98,7 @@ export default new Router({
           component: Provider
         },
         {
-          path: 'proveedor/editar/:id',
+          path: 'proveedores/editar/:id',
           name: 'Editar Proveedor',
           props: true,
           component: Provider
@@ -109,7 +109,7 @@ export default new Router({
           component: Clients
         },
         {
-          path: 'cliente/editar/:id',
+          path: 'clientes/editar/:id',
           name: 'Editar Cliente',
           component: Client
         },

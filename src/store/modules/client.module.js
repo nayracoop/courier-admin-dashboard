@@ -6,24 +6,25 @@ import { RESET_STATE, SET_CLIENT, FETCH_START, FETCH_CLIENTS_END } from '@/store
 const getInitialState = () => {
   return {
     client: {
-      taxCategory: -1, // categoría, condición frente al IVA
-      docType: -1, // CUIT, DNI, etcétera
+      taxCategory: null, // categoría, condición frente al IVA
+      docType: null, // CUIT, DNI, etcétera
       docValue: '', // número de DNI, CUIT, etcétera
       externalId: '',
       userCode: '',
       name: '',
       businessName: '',
-      postalCode: '',
-      purchaseAccount: -1,
-      saleAccount: -1,
       address: '',
+      country: null,
+      state: null,
+      province: null,
+      location: null,
+      postalCode: '',
       email: '',
+      phone: '',
       notifications: null,
       observation: '',
-      country: -1,
-      province: -1,
-      location: -1,
-      phone: '',
+      purchaseAccount: null,
+      saleAccount: null,
       cbu: '',
       hasPerception: null,
       addresses: []
