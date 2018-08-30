@@ -28,19 +28,11 @@ main {
 .fa-question-circle {
   color: lightgrey;
 }
-.card-header[role="tab"] a:focus { 
-  box-shadow: none;
-  -webkit-box-shadow: none;
-}
-.card-header[role="tab"] a {
-  background: #f7f7f7;
-  border: 0px;
-  text-align: left;
-  font-weight: bolder;
-}
+
 .card-header[role="tab"] {
   background: #f7f7f7;
 }
+/*
 .card-header[role="tab"] a[aria-expanded="false"]::after,
 .card-header[role="tab"] a[aria-expanded="true"]::after {
   font-family: 'FontAwesome';
@@ -56,6 +48,7 @@ main {
 .card-header[role="tab"] a[aria-expanded="true"]::after {
   content: '\f106';
 }
+*/
 .info-address {
   margin-top: 15px;
   margin-bottom: 15px;
@@ -100,6 +93,38 @@ main {
 }
 
 /* Fin Dashboard index */
+
+/* Estilos tablas */
+table td *,
+table.table td *{
+  white-space: normal;
+  text-align: left;
+}
+
+table td a.btn-link,
+table.table td a.btn-link{
+  padding-top: 0;
+  padding-bottom: 0;
+} 
+table td,
+table.table td{
+  vertical-align: middle;
+}
+table .selection,
+table.table .selection{
+  width: 40px;  
+}
+
+table .cost-actions,
+table .cost-weight,
+table .cost-discount{
+  width: 140px;
+}
+
+
+
+
+/* Fin Estilos tablas */
 
 /* Sidebar derecho cotizaciones */
 .circular-icon-cont{
@@ -238,10 +263,7 @@ select[aria-invalid=true]{
 /* Fin Validación campos formulario */
 
 /* Estilos modal */
-div[slot="modal-footer"]{
-  border-top: 1px solid #dadada;
-  padding-top: 1em;
-}
+
 .modal-header{
   background: #c8ced3;
 }
@@ -249,10 +271,79 @@ div[slot="modal-footer"]{
   color: #ffff;
   font-weight: 500;
   letter-spacing: .5px;
-}
+}*/
 
 .delete-modal header{
   background: linear-gradient(to right, #ff5150 0%,#fb7979 100%);
-}*/
+  color: #ffff;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
+.import-modal header{
+  background: linear-gradient(to right, #53a3c0 0%, #9be1fb 100%);
+  color: #ffff;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
 
+input[type="file"]{
+  cursor: pointer;
+}
 /* Fin Estilos modal */
+
+/* Estilos accordions */
+.card-header[role="tab"] a{
+  color: #23282c;  
+  text-decoration: none;
+  background: #f7f7f7!important;
+  border: 0px;
+  text-align: left;
+  font-weight: bolder;
+}
+.card-header[role="tab"] a:hover{  
+  color: #167495;
+}
+.card-header[role="tab"] a:focus { 
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+.card-header[role="tab"] a:active{
+  background-color:#f7f7f7!important;
+  box-shadow: none!important;
+  -webkit-box-shadow: none!important;
+}
+
+.card-header[role="tab"] a::after{
+  background:#a2a2a2;
+  color: white;
+  padding: 0  ;
+  width: 42px;
+  height: 42px;
+  text-align: center;
+  padding-top: 12px;
+  font-size: .75em;
+  font-weight: 300;
+  right: 0;
+  top: 0;
+  -webkit-transition: .05s ease-in-out;
+  transition: .05s ease-in-out;
+  font-family: 'FontAwesome';
+  position: absolute;
+  display: inline-block;  
+}
+
+.card-header[role="tab"] a[aria-expanded="false"]::after{
+  //content: '\f067';
+  content: '\f054';
+}
+
+.card-header[role="tab"] a[aria-expanded="true"]::after{
+  // content: '\f068';
+  content: '\f078';
+  background: #20a8d8;
+}
+
+.card-header[role="tab"] a:hover::after{
+  background: #20a8d8;
+}
+/* Fin Estilos accordions */

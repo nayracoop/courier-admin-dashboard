@@ -112,13 +112,13 @@ export default {
   data () {
     return {
       fields: [
-        { key: 'weight', label: 'Hasta Kgs.' }, // cliente y proveedor
-        { key: 'grossPrice', label: 'Precio Bruto' }, // cliente y proveedor
-        { key: 'saleDiscount', label: '% Descuento Venta' }, // proveedor
-        { key: 'netPrice', label: 'Neto' }, // proveedor
-        { key: 'costDiscount', label: '% Descuento Costo' }, // cliente
-        { key: 'cost', label: 'Costo' }, // cliente
-        { key: 'actions', label: 'Acciones' }
+        { key: 'weight', label: 'Hasta Kgs.', class: 'cost-weight' },
+        { key: 'grossPrice', label: 'Precio Bruto' },
+        { key: 'saleDiscount', label: '% Descuento Venta', class: 'cost-discount' },
+        { key: 'netPrice', label: 'Neto' },
+        { key: 'costDiscount', label: '% Descuento Costo', class: 'cost-discount' },
+        { key: 'cost', label: 'Costo' },
+        { key: 'actions', label: 'Acciones', class: 'cost-actions' }
       ],
       // el cliente también va a necesitar la lista de proveedores
       shippingTypes: shippingTypes,

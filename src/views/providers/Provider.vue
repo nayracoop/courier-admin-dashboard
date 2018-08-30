@@ -15,10 +15,8 @@
                 <b-col sm="6">
                   <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
                   <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
-                  <b-modal id="fileDialog" ref="fileDialogModal"
-                    hide-footer centered title="Importar precios de venta" >
-                    <c-csv-file-dialog cancellationMethod="cancelImport"
-                    :provider="provider" @cancelImport="hideImportModal()" />
+                  <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar precios de venta" class="import-modal">
+                    <c-csv-file-dialog bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv" cancellationMessage="Cancelar" cancellationMethod="cancelImport" :provider="provider" @cancelImport="hideImportModal()" />
                   </b-modal>
                 </b-col>
               </b-row>
@@ -34,12 +32,12 @@
       </b-col>
     </b-row>
     <c-confirmation-modal promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
-      ref="deleteModal" title="Eliminar registro"
+      ref="deleteModal" :modalTitle="'Eliminar proveedor ' + provider.name" classModal="delete-modal"
       confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="Cancelar"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="deleteProvider()" @cancelDelete="hideDeleteModal()" />
-    <c-confirmation-modal promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
-      ref="returnModal" title="Confirmación"
+    <c-confirmation-modal classModal="return-modal" promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
+      ref="returnModal" modalTitle="Confirmación"
       confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="Cancelar"
       confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
       @confirmReturn="confirmReturn(returnTo, provider)" @cancelReturn="hideReturnModal()" />
