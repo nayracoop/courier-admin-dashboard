@@ -99,7 +99,6 @@ export default {
       deleteMultiple: false,
       currentPage: 1,
       perPage: 5,
-      totalRows: 0,
       filter: null
     }
   },
@@ -133,6 +132,9 @@ export default {
     confirmImport () {
       let promises = []
       for (const provider of this.syncProviders) {
+        // le defino una tabla vacía de precios de costo
+        // porque el componente costsTable asume que existe
+        provider.costsTable = []
         promises.push(ProvidersService.create(provider))
       }
       Promise.all(promises).then(() => {

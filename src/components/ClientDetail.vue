@@ -118,7 +118,7 @@
     <b-row>
       <b-col sm="6">
         <b-form-group>
-          <label for="location">Localidad</label>
+          <label for="location">Localidad / ciudad</label>
           <b-form-input v-validate="{ regex: /[^\s*]$/ }" name="location" data-vv-as="localidad" type="text" id="location" v-model="client.location" placeholder="Ej: San Justo"></b-form-input>
           <!-- No puede tener espacios en blanco intermedios ni puede ser únicamente un espacio en blanco  -->
           <span><small class="inv-feedback" v-show="errors.has('location')">{{ errors.first('location') }}</small></span>

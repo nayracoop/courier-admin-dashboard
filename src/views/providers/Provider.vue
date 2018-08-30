@@ -22,7 +22,7 @@
                   </b-modal>
                 </b-col>
               </b-row>
-              <c-cost-table :provider="provider"></c-cost-table>
+              <c-cost-table></c-cost-table>
             </b-tab>
           </b-tabs>
           <b-col class="actions-bar" sm="12">
