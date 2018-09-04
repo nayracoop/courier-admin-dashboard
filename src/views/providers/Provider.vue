@@ -16,11 +16,23 @@
                   <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
                   <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
                   <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar precios de venta" class="import-modal">
-                    <c-csv-file-dialog bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv" cancellationMessage="Cancelar" cancellationMethod="cancelImport" :provider="provider" @cancelImport="hideImportModal()" />
+                    <c-csv-file-dialog
+                      bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv"
+                      cancellationMessage="Cancelar"
+                      cancellationMethod="cancelImport"
+                      @cancelImport="hideImportModal()" />
                   </b-modal>
                 </b-col>
+                <b-form-group class="ml-auto col-6">
+                  <b-input-group>
+                    <b-form-input v-model="filter" placeholder="Buscar..." />
+                    <b-input-group-append>
+                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
               </b-row>
-              <c-cost-table></c-cost-table>
+              <c-cost-table :filter="filter" variant="provider"></c-cost-table>
             </b-tab>
           </b-tabs>
           <b-col class="actions-bar" sm="12">
@@ -120,7 +132,8 @@ export default {
       cleanObject: null,
       deleteId: -1,
       returnConfirmed: false,
-      returnTo: null
+      returnTo: null,
+      filter: null
     }
   },
   computed: {

@@ -63,7 +63,8 @@ import modals from '@/shared/modals'
 import common from '@/shared/common'
 import crud from '@/shared/crud'
 
-import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, FETCH_SHIPPING, FETCH_SHIPPING_PROVIDERS, FETCH_CLIENTS, FETCH_CLIENT, FETCH_PROVIDER, SHIPPING_RESET_STATE } from '@/store/types/actions'
+import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, FETCH_SHIPPING, FETCH_SHIPPING_PROVIDERS,
+  FETCH_CLIENTS, FETCH_CLIENT, FETCH_PROVIDER, SHIPPING_RESET_STATE, CLIENT_RESET_STATE, PROVIDER_RESET_STATE } from '@/store/types/actions'
 
 import CShippingData from '@/components/ShippingData'
 import CAddress from '@/components/Address'
@@ -130,6 +131,8 @@ export default {
     // Reset state if user goes from /editor/:id to /editor
     // The component is not recreated so we use to hook to reset the state.
     await store.dispatch(SHIPPING_RESET_STATE)
+    await store.dispatch(PROVIDER_RESET_STATE)
+    await store.dispatch(CLIENT_RESET_STATE)
     next(vm => {
       vm.cleanObject = vm._.cloneDeep(vm.shipping)
     })
@@ -138,6 +141,8 @@ export default {
     // SO: https://github.com/vuejs/vue-router/issues/1034
     // If we arrive directly to this url, we need to fetch the shipping
     await store.dispatch(SHIPPING_RESET_STATE)
+    await store.dispatch(PROVIDER_RESET_STATE)
+    await store.dispatch(CLIENT_RESET_STATE)
     if (to.params.id !== undefined) {
       await store.dispatch(FETCH_SHIPPING,
         to.params.id,
@@ -151,6 +156,8 @@ export default {
   async beforeRouteLeave (to, from, next) {
     if (!this.dirtyCheck(this.shipping) || this.returnConfirmed) {
       await store.dispatch(SHIPPING_RESET_STATE)
+      await store.dispatch(PROVIDER_RESET_STATE)
+      await store.dispatch(CLIENT_RESET_STATE)
       next()
     } else {
       this.showReturnModal(to.path)
