@@ -29,7 +29,7 @@ const getInitialState = () => {
     },
     providers: [],
     syncProviders: [],
-    isLoading: false,
+    providerLoading: false,
     providersCount: 0,
     syncProvidersCount: 0
   }
@@ -100,7 +100,7 @@ export const actions = {
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
   [FETCH_START] (state) {
-    state.isLoading = true
+    state.providerLoading = true
   },
   [FETCH_PROVIDERS_END] (state, providers) {
     state.providers = providers.map(function (e) {
@@ -110,7 +110,7 @@ export const mutations = {
       return e.toJSON()
     })
     state.providersCount = providers.length
-    state.isLoading = false
+    state.providerLoading = false
   },
   [FETCH_SYNC_PROVIDERS_END] (state, providers) {
     state.syncProviders = providers.map(function (e) {
@@ -120,7 +120,7 @@ export const mutations = {
       return e.toJSON()
     })
     state.syncProvidersCount = providers.length
-    state.isLoading = false
+    state.providerLoading = false
   },
   [SET_PROVIDER] (state, provider) {
     state.provider = provider.toJSON()
@@ -149,8 +149,8 @@ const getters = {
   syncProvidersCount (state) {
     return state.syncProvidersCount
   },
-  isLoading (state) {
-    return state.isLoading // el getter isLoading se usa en distintos lugares
+  providerLoading (state) {
+    return state.providerLoading // el getter providerLoading se usa en distintos lugares
   }
 }
 

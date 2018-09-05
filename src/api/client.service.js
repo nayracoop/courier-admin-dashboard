@@ -46,5 +46,8 @@ export default {
         return error
       }
     })
+  },
+  getSyncClients () {
+    return Parse.Cloud.run('ClientSync', {})
   }
 }

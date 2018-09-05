@@ -80,7 +80,7 @@ export default {
     CShippingTracking
   },
   computed: {
-    ...mapGetters([ 'isLoading', 'clients', 'providers', 'shipping' ])
+    ...mapGetters([ 'shippingLoading', 'clients', 'providers', 'shipping' ])
   },
   props: {
     clientId: { type: String, default: null },

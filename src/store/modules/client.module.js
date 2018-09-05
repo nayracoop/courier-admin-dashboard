@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { ClientsService } from '@/api'
-import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, CLIENT_RESET_STATE, FETCH_CLIENT, FETCH_CLIENTS } from '@/store/types/actions'
-import { RESET_STATE, SET_CLIENT, FETCH_START, FETCH_CLIENTS_END } from '@/store/types/mutations'
+import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, CLIENT_RESET_STATE, FETCH_CLIENT, FETCH_CLIENTS, FETCH_SYNC_CLIENTS } from '@/store/types/actions'
+import { RESET_STATE, SET_CLIENT, FETCH_START, FETCH_CLIENTS_END, FETCH_SYNC_CLIENTS_END } from '@/store/types/mutations'
 
 const getInitialState = () => {
   return {
@@ -9,7 +9,7 @@ const getInitialState = () => {
       taxCategory: null, // categoría, condición frente al IVA
       docType: null, // CUIT, DNI, etcétera
       docValue: '', // número de DNI, CUIT, etcétera
-      externalId: '',
+      externalId: null,
       userCode: '',
       name: '',
       businessName: '',
@@ -27,11 +27,14 @@ const getInitialState = () => {
       saleAccount: null,
       cbu: '',
       hasPerception: null,
-      addresses: []
+      addresses: [],
+      costsTable: []
     },
     clients: [],
-    isLoading: false, // isLoading se usa en distintos lugares
-    clientsCount: 0
+    syncClients: [],
+    clientLoading: false, // clientLoading se usa en distintos lugares
+    clientsCount: 0,
+    syncClientsCount: 0
   }
 }
 
@@ -46,6 +49,16 @@ export const actions = {
     return ClientsService.getAll()
       .then(data => {
         commit(FETCH_CLIENTS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_SYNC_CLIENTS] ({ commit }) {
+    commit(FETCH_START)
+    return ClientsService.getSyncClients()
+      .then(data => {
+        commit(FETCH_SYNC_CLIENTS_END, data)
       })
       .catch((error) => {
         throw new Error(error)
@@ -80,14 +93,24 @@ export const actions = {
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
   [FETCH_START] (state) {
-    state.isLoading = true
+    state.clientLoading = true
   },
   [FETCH_CLIENTS_END] (state, clients) {
     state.clients = clients.map(function (e) {
       return e.toJSON()
     })
     state.clientsCount = clients.length
-    state.isLoading = false
+    state.clientLoading = false
+  },
+  [FETCH_SYNC_CLIENTS_END] (state, clients) {
+    state.syncClients = clients.map(function (e) {
+      if (e.constructor === Object) {
+        return e
+      }
+      return e.toJSON()
+    })
+    state.syncClientsCount = clients.length
+    state.clientLoading = false
   },
   [SET_CLIENT] (state, client) {
     state.client = client.toJSON()
@@ -104,11 +127,20 @@ const getters = {
   clients (state) {
     return state.clients
   },
+  syncClients (state) {
+    return state.syncClients
+  },
   client (state) {
     return state.client
   },
   clientsCount (state) {
     return state.clientsCount
+  },
+  syncClientsCount (state) {
+    return state.syncClientsCount
+  },
+  clientLoading (state) {
+    return state.clientLoading // el getter clientLoading se usa en distintos lugares
   }
 }
 

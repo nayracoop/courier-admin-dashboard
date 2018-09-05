@@ -6,7 +6,7 @@
           <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor <i class="fa fa-plus-circle ml-1"></i></b-button>
           <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
           <b-button variant="outline-primary" @click="showImportModal()">
-            Importar <i v-if="!isLoading" class="fa fa-file ml-1"></i>
+            Importar <i v-if="!providerLoading" class="fa fa-file ml-1"></i>
             <i v-else class="fa fa-cog fa-spin ml-1"></i>
           </b-button>
         </b-col>
@@ -101,7 +101,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([ 'providersCount', 'isLoading', 'providers', 'syncProviders', 'syncProvidersCount' ])
+    ...mapGetters([ 'providersCount', 'providerLoading', 'providers', 'syncProviders', 'syncProvidersCount' ])
   },
   mounted () {
     this.fetchProviders()
