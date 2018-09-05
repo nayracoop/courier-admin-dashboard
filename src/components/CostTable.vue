@@ -120,8 +120,8 @@
     <nav>
       <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente" :limit="8" />
     </nav>
-    <pre>{{ `proveedor: ${JSON.stringify(this.provider && this.provider.costsTable, null, 2)}` }}</pre>
-    <pre>{{ `cliente: ${JSON.stringify(this.client && this.client.costsTable, null, 2)}` }}</pre>
+    <pre>{{ `proveedor CT: ${JSON.stringify(this.provider && this.provider.costsTable, null, 2)}` }}</pre>
+    <pre>{{ `cliente CT: ${JSON.stringify(this.client && this.client.costsTable, null, 2)}` }}</pre>
   </b-form>
 </template>
 <script>
@@ -234,8 +234,8 @@ export default {
       this.inProgress = true
       this.providerCostsTableIndex = -1
 
-      let providerCostFound = null
-      let clientCostFound = null
+      let providerCostFound = []
+      let clientCostFound = []
       let providerCosts = []
       let clientCosts = []
 
@@ -254,7 +254,7 @@ export default {
         }
       }
 
-      providerCosts = providerCostFound && providerCostFound.length > 0 && providerCostFound[0].costs
+      providerCosts = (providerCostFound && providerCostFound.length > 0 ? providerCostFound[0].costs : [])
 
       if (this.client && this.client.costsTable && this.client.costsTable.length > 0) {
         if (this.client.costsTable) {
@@ -272,10 +272,7 @@ export default {
         }
       }
 
-      clientCosts = clientCostFound && clientCostFound.length > 0 && clientCostFound[0].costs
-
-      console.log(`clientCosts: ${clientCosts}`)
-      console.log(`providerCosts: ${providerCosts}`)
+      clientCosts = (clientCostFound && clientCostFound.length > 0 ? clientCostFound[0].costs : [])
 
       this.items = [...providerCosts.concat(clientCosts).reduce((m, o) => m.set(o.weight, Object.assign(m.get(o.weight) || {}, o)), new Map()).values()]
 
@@ -309,12 +306,14 @@ export default {
     },
     add () {
       // valido los datos
+      // agregar solo va a servir para proveedor
       if (!this.validateNumericValues(this.newRow)) return
 
+      // creo la nueva fila así no queda referenciado
       let newRow = {
         weight: this.newRow.weight,
         grossPrice: Number(this.newRow.grossPrice),
-        saleDiscount: Number(this.newRow.saleDiscount) | 0
+        costDiscount: Number(this.newRow.costDiscount) | 0
       }
       if (this.providerCostsTableIndex === -1) {
         // si es el primer registro, lo inserto directo
@@ -333,7 +332,7 @@ export default {
       // reseteo todo y el filtro
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
       this.newRow.grossPrice = null
-      this.newRow.saleDiscount = null
+      this.newRow.costDiscount = null
       this.resetFilter()
     },
     enableEdit (selectedWeight) {
@@ -353,6 +352,7 @@ export default {
     },
     applyEdit (selectedWeight) {
       if (selectedWeight !== undefined && selectedWeight !== null && selectedWeight > -1) {
+        // acá es donde hay que cambiar por variant
         let selRow = this.provider.costsTable[this.providerCostsTableIndex].costs.find(el => el.weight === selectedWeight)
         if (!this.validateNumericValues(selRow)) return
         delete selRow.edit
