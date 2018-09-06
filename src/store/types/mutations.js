@@ -15,6 +15,7 @@ export const UPDATE_PROVIDER_IN_LIST = 'updateProviderInList'
 
 /* Clients mutations */
 export const FETCH_CLIENTS_END = 'setClients'
+export const FETCH_SYNC_CLIENTS_END = 'setSyncClients'
 export const SET_CLIENT = 'setClient'
 export const UPDATE_CLIENT_IN_LIST = 'updateClientInList'
 

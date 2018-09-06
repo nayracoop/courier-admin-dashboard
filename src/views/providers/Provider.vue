@@ -20,13 +20,19 @@
                       bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv"
                       cancellationMessage="Cancelar"
                       cancellationMethod="cancelImport"
-                      :provider="provider"
-                      @cancelImport="hideImportModal()"
-                    />
+                      @cancelImport="hideImportModal()" />
                   </b-modal>
                 </b-col>
+                <b-form-group class="ml-auto col-6">
+                  <b-input-group>
+                    <b-form-input v-model="filter" placeholder="Buscar..." />
+                    <b-input-group-append>
+                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
               </b-row>
-              <c-cost-table :provider="provider"></c-cost-table>
+              <c-cost-table :filter="filter" variant="provider"></c-cost-table>
             </b-tab>
           </b-tabs>
           <b-col class="actions-bar" sm="12">
@@ -140,7 +146,8 @@ export default {
       cleanObject: null,
       deleteId: -1,
       returnConfirmed: false,
-      returnTo: null
+      returnTo: null,
+      filter: null
     }
   },
   computed: {

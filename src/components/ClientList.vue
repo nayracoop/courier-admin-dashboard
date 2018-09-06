@@ -5,7 +5,10 @@
         <b-col sm="6">
           <b-button variant="primary" :to="{ name: 'Nuevo Cliente' }">Nuevo cliente <i class="fa fa-plus-circle ml-1"></i></b-button>
           <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-          <b-button variant="outline-primary" disabled>Importar <i class="fa fa-file ml-1"></i></b-button>
+          <b-button variant="outline-primary" @click="showImportModal()">
+            Importar <i v-if="!clientLoading" class="fa fa-file ml-1"></i>
+            <i v-else class="fa fa-cog fa-spin ml-1"></i>
+          </b-button>
         </b-col>
         <b-form-group class="ml-auto col-6">
           <b-input-group>
@@ -58,16 +61,23 @@
       :promptMessage="'Se ' + (deleteMultiple && checkedItems.length > 1 ? `eliminarán los ${checkedItems.length} registros seleccionados` : 'eliminará el registro seleccionado') + ' de la lista de clientes. Esta acción no se puede deshacer'"
       :confirmationMessage="'Sí, ' + (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' eliminaré'"
       :cancellationMessage="'No, ' +  (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' conservaré '  "
+      confirmationMethod="confirmDelete"
       cancellationMethod="cancelDelete"
       @confirmDelete="confirmDelete"
       @cancelDelete="hideDeleteModal"
     />
+    <c-confirmation-modal classModal="import-modal" :promptMessage="'¿Desea importar ' + (syncClientsCount && syncClientsCount > 1 ? `${syncClientsCount} registros` : 'un registro') + '?'"
+      ref="importModal" title="Confirmar importación"
+      :confirmationMessage="'Sí, deseo importarlo' + (syncClientsCount && syncClientsCount > 1 ? 's' : '')"
+      confirmationMethod="confirmImport" cancellationMethod="cancelImport"
+      @confirmImport="confirmImport" @cancelImport="hideImportModal" />
   </b-card>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_CLIENTS, IMPORT_CLIENTS, CLIENT_DELETE } from '@/store/types/actions'
+import { FETCH_CLIENTS, FETCH_SYNC_CLIENTS, CLIENT_DELETE } from '@/store/types/actions'
+import { ClientsService } from '@/api'
 import CConfirmationModal from '@/components/ConfirmationModal'
 
 export default {
@@ -99,7 +109,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([ 'clientsCount', 'isLoading', 'clients' ])
+    ...mapGetters([ 'clientsCount', 'clientLoading', 'clients', 'syncClients', 'syncClientsCount' ])
   },
   mounted () {
     this.fetchClients()
@@ -113,8 +123,34 @@ export default {
     fetchClients () {
       this.$store.dispatch(FETCH_CLIENTS)
     },
-    importClients () {
-      this.$store.dispatch(IMPORT_CLIENTS)
+    showImportModal () {
+      this.$store.dispatch(FETCH_SYNC_CLIENTS).then(() => {
+        if (this.syncClientsCount && this.syncClientsCount > 0) {
+          this.$refs.importModal.$refs.confirmationModal.show()
+        } else {
+          this.$toasted.global.error_toast({ message: 'No hay nuevos registros para importar' })
+        }
+      })
+    },
+    hideImportModal () {
+      this.$refs.importModal.$refs.confirmationModal.hide()
+    },
+    confirmImport () {
+      let promises = []
+      for (const client of this.syncClients) {
+        // le defino una tabla vacía de precios de costo
+        // porque el componente costsTable asume que existe
+        client.costsTable = []
+        client.addresses = []
+        promises.push(ClientsService.create(client))
+      }
+      Promise.all(promises).then(() => {
+        this.$toasted.global.success_toast({ message: `${this.syncClientsCount} registros importados con éxito` })
+        this.fetchClients()
+      }, error => {
+        this.$toasted.global.error_toast({ message: error })
+      })
+      this.$refs.importModal.$refs.confirmationModal.hide()
     },
     showDeleteModal (id) {
       if (id) {

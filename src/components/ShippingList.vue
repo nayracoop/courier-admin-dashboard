@@ -80,7 +80,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([ 'shippingsCount', 'isLoading', 'shippings' ])
+    ...mapGetters([ 'shippingsCount', 'shippingLoading', 'shippings' ])
   },
   mounted () {
     this.fetchShippings()

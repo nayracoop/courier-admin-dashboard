@@ -22,7 +22,7 @@ const getInitialState = () => {
       cost: ''
     },
     shippings: [],
-    isLoading: false,
+    shippingLoading: false,
     shippingsCount: 0
   }
 }
@@ -72,14 +72,14 @@ export const actions = {
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
   [FETCH_START] (state) {
-    state.isLoading = true
+    state.shippingLoading = true
   },
   [FETCH_SHIPPINGS_END] (state, shippings) {
     state.shippings = shippings.map(function (e) {
       return e.toJSON()
     })
     state.shippingsCount = shippings.length
-    state.isLoading = false
+    state.shippingLoading = false
   },
   [SET_SHIPPING] (state, shipping) {
     state.shipping = shipping.toJSON()
@@ -101,6 +101,9 @@ const getters = {
   },
   shippingsCount (state) {
     return state.shippingsCount
+  },
+  shippingLoading (state) {
+    return state.shippingLoading // el getter shippingLoading se usa en distintos lugares
   }
 }
 

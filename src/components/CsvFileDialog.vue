@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Papa from 'papaparse'
 
 export default {
@@ -34,10 +35,10 @@ export default {
     cancellationMessage: { type: String, default: 'Cancelar' } */
     cancellationMethod: { type: String, default: 'cancel' },
     cancellationMessage: { type: String },
-    bodyMessage: { type: String },
-    provider: null
+    bodyMessage: { type: String }
   },
   computed: {
+    ...mapGetters(['provider']),
     buttonText () {
       return `Importar ${this.count} registros`
     }

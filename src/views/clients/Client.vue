@@ -1,34 +1,64 @@
 <template>
   <div class="animated fadeIn">
+
     <b-row>
       <b-col sm="12">
-        <b-card>
-          <div slot="header">
-            <strong>{{ isEdit ? client.name : 'Nuevo cliente' }}</strong>
-          </div>
-          <c-client-detail ref="clientDetail" :isEdit="isEdit"></c-client-detail>
+        <b-card no-body>
+          <b-tabs card>
+            <b-tab v-bind:title="isEdit ? client.name : 'Nuevo cliente'" active>
+              <div slot="header">
+                <strong>{{ isEdit ? client.name : 'Nuevo cliente' }}</strong>
+              </div>
+              <c-client-detail ref="clientDetail" :isEdit="isEdit"></c-client-detail>
+              <div role="tablist" class="mb-3">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-btn block href="#" v-b-toggle.accordion1>Direcciones</b-btn>
+                  </b-card-header>
+                  <b-collapse id="accordion1" accordion="my-accordion" role="tabpanel">
+                    <b-card-body>
+                      <c-address />
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+            </b-tab>
+            <b-tab title="Descuentos">
+              <b-row class="actions-bar">
+                <b-col sm="6">
+                  <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                  <b-button variant="outline-primary" disabled>Imprimir lista de descuentos<i class="fa fa-print  ml-1"></i></b-button>
+                  <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar lista de descuentos" class="import-modal">
+                    <c-csv-file-dialog
+                      bodyMessage="Elija un archivo para importar la lista de descuentos. Únicamente se permiten archivos .csv"
+                      cancellationMessage="Cancelar"
+                      cancellationMethod="cancelImport"
+                      @cancelImport="hideImportModal()" />
+                  </b-modal>
+                </b-col>
+                <b-form-group class="ml-auto col-6">
+                  <b-input-group>
+                    <b-form-input v-model="filter" placeholder="Buscar..." />
+                    <b-input-group-append>
+                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
+              </b-row>
+              <c-cost-table :filter="filter" variant="client" :providerList="providerList"></c-cost-table>
+            </b-tab>
+
+          </b-tabs>
+          <b-col class="actions-bar" sm="12">
+            <b-button variant="primary" :disabled="inProgress" @click="saveClient(client)">Guardar <i class="fa fa-save ml-1"></i></b-button>
+            <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(client.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+            <b-button variant="outline-primary" @click="goNavigate('/clientes', client)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
+          </b-col>
         </b-card>
       </b-col>
     </b-row>
-    <div role="tablist" class="mb-3">
-      <b-card no-body class="mb-1">
-        <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn block href="#" v-b-toggle.accordion1>Direcciones</b-btn>
-        </b-card-header>
-        <b-collapse id="accordion1" accordion="my-accordion" role="tabpanel">
-          <b-card-body>
-            <c-address />
-          </b-card-body>
-        </b-collapse>
-      </b-card>
-    </div>
-    <b-row class="actions-bar">
-      <b-col sm="12">
-        <b-button variant="primary" :disabled="inProgress" @click="saveClient(client)">Guardar <i class="fa fa-save ml-1"></i></b-button>
-        <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(client.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-        <b-button variant="outline-primary" @click="goNavigate('/clientes', client)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
-      </b-col>
-    </b-row>
+
     <!-- <pre>{{ JSON.stringify(cleanObject, null, 4) }}</pre>
     <pre>{{ JSON.stringify(client, null, 4) }}</pre> -->
     <c-confirmation-modal
@@ -65,14 +95,16 @@ import modals from '@/shared/modals'
 import common from '@/shared/common'
 import crud from '@/shared/crud'
 
+import CCostTable from '@/components/CostTable'
 import CConfirmationModal from '@/components/ConfirmationModal'
 import CAddress from '@/components/Address'
 import CClientDetail from '@/components/ClientDetail'
-import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, FETCH_CLIENT, CLIENT_RESET_STATE } from '@/store/types/actions'
+import CCsvFileDialog from '@/components/CsvFileDialog'
+import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, FETCH_CLIENT, CLIENT_RESET_STATE, PROVIDER_RESET_STATE, FETCH_SHIPPING_PROVIDERS } from '@/store/types/actions'
 
 export default {
   name: 'v-client',
-  components: { CConfirmationModal, CAddress, CClientDetail },
+  components: { CCostTable, CConfirmationModal, CAddress, CClientDetail, CCsvFileDialog },
   props: {
     previousClient: {
       type: Object,
@@ -93,17 +125,25 @@ export default {
 
     this.save = crud.save.bind(this)
     this.deleteEl = crud.deleteEl.bind(this)
+
+    this.fetchProviders().then(() => {
+      this.providerList = this.providers.map(provider => {
+        return ({ value: provider.objectId, text: provider.name })
+      })
+    })
   },
   async beforeRouteUpdate (to, from, next) {
     // Reset state if user goes from /editor/:id to /editor
     // The component is not recreated so we use to hook to reset the state.
     await store.dispatch(CLIENT_RESET_STATE)
+    await store.dispatch(PROVIDER_RESET_STATE)
     return next()
   },
   async beforeRouteEnter (to, from, next) {
     // SO: https://github.com/vuejs/vue-router/issues/1034
     // If we arrive directly to this url, we need to fetch the provider
     await store.dispatch(CLIENT_RESET_STATE)
+    await store.dispatch(PROVIDER_RESET_STATE)
     if (to.params.id !== undefined) {
       await store.dispatch(FETCH_CLIENT,
         to.params.id,
@@ -117,6 +157,7 @@ export default {
   async beforeRouteLeave (to, from, next) {
     if (!this.dirtyCheck(this.client) || this.returnConfirmed) {
       await store.dispatch(CLIENT_RESET_STATE)
+      await store.dispatch(PROVIDER_RESET_STATE)
       next()
     } else {
       this.showReturnModal(to.path)
@@ -129,16 +170,21 @@ export default {
       cleanObject: null,
       deleteId: -1,
       returnConfirmed: false,
-      returnTo: null
+      returnTo: null,
+      filter: null,
+      providerList: []
     }
   },
   computed: {
-    ...mapGetters(['client']),
+    ...mapGetters(['client', 'providers']),
     isEdit () {
       return !!this.client.objectId
     }
   },
   methods: {
+    fetchProviders () {
+      return this.$store.dispatch(FETCH_SHIPPING_PROVIDERS)
+    },
     saveClient (client) {
       this.$refs.clientDetail.validateBeforeSubmit().then(res => {
         if (!res) {

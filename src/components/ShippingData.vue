@@ -117,7 +117,7 @@ export default {
     providerList: { type: Array }
   },
   computed: {
-    ...mapGetters([ 'isLoading', 'clients', 'providers', 'shipping', 'client', 'provider' ]),
+    ...mapGetters([ 'shippingLoading', 'clients', 'providers', 'shipping', 'client', 'provider' ]),
     isEdit () {
       return !!this.shipping.objectId
     }

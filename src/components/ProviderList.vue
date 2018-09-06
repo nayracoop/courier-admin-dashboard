@@ -6,7 +6,7 @@
           <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor <i class="fa fa-plus-circle ml-1"></i></b-button>
           <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
           <b-button variant="outline-primary" @click="showImportModal()">
-            Importar <i v-if="!isLoading" class="fa fa-file ml-1"></i>
+            Importar <i v-if="!providerLoading" class="fa fa-file ml-1"></i>
             <i v-else class="fa fa-cog fa-spin ml-1"></i>
           </b-button>
         </b-col>
@@ -108,12 +108,11 @@ export default {
       deleteMultiple: false,
       currentPage: 1,
       perPage: 5,
-      totalRows: 0,
       filter: null
     }
   },
   computed: {
-    ...mapGetters([ 'providersCount', 'isLoading', 'providers', 'syncProviders', 'syncProvidersCount' ])
+    ...mapGetters([ 'providersCount', 'providerLoading', 'providers', 'syncProviders', 'syncProvidersCount' ])
   },
   mounted () {
     this.fetchProviders()
@@ -142,6 +141,9 @@ export default {
     confirmImport () {
       let promises = []
       for (const provider of this.syncProviders) {
+        // le defino una tabla vacía de precios de costo
+        // porque el componente costsTable asume que existe
+        provider.costsTable = []
         promises.push(ProvidersService.create(provider))
       }
       Promise.all(promises).then(() => {
