@@ -120,6 +120,18 @@
           <span><small class="inv-feedback" v-show="errors.has('city')">{{ errors.first('city') }}</small></span>
         </b-form-group>
       </b-col>
+      <b-col sm="6" v-if="provider.isShipping">
+        <b-form-group>
+          <label for="city">Seguro (porcentaje)</label>
+          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Ingrese el porcentaje de descuento. Este campo solo puede contener números y puntos."></i>
+          <b-input-group>
+            <b-form-input v-validate="{ max_value: 100, regex: /^[0-9.,]+$/ }" name="insurance" data-vv-as="seguro" type="text" id="insurance" v-model="provider.insurance" placeholder="Ej: 50"></b-form-input>
+            <b-input-group-append><b-input-group-text>%</b-input-group-text></b-input-group-append>
+          </b-input-group>
+          <!-- No puede tener espacios en blanco intermedios ni puede ser únicamente un espacio en blanco  -->
+          <span><small class="inv-feedback" v-show="errors.has('insurance')">{{ errors.first('insurance') }}</small></span>
+        </b-form-group>
+      </b-col>
     </b-row>
     <b-row>
       <b-col sm="12">
