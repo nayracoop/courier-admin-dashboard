@@ -31,14 +31,13 @@
         </b-card>
       </b-col>
     </b-row>
-    <c-confirmation-modal promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
-      ref="deleteModal" :modalTitle="'Eliminar proveedor ' + provider.name" classModal="delete-modal"
-      confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="Cancelar"
+    <c-confirmation-modal :promptMessage="'¿Está seguro que desea eliminar este registro de la lista de proveedores? Esta acción no se puede deshacer.'"
+      ref="deleteModal" :modalTitle="'Eliminar ' + provider.name" classModal="delete-modal"
+      confirmationMessage="Sí, eliminar proveedor" cancellationMessage="No, conservar proveedor"
       confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
       @confirmDelete="deleteProvider()" @cancelDelete="hideDeleteModal()" />
-    <c-confirmation-modal classModal="return-modal" promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
-      ref="returnModal" modalTitle="Confirmación"
-      confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="Cancelar"
+    <c-confirmation-modal classModal="return-modal" promptMessage="Hay cambios sin guardar en este registro. Si sale de esta pantalla se perderán. Esta acción no se puede deshacer." ref="returnModal" modalTitle="¿Desea descartar los cambios?"
+      confirmationMessage="Sí, descartar cambios" cancellationMessage="No, seguir editando"
       confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
       @confirmReturn="confirmReturn(returnTo, provider)" @cancelReturn="hideReturnModal()" />
     <!-- <pre>{{ JSON.stringify(this.provider, null, 2) }}</pre>
