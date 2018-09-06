@@ -145,8 +145,16 @@
       </b-row>
       <b-row v-show="saveAddress || !isShipping">
         <b-col sm="6">
-          <b-form-group label="Dirección por defecto?">
+          <b-form-group>
+            <b-form-group label="Dirección por defecto?">
             <b-check :id="id + '_defaultAddress'" v-model="currentAddress.isDefault" @change="changeDefault">Sí</b-check>
+          </b-form-group>
+          <!-- <label class="switch switch-label switch-outline-primary-alt">
+            Dirección por defecto?
+            <input type="checkbox" class="switch-input" :id="id + '_defaultAddress'" v-model="currentAddress.isDefault" @change="changeDefault">
+            <span class="switch-slider" data-checked="Si" data-unchecked="No"></span>
+          </label> -->
+          <!-- <input type="checkbox" :id="id + '_defaultAddress'" v-model="currentAddress.isDefault" @change="changeDefault" class="switch-input">Sí -->
           </b-form-group>
         </b-col>
         <b-col sm="6">

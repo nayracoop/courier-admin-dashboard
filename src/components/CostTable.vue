@@ -47,7 +47,7 @@
         <b-table hover striped bordered small fixed responsive="sm"
         :items="items"
         :fields="fields"
-        :foot-clone="(hasWeight || costsTableIndex === -1) && variant === 'provider'"
+        :foot-clone="(hasWeight || providerCostsTableIndex === -1) && variant === 'provider'"
         :current-page="currentPage"
         :per-page="perPage"
         :filter="filter"
@@ -77,7 +77,7 @@
               <b-button v-b-tooltip.hover title="Descartar cambios" variant="warning" @click.prevent="revertEdit(data.item.weight)">
                 <i class="fa fa-undo"></i>
               </b-button>
-              <b-button v-b-tooltip.hover title="Aplicar cambios" variant="primary" @click.prevent="applyEdit(data.item.weight)">
+              <b-button v-b-tooltip.hover title="Aplicar cambios" variant="primary" @click.prevent="applyEdit(data.item)">
                 <strong><i class="fa fa-check"></i></strong>
               </b-button>
             </template>
@@ -120,8 +120,8 @@
     <nav>
       <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente" :limit="8" />
     </nav>
-    <pre>{{ `proveedor CT: ${JSON.stringify(this.provider && this.provider.costsTable, null, 2)}` }}</pre>
-    <pre>{{ `cliente CT: ${JSON.stringify(this.client && this.client.costsTable, null, 2)}` }}</pre>
+    <!-- <pre>{{ `proveedor CT: ${JSON.stringify(this.provider && this.provider.costsTable, null, 2)}` }}</pre>
+    <pre>{{ `cliente CT: ${JSON.stringify(this.client && this.client.costsTable, null, 2)}` }}</pre> -->
   </b-form>
 </template>
 <script>
@@ -178,19 +178,18 @@ export default {
   async created () {
     // si tengo cliente, voy a usar el provider asociado al primer registro de la tabla de costos del cliente
     if (this.client && this.client.costsTable && this.client.costsTable.length > 0) {
-      await this.fetchProvider(this.provider.costsTable[0].providerId)
+      this.costsFilter.providerId = this.client.costsTable[0].providerId
+      await this.fetchProvider()
+    } else {
+      this.costsFilter.providerId = -1
     }
     // si el proveedor en cuestión no tiene costos asociados, tampoco le voy a poder asociar descuentos
     // entonces, si costsTableIndex es -1 acá, fin para el vínculo cliente <-> proveedor
     this.providerCostsTableIndex = (this.provider.costsTable && this.provider.costsTable.length > 0 ? 0 : -1)
-    this.costsFilter = {
-      // acá si es cliente, voy a necesitar también el proveedor
-      shippingType: (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingType : 1),
-      serviceType: (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].serviceType : 1),
-      packageType: (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].packageType : 1),
-      shippingZone: (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingZone : 1),
-      providerId: (this.provider ? this.provider.objectId : '-1')
-    }
+    this.costsFilter.shippingType = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingType : 1)
+    this.costsFilter.serviceType = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].serviceType : 1)
+    this.costsFilter.packageType = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].packageType : 1)
+    this.costsFilter.shippingZone = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingZone : 1)
 
     // el proveedor tiene: weight / grossPrice / costDiscount
     // el cliente tiene:   weight / saleDiscount
@@ -233,6 +232,7 @@ export default {
       // los registros que corresponden a los valores seleccionados
       this.inProgress = true
       this.providerCostsTableIndex = -1
+      this.clientCostsTableIndex = -1
 
       let providerCostFound = []
       let clientCostFound = []
@@ -240,40 +240,37 @@ export default {
       let clientCosts = []
 
       if (this.provider && this.provider.costsTable && this.provider.costsTable.length > 0) {
-        if (this.provider.costsTable) {
-          providerCostFound = this.provider.costsTable.filter(
-            (cost, i) => {
-              if (cost.shippingType === this.costsFilter.shippingType &&
-              cost.serviceType === this.costsFilter.serviceType &&
-              cost.packageType === this.costsFilter.packageType &&
-              cost.shippingZone === this.costsFilter.shippingZone) {
-                this.providerCostsTableIndex = i
-                return true
-              }
-            })
-        }
+        providerCostFound = this.provider.costsTable.filter(
+          (cost, i) => {
+            if (cost.shippingType === this.costsFilter.shippingType &&
+            cost.serviceType === this.costsFilter.serviceType &&
+            cost.packageType === this.costsFilter.packageType &&
+            cost.shippingZone === this.costsFilter.shippingZone) {
+              this.providerCostsTableIndex = i
+              return true
+            }
+          })
       }
 
       providerCosts = (providerCostFound && providerCostFound.length > 0 ? providerCostFound[0].costs : [])
 
       if (this.client && this.client.costsTable && this.client.costsTable.length > 0) {
-        if (this.client.costsTable) {
-          clientCostFound = this.client.costsTable.filter(
-            (cost, i) => {
-              if (cost.providerId === this.costsFilter.providerId &&
-              cost.shippingType === this.costsFilter.shippingType &&
-              cost.serviceType === this.costsFilter.serviceType &&
-              cost.packageType === this.costsFilter.packageType &&
-              cost.shippingZone === this.costsFilter.shippingZone) {
-                this.clientCostsTableIndex = i
-                return true
-              }
-            })
-        }
+        clientCostFound = this.client.costsTable.filter(
+          (cost, i) => {
+            if (cost.providerId === this.costsFilter.providerId &&
+            cost.shippingType === this.costsFilter.shippingType &&
+            cost.serviceType === this.costsFilter.serviceType &&
+            cost.packageType === this.costsFilter.packageType &&
+            cost.shippingZone === this.costsFilter.shippingZone) {
+              this.clientCostsTableIndex = i
+              return true
+            }
+          })
       }
 
       clientCosts = (clientCostFound && clientCostFound.length > 0 ? clientCostFound[0].costs : [])
 
+      // primero que nada: esto no mantiene referencia
       this.items = [...providerCosts.concat(clientCosts).reduce((m, o) => m.set(o.weight, Object.assign(m.get(o.weight) || {}, o)), new Map()).values()]
 
       // en caso de que no haya definido un filtro
@@ -304,63 +301,131 @@ export default {
         this.newRow.weight = newWeight
       }
     },
-    add () {
+    add (el) {
+      let newRow = {}
       // valido los datos
-      // agregar solo va a servir para proveedor
-      if (!this.validateNumericValues(this.newRow)) return
-
-      // creo la nueva fila así no queda referenciado
-      let newRow = {
-        weight: this.newRow.weight,
-        grossPrice: Number(this.newRow.grossPrice),
-        costDiscount: Number(this.newRow.costDiscount) | 0
-      }
-      if (this.providerCostsTableIndex === -1) {
-        // si es el primer registro, lo inserto directo
-        this.provider.costsTable.push({
-          shippingType: this.costsFilter.shippingType,
-          serviceType: this.costsFilter.serviceType,
-          packageType: this.costsFilter.packageType,
-          shippingZone: this.costsFilter.shippingZone,
-          costs: [newRow]
-        })
-        this.providerCostsTableIndex = this.provider.costsTable.length - 1
-      } else {
-        // si había un índice seleccionado, inserto en esa posición una nueva entrada
-        this.provider.costsTable[this.providerCostsTableIndex].costs.push(newRow)
+      switch (this.variant) {
+        case 'provider':
+          if (!this.validateNumericValues(this.newRow)) return
+          newRow = {
+            weight: this.newRow.weight,
+            grossPrice: Number(this.newRow.grossPrice),
+            costDiscount: Number(this.newRow.costDiscount) | 0
+          }
+          if (this.providerCostsTableIndex === -1) {
+            // si es el primer registro, lo inserto directo
+            this.provider.costsTable.push({
+              shippingType: this.costsFilter.shippingType,
+              serviceType: this.costsFilter.serviceType,
+              packageType: this.costsFilter.packageType,
+              shippingZone: this.costsFilter.shippingZone,
+              costs: [newRow]
+            })
+            this.providerCostsTableIndex = this.provider.costsTable.length - 1
+          } else {
+            // si había un índice seleccionado, inserto en esa posición una nueva entrada
+            this.provider.costsTable[this.providerCostsTableIndex].costs.push(newRow)
+          }
+          break
+        case 'client':
+          if (!this.validateNumericValues(el)) return
+          newRow = {
+            weight: el.weight,
+            saleDiscount: Number(el.saleDiscount) | 0
+          }
+          if (this.clientCostsTableIndex === -1) {
+            // si es el primer registro, lo inserto directo
+            this.client.costsTable.push({
+              providerId: this.costsFilter.providerId,
+              shippingType: this.costsFilter.shippingType,
+              serviceType: this.costsFilter.serviceType,
+              packageType: this.costsFilter.packageType,
+              shippingZone: this.costsFilter.shippingZone,
+              costs: [newRow]
+            })
+            this.clientCostsTableIndex = this.client.costsTable.length - 1
+          } else {
+            // si había un índice seleccionado, inserto en esa posición una nueva entrada
+            this.client.costsTable[this.clientCostsTableIndex].costs.push(newRow)
+          }
+          break
+        case 'shipping':
+          break
+        default:
+          break
       }
       // reseteo todo y el filtro
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
       this.newRow.grossPrice = null
       this.newRow.costDiscount = null
+      this.newRow.saleDiscount = null
       this.resetFilter()
     },
     enableEdit (selectedWeight) {
       if (selectedWeight !== undefined && selectedWeight !== null && selectedWeight > -1 && !this.inEdit) {
         this.inEdit = true
+
+        // acá no hago switch
+        // y siempre seteo "edit" al registro de proveedor
+        // porque es el que pivotea
         let selRow = this.provider.costsTable[this.providerCostsTableIndex].costs.find(el => el.weight === selectedWeight)
         // esta asignación mantiene los datos previos a la edición
-        // para revertirlos si es necesario
-        Object.assign(this.oldRow, selRow)
+        // para revertirlos si es necesario, así que tengo que mantener si es cliente o proveedor
+        switch (this.variant) {
+          case 'provider':
+            Object.assign(this.oldRow, selRow)
+            break
+          case 'client':
+            let clientCost = {}
+            if (this.client && this.client.costsTable && this.client.costsTable.length > 0 && this.clientCostsTableIndex !== -1) {
+              clientCost = this.client.costsTable[this.clientCostsTableIndex].costs.find(el => el.weight === selectedWeight)
+            }
+            Object.assign(this.oldRow, clientCost)
+            break
+        }
         selRow.edit = true
         // el filtro se reseta en todos los casos, para replicar
-        // los cambios en la lista del provider en los items de la tabla
+        // los cambios en la lista en los items de la tabla
         this.resetFilter()
       } else {
         this.$toasted.global.error_toast({ message: 'No se pueden editar dos filas a la vez' })
       }
     },
-    applyEdit (selectedWeight) {
+    applyEdit (el) {
+      let selectedWeight = el.weight
       if (selectedWeight !== undefined && selectedWeight !== null && selectedWeight > -1) {
-        // acá es donde hay que cambiar por variant
+        if (!this.validateNumericValues(el)) return
         let selRow = this.provider.costsTable[this.providerCostsTableIndex].costs.find(el => el.weight === selectedWeight)
-        if (!this.validateNumericValues(selRow)) return
-        delete selRow.edit
-        if (selRow.grossPrice !== this.oldRow.grossPrice ||
-          selRow.saleDiscount !== this.oldRow.saleDiscount ||
-          selRow.costDiscount !== this.oldRow.costDiscount) {
-          this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
+        switch (this.variant) {
+          case 'provider':
+            if (el.grossPrice !== this.oldRow.grossPrice ||
+              el.costDiscount !== this.oldRow.costDiscount) {
+              selRow.grossPrice = el.grossPrice
+              selRow.costDiscount = el.costDiscount
+              this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
+            }
+            break
+          case 'client':
+            let clientCost = null
+            // busco el costo
+            if (this.client && this.client.costsTable && this.client.costsTable.length > 0 && this.clientCostsTableIndex !== -1) {
+              clientCost = this.client.costsTable[this.clientCostsTableIndex].costs.find(el => el.weight === selectedWeight)
+            }
+            // si existe, lo voy a editar
+            if (clientCost) {
+              // si cambió, lo edito
+              if (el.saleDiscount !== this.oldRow.saleDiscount) {
+                console.log('ecole')
+                clientCost.saleDiscount = el.saleDiscount
+                this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
+              }
+            } else {
+              this.add(el)
+            }
+            break
         }
+
+        delete selRow.edit
         this.oldRow = {}
         this.resetFilter()
       }
