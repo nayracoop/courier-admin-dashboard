@@ -16,7 +16,13 @@
                   <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
                   <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
                   <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar precios de venta" class="import-modal">
-                    <c-csv-file-dialog bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv" cancellationMessage="Cancelar" cancellationMethod="cancelImport" :provider="provider" @cancelImport="hideImportModal()" />
+                    <c-csv-file-dialog
+                      bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv"
+                      cancellationMessage="Cancelar"
+                      cancellationMethod="cancelImport"
+                      :provider="provider"
+                      @cancelImport="hideImportModal()"
+                    />
                   </b-modal>
                 </b-col>
               </b-row>
@@ -31,15 +37,30 @@
         </b-card>
       </b-col>
     </b-row>
-    <c-confirmation-modal :promptMessage="'¿Está seguro que desea eliminar este registro de la lista de proveedores? Esta acción no se puede deshacer.'"
-      ref="deleteModal" :modalTitle="'Eliminar ' + provider.name" classModal="delete-modal"
-      confirmationMessage="Sí, eliminar proveedor" cancellationMessage="No, conservar proveedor"
-      confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
-      @confirmDelete="deleteProvider()" @cancelDelete="hideDeleteModal()" />
-    <c-confirmation-modal classModal="return-modal" promptMessage="Hay cambios sin guardar en este registro. Si sale de esta pantalla se perderán. Esta acción no se puede deshacer." ref="returnModal" modalTitle="¿Desea descartar los cambios?"
-      confirmationMessage="Sí, descartar cambios" cancellationMessage="No, seguir editando"
-      confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
-      @confirmReturn="confirmReturn(returnTo, provider)" @cancelReturn="hideReturnModal()" />
+    <c-confirmation-modal
+      classModal="delete-modal"
+      ref="deleteModal"
+      :modalTitle="'¿Está seguro que desea eliminar ' + provider.name + '?'"
+      :promptMessage="'Se eliminará el registro de la lista de clientes. Esta acción no se puede deshacer.'"
+      confirmationMessage="Sí, lo eliminaré"
+      cancellationMessage="No, lo conservaré"
+      confirmationMethod="confirmDelete"
+      cancellationMethod="cancelDelete"
+      @confirmDelete="deleteClient()"
+      @cancelDelete="hideDeleteModal()" />
+    <c-confirmation-modal
+      classModal="return-modal"
+      ref="returnModal"
+      modalTitle="¿Desea descartar los cambios?"
+      promptMessage="Hay cambios sin guardar en este registro. Si sale de esta pantalla se perderán. Esta acción no se puede deshacer."
+      variantConfirmation="warning"
+      confirmationMessage="Sí, descartar cambios"
+      cancellationMessage="No, seguir editando"
+      confirmationMethod="confirmReturn"
+      cancellationMethod="cancelReturn"
+      @confirmReturn="confirmReturn(returnTo, provider)"
+      @cancelReturn="hideReturnModal()"
+    />
     <!-- <pre>{{ JSON.stringify(this.provider, null, 2) }}</pre>
     <pre>{{ JSON.stringify(this.cleanObject, null, 2) }}</pre> -->
   </div>

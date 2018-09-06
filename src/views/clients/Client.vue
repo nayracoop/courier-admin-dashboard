@@ -31,16 +31,29 @@
     </b-row>
     <!-- <pre>{{ JSON.stringify(cleanObject, null, 4) }}</pre>
     <pre>{{ JSON.stringify(client, null, 4) }}</pre> -->
-    <c-confirmation-modal classModal="delete-modal" promptMessage="¿Desea eliminar definitivamente el registro seleccionado?"
-      ref="deleteModal" :modalTitle="'Eliminar cliente ' + client.name"
-      confirmationMessage="Sí, deseo eliminarlo" cancellationMessage="Cancelar"
-      confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
-      @confirmDelete="deleteClient()" @cancelDelete="hideDeleteModal()" />
-    <c-confirmation-modal classModal="return-modal" promptMessage="El registro fue editado ¿desea abandonar esta pantalla?"
-      ref="returnModal" modalTitle="Confirmación"
-      confirmationMessage="Sí, deseo descartar los cambios" cancellationMessage="Cancelar"
-      confirmationMethod="confirmReturn" cancellationMethod="cancelReturn"
-      @confirmReturn="confirmReturn(returnTo, client)" @cancelReturn="hideReturnModal()" />
+    <c-confirmation-modal
+      classModal="delete-modal"
+      ref="deleteModal"
+      :modalTitle="'¿Está seguro que desea eliminar ' + client.name + '?'"
+      :promptMessage="'Se eliminará el registro de la lista de clientes. Esta acción no se puede deshacer.'"
+      confirmationMessage="Sí, lo eliminaré"
+      cancellationMessage="No, lo conservaré"
+      confirmationMethod="confirmDelete"
+      cancellationMethod="cancelDelete"
+      @confirmDelete="deleteClient()"
+      @cancelDelete="hideDeleteModal()" />
+    <c-confirmation-modal
+      classModal="return-modal"
+      ref="returnModal"
+      modalTitle="¿Desea descartar los cambios?"
+      promptMessage="Hay cambios sin guardar en este registro. Si sale de esta pantalla se perderán. Esta acción no se puede deshacer."
+      variantConfirmation="warning"
+      confirmationMessage="Sí, descartar cambios"
+      cancellationMessage="No, seguir editando"
+      confirmationMethod="confirmReturn"
+      cancellationMethod="cancelReturn"
+      @confirmReturn="confirmReturn(returnTo, client)"
+      @cancelReturn="hideReturnModal()" />
   </div>
 </template>
 
