@@ -14,23 +14,23 @@
               :filter="filter"
               @filtered="filtered">
                 <template slot="country" slot-scope="data">
-                  <b-form-input readonly type="text" v-model="data.item.translations.es"></b-form-input>
+                  <b-form-input readonly type="text" v-model="data.item.name"></b-form-input>
                 </template>
                 <template slot="zone" slot-scope="data">
                   <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
                 </template>
                 <template slot="actions" slot-scope="data">
                   <template v-if="data.item.edit">
-                    <b-button v-b-tooltip.hover title="Descartar cambios" variant="warning" @click.prevent="revertEdit(data.item, 1)">
+                    <b-button variant="warning" @click.prevent="revertEdit(data.item, 1)">
                       <i class="fa fa-undo"></i>
                     </b-button>
-                    <b-button v-b-tooltip.hover title="Aplicar cambios" variant="primary" @click.prevent="applyEdit(data.item, 1)">
+                    <b-button variant="primary" @click.prevent="applyEdit(data.item, 1)">
                       <strong><i class="fa fa-check"></i></strong>
                     </b-button>
                   </template>
                   <template v-else>
-                    <b-button  v-b-tooltip.hover title="Editar fila" variant="primary" @click.prevent="enableEdit(data.item, 1)">
-                      <strong><i class="fa fa-edit"></i>{{data.item.numericCode}} {{data.item.edit}}</strong>
+                    <b-button variant="primary" @click.prevent="enableEdit(data.item, 1)">
+                      <strong><i class="fa fa-edit"></i></strong>
                     </b-button>
                   </template>
                 </template>
@@ -52,22 +52,22 @@
               :filter="filter"
               @filtered="filtered">
                 <template slot="country" slot-scope="data">
-                  <b-form-input readonly type="text" v-model="data.item.translations.es"></b-form-input>
+                  <b-form-input readonly type="text" v-model="data.item.name"></b-form-input>
                 </template>
                 <template slot="zone" slot-scope="data">
                   <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
                 </template>
                 <template slot="actions" slot-scope="data">
                   <template v-if="data.item.edit">
-                    <b-button v-b-tooltip.hover title="Descartar cambios" variant="warning" @click.prevent="revertEdit(data.item, 2)">
+                    <b-button variant="warning" @click.prevent="revertEdit(data.item, 2)">
                       <i class="fa fa-undo"></i>
                     </b-button>
-                    <b-button v-b-tooltip.hover title="Aplicar cambios" variant="primary" @click.prevent="applyEdit(data.item, 2)">
+                    <b-button variant="primary" @click.prevent="applyEdit(data.item, 2)">
                       <strong><i class="fa fa-check"></i></strong>
                     </b-button>
                   </template>
                   <template v-else>
-                    <b-button  v-b-tooltip.hover title="Editar fila" variant="primary" @click.prevent="enableEdit(data.item, 2)">
+                    <b-button variant="primary" @click.prevent="enableEdit(data.item, 2)">
                       <strong><i class="fa fa-edit"></i></strong>
                     </b-button>
                   </template>
@@ -97,15 +97,15 @@
                 </template>
                 <template slot="actions" slot-scope="data">
                   <template v-if="data.item.edit">
-                    <b-button v-b-tooltip.hover title="Descartar cambios" variant="warning" @click.prevent="revertEdit(data.item, 3)">
+                    <b-button variant="warning" @click.prevent="revertEdit(data.item, 3)">
                       <i class="fa fa-undo"></i>
                     </b-button>
-                    <b-button v-b-tooltip.hover title="Aplicar cambios" variant="primary" @click.prevent="applyEdit(data.item, 3)">
+                    <b-button variant="primary" @click.prevent="applyEdit(data.item, 3)">
                       <strong><i class="fa fa-check"></i></strong>
                     </b-button>
                   </template>
                   <template v-else>
-                    <b-button  v-b-tooltip.hover title="Editar fila" variant="primary" @click.prevent="enableEdit(data.item, 3)">
+                    <b-button variant="primary" @click.prevent="enableEdit(data.item, 3)">
                       <strong><i class="fa fa-edit"></i></strong>
                     </b-button>
                   </template>
@@ -128,15 +128,11 @@
         </nav>
       </b-col>
     </b-row>
-    <pre>{{ `datos: ${JSON.stringify(this.importItems, null, 2)}` }}</pre>
-    <!-- <pre>{{ `cliente CT: ${JSON.stringify(this.client && this.client.costsTable, null, 2)}` }}</pre> -->
   </b-form>
 </template>
 <script>
 import { countries } from '@/store/const'
 import { mapGetters } from 'vuex'
-// import shippingService from '@/api/shipping.service'
-// import { FETCH_PROVIDER } from '@/store/types/actions'
 
 export default {
   name: 'c-zone-table',
@@ -156,26 +152,12 @@ export default {
         { key: 'zone', label: 'Zona' },
         { key: 'actions', label: 'Acciones', class: 'cost-actions' }
       ],
-      countriesList: countries,
-      // el cliente también va a necesitar la lista de proveedores
-      // shippingTypes: shippingTypes,
-      // serviceTypes: serviceTypes,
-      // packageTypes: packageTypes,
-      // shippingZones: shippingZones,
-      // si el proveedor tiene costsTable, uso la primera posición
-      // providerCostsTableIndex: -1,
-      // clientCostsTableIndex: -1,
+      // import and export countries list
+      iCountriesList: this._.cloneDeep(countries),
+      eCountriesList: this._.cloneDeep(countries),
       importItems: [],
       exportItems: [],
       domesticItems: [],
-      // costsFilter: {},
-      newRow: {
-        countryId: null,
-        zone: null
-        // grossPrice: null, // proveedor, usado en cliente
-        // costDiscount: null, // proveedor
-        // saleDiscount: null // cliente
-      },
       inProgress: false,
       // inEdit tiene que compartirse con el parent
       // para el botón guardar
@@ -197,28 +179,25 @@ export default {
     resetFilter () {
       let providerImportZones = []
       let providerExportZones = []
-      let providerDomesticZones = []
+      // let providerDomesticZones = []
 
-      if (this.provider.zhippingZones && this.provider.zhippingZones.length !== 0) {
+      if (this.provider.shippingZones && this.provider.shippingZones.length) {
         // TODO: sacar el horrible hardcode?
         let searchImportZones = this.provider.shippingZones.filter(el => el.shippingType === 1)
         let searchExportZones = this.provider.shippingZones.filter(el => el.shippingType === 2)
-        let searchDomesticZones = this.provider.shippingZones.filter(el => el.shippingType === 3)
+        // let searchDomesticZones = this.provider.shippingZones.filter(el => el.shippingType === 3)
 
-        providerImportZones = searchImportZones && searchImportZones.length > 0 && searchImportZones[0].countries
-        providerExportZones = searchExportZones && searchExportZones.length > 0 && searchExportZones[0].countries
-        providerDomesticZones = searchDomesticZones && searchDomesticZones.length > 0 && searchDomesticZones[0].countries
+        providerImportZones = searchImportZones && searchImportZones.length && searchImportZones[0].countries
+        providerExportZones = searchExportZones && searchExportZones.length && searchExportZones[0].countries
+        // providerDomesticZones = searchDomesticZones && searchDomesticZones.length && searchDomesticZones[0].countries
 
-        this.importItems = [...this.countriesList.concat(providerImportZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
-        this.exportItems = [...this.countriesList.concat(providerExportZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
-        this.domesticItems = [...this.countriesList.concat(providerDomesticZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
+        this.importItems = [...this.iCountriesList.concat(providerImportZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
+        this.exportItems = [...this.eCountriesList.concat(providerExportZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
+        // this.domesticItems = [...this.countriesList.concat(providerDomesticZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
       } else {
-        // console.log(this.countriesList[0])
-        // console.log(JSON.stringify(this.countriesList[0], null, 2))
-        // console.log(this.countriesList[0].edit)
-        this.importItems = Object.assign([], this.countriesList)
-        this.exportItems = Object.assign([], this.countriesList)
-        // console.log(this.importItems[0].edit)
+        // no quiero una referencia
+        this.importItems = this._.cloneDeep(this.iCountriesList, true)
+        this.exportItems = this._.cloneDeep(this.eCountriesList, true)
       }
 
       // todos van a tener el mismo largo
@@ -228,23 +207,24 @@ export default {
     },
     add (el, shippingType) {
       if (!this.validateNumericValues(el)) return
+      let newRow = {}
 
-      this.newRow = {
+      newRow = {
         numericCode: el.numericCode,
         zone: el.zone
       }
 
-      let searchZones = this.provider.shippingZones && this.provider.shippingZones.filter(el => el.shippingType === shippingType)
+      let searchTypes = this.provider.shippingZones && this.provider.shippingZones.filter(type => type.shippingType === shippingType)
 
       switch (shippingType) {
         case 1:
         case 2:
-          if (searchZones) {
-            searchZones.push(this.newRow)
+          if (searchTypes.length) {
+            searchTypes[0].countries.push(newRow)
           } else {
             this.provider.shippingZones.push({
-              shippingType: el.shippingType,
-              countriesList: [this.newRow]
+              shippingType: shippingType,
+              countries: [newRow]
             })
           }
           break
@@ -254,8 +234,6 @@ export default {
       }
       // reseteo todo y el filtro
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
-      this.newRow.numericCode = null
-      this.newRow.zone = null
       this.resetFilter()
     },
     enableEdit (el, shippingType) {
@@ -268,8 +246,10 @@ export default {
 
         switch (shippingType) {
           case 1:
+            selRow = this.iCountriesList.find(country => country.numericCode === el.numericCode)
+            break
           case 2:
-            selRow = this.countriesList.find(country => country.numericCode === el.numericCode)
+            selRow = this.eCountriesList.find(country => country.numericCode === el.numericCode)
             break
           case 3:
             // otra cosa
@@ -286,18 +266,29 @@ export default {
       if (el.numericCode !== undefined && el.numericCode !== null && el.numericCode > -1) {
         let selRow = []
         // busco si el proveedor tiene esa categoría de shipping asociada
-        let searchZones = this.provider.shippingZones && this.provider.shippingZones.filter(country => country.shippingType === shippingType)
-
+        let searchTypes = this.provider.shippingZones && this.provider.shippingZones.filter(type => type.shippingType === shippingType)
+        let searchCountry = []
         switch (shippingType) {
           case 1:
-          case 2:
-            // busco si existe el registro para editarlo
-            selRow = this.countriesList.find(country => country.numericCode === el.numericCode)
-            let searchCountry = searchZones && searchZones.countries && searchZones.countries.filter(country => country.numericCode === el.numericCode)
-            if (searchCountry) {
+            selRow = this.iCountriesList.find(country => country.numericCode === el.numericCode)
+            searchCountry = searchTypes.length && searchTypes[0].countries && searchTypes[0].countries.filter(country => country.numericCode === el.numericCode)
+
+            if (searchCountry.length) {
               if (el.zone !== this.oldRow.zone) {
-                console.log('edit')
-                searchCountry.zone = el.zone
+                searchCountry[0].zone = el.zone
+                this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
+              }
+            } else {
+              this.add(el, shippingType)
+            }
+            break
+          case 2:
+            selRow = this.eCountriesList.find(country => country.numericCode === el.numericCode)
+            searchCountry = searchTypes.length && searchTypes[0].countries && searchTypes[0].countries.filter(country => country.numericCode === el.numericCode)
+
+            if (searchCountry.length) {
+              if (el.zone !== this.oldRow.zone) {
+                searchCountry[0].zone = el.zone
                 this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
               }
             } else {
@@ -322,8 +313,10 @@ export default {
 
         switch (shippingType) {
           case 1:
+            selRow = this.iCountriesList.find(country => country.numericCode === el.numericCode)
+            break
           case 2:
-            selRow = this.countriesList.find(country => country.numericCode === el.numericCode)
+            selRow = this.eCountriesList.find(country => country.numericCode === el.numericCode)
             break
           case 3:
             // otra cosa

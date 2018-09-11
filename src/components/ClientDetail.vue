@@ -156,7 +156,7 @@ export default {
   },
   created () {
     countries.map(el => {
-      this.countryList.push({ value: el.numericCode, text: el.translations.es || el.name })
+      this.countryList.push({ value: el.numericCode, text: el.name })
     })
     argProvinces.map(el => {
       this.argProvinceList.push({ value: el.provincia_id, text: el.provincia_nombre })
