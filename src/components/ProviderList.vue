@@ -133,6 +133,7 @@ export default {
         // le defino una tabla vacía de precios de costo
         // porque el componente costsTable asume que existe
         provider.costsTable = []
+        provider.shippingZones = []
         promises.push(ProvidersService.create(provider))
       }
       Promise.all(promises).then(() => {

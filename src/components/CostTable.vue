@@ -364,7 +364,8 @@ export default {
     enableEdit (selectedWeight) {
       if (selectedWeight !== undefined && selectedWeight !== null && selectedWeight > -1 && !this.inEdit) {
         this.inEdit = true
-
+        // TODO: cambiar esto porque si paso directo el elemento desde la tabla
+        // puedo guardarlo como oldRow
         // acá no hago switch
         // y siempre seteo "edit" al registro de proveedor
         // porque es el que pivotea
@@ -415,7 +416,6 @@ export default {
             if (clientCost) {
               // si cambió, lo edito
               if (el.saleDiscount !== this.oldRow.saleDiscount) {
-                console.log('ecole')
                 clientCost.saleDiscount = el.saleDiscount
                 this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
               }

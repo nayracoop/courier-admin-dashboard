@@ -43,16 +43,16 @@
                 <label for="initialDate">Fecha actual</label>
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
                 <div class="input-group datepicker-group">
-              <flat-pickr
-                v-validate="'date_format:DD/MM/YYYY'"
-                v-model="shipping.initialDate"
-                data-vv-as="fecha actual"
-                name="initialDate"
-                id="initialDate"
-                class="form-control"
-                :config="config"
-                placeholder="Seleccionar fecha actual"></flat-pickr>
-                <b-input-group-append><b-input-group-text><a class="input-button" title="Seleccionar fecha actual" data-toggle><i class="fa fa-calendar"></i></a></b-input-group-text></b-input-group-append>
+                  <flat-pickr
+                    v-validate="'date_format:DD/MM/YYYY'"
+                    v-model="shipping.initialDate"
+                    data-vv-as="fecha actual"
+                    name="initialDate"
+                    id="initialDate"
+                    class="form-control"
+                    :config="config"
+                    placeholder="Seleccionar fecha actual"></flat-pickr>
+                    <b-input-group-append><b-input-group-text><a class="input-button" title="Seleccionar fecha actual" data-toggle><i class="fa fa-calendar"></i></a></b-input-group-text></b-input-group-append>
                 </div>
                 <!--b-form-input type="text" id="initialDate" placeholder="Ej: 27/06/2018" :value="_"></b-form-input-->
               </b-form-group>

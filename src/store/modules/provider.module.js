@@ -25,7 +25,8 @@ const getInitialState = () => {
       purchaseAccount: null,
       saleAccount: null,
       isShipping: null,
-      costsTable: []
+      costsTable: [],
+      shippingZones: []
     },
     providers: [],
     syncProviders: [],

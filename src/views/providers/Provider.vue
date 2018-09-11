@@ -10,11 +10,35 @@
               </div>
               <c-provider-detail ref="providerDetail" :isEdit="isEdit"></c-provider-detail>
             </b-tab>
+            <b-tab title="Zonas" v-if="provider.isShipping">
+              <b-row class="actions-bar">
+                <b-col sm="6">
+                  <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                  <b-button variant="outline-primary" disabled>Imprimir zonas por país<i class="fa fa-print ml-1"></i></b-button>
+                  <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar zonas por país" class="import-modal">
+                    <c-csv-file-dialog
+                      bodyMessage="Elija un archivo para importar zonas por país. Únicamente se permiten archivos .csv"
+                      cancellationMessage="Cancelar"
+                      cancellationMethod="cancelImport"
+                      @cancelImport="hideImportModal()" />
+                  </b-modal>
+                </b-col>
+                <b-form-group class="ml-auto col-6">
+                  <b-input-group>
+                    <b-form-input v-model="filter" placeholder="Buscar..." />
+                    <b-input-group-append>
+                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
+              </b-row>
+              <c-zones-table :filter="filter" variant="provider"></c-zones-table>
+            </b-tab>
             <b-tab title="Precios de venta" v-if="provider.isShipping">
               <b-row class="actions-bar">
                 <b-col sm="6">
                   <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
-                  <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print  ml-1"></i></b-button>
+                  <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print ml-1"></i></b-button>
                   <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar precios de venta" class="import-modal">
                     <c-csv-file-dialog
                       bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv"
@@ -33,6 +57,9 @@
                 </b-form-group>
               </b-row>
               <c-cost-table :filter="filter" variant="provider"></c-cost-table>
+            </b-tab>
+            <b-tab title="Costo de combustible" v-if="provider.isShipping">
+              <c-fuel-table :filter="filter" variant="provider"></c-fuel-table>
             </b-tab>
           </b-tabs>
           <b-col class="actions-bar" sm="12">
@@ -66,6 +93,8 @@ import common from '@/shared/common'
 import crud from '@/shared/crud'
 
 import CCostTable from '@/components/CostTable'
+import CZonesTable from '@/components/ZonesTable'
+import CFuelTable from '@/components/FuelTable'
 import CConfirmationModal from '@/components/ConfirmationModal'
 import CProviderDetail from '@/components/ProviderDetail'
 import CCsvFileDialog from '@/components/CsvFileDialog'
@@ -73,7 +102,7 @@ import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, FETCH_PROVIDER, PROVIDER
 
 export default {
   name: 'v-provider',
-  components: { CCostTable, CConfirmationModal, CProviderDetail, CCsvFileDialog },
+  components: { CCostTable, CConfirmationModal, CProviderDetail, CCsvFileDialog, CZonesTable, CFuelTable },
   props: {
     previousProvider: {
       type: Object,
