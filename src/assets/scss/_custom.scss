@@ -264,31 +264,179 @@ select[aria-invalid=true]{
 
 /* Estilos modal */
 
-.modal-header{
-  background: #c8ced3;
-}
-/*.modal header{
-  color: #ffff;
-  font-weight: 500;
-  letter-spacing: .5px;
-}*/
+// Todos los modal
 
+#modal-confirm footer button:last-of-type(){
+  margin-left: 10px;
+}
+.modal-title{
+  letter-spacing: initial;
+}
+#modal-confirm footer{
+  justify-content: center;
+}
+#modal-confirm header{
+  flex-direction: column-reverse;
+  text-align: center;
+  padding-bottom: 25px;
+  padding-top: 5px;
+}
+#modal-confirm .modal-body{
+  background: #fff;
+  color: #000;
+}
+#modal-confirm header .modal-title::before{  
+  font-family: 'FontAwesome';
+  display: block;
+  font-size: 1.15em;
+  padding-top: 12px;
+  border: 1px solid #fff;
+  color: #fff;
+  //background: #fff;
+  height: 55px;
+  width: 55px;
+  border-radius: 50%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+#modal-confirm header .modal-title{
+  font-size: 1.65em;
+  margin: 0 auto;
+  line-height:  1.2;
+  font-family: 'Montserrat';
+  letter-spacing: initial;
+  max-width: 95%;
+}
+#modal-confirm .prompt-col{
+  margin: auto;
+}
+#modal-confirm .prompt-col p{
+  margin-bottom: 0;
+}
+
+// Modal eliminar
+
+.delete-modal header .modal-title{
+  color: #fff;
+}  
+.delete-modal header .modal-title::before{  
+  content: "\f12a";
+}
+.delete-modal .modal-header .close{
+  color: #fff;
+}
 .delete-modal header{
-  background: linear-gradient(to right, #ff5150 0%,#fb7979 100%);
-  color: #ffff;
+  // background: linear-gradient(to right, #ff5150 0%,#fb7979 100%);
+  background: #f86c6b;
   font-weight: 500;
   letter-spacing: .5px;
+  // border-bottom: 4px solid #bc5555;
+}
+
+// Modal volver
+
+.return-modal header .modal-title{
+  color: #2f2f2f;
+}
+.return-modal header .modal-title::before{
+  content: "\f071";
+}
+.return-modal .modal-body{
+  background: #ffc107;
+  color: #000;
+}
+.return-modal header{
+  background: #ffc107;
+  // border-bottom: 4px solid #dfaa0c;
+  color: white;
+}
+
+// Modal default 
+
+
+// Modal importar
+
+.import-modal header .modal-title{
+  font-size: 1.4em;
 }
 .import-modal header{
-  background: linear-gradient(to right, #53a3c0 0%, #9be1fb 100%);
+  background: #20a8d8;
   color: #ffff;
   font-weight: 500;
-  letter-spacing: .5px;
 }
-
 input[type="file"]{
   cursor: pointer;
 }
+
+.import-modal .modal-header .close{
+  color: #fff;
+  align-self: center;
+}
+
+.import-modal .custom-file{
+  width: 100%;
+  height: 200px;
+  box-shadow: 0px 1px 10px .51px #06050533;
+}
+.import-modal .custom-file-input{
+  height: 200px;
+}
+.import-modal .custom-file-label::after{
+  content: none;
+}
+
+.import-modal .b-form-file.is-invalid .custom-file-label{
+  opacity: 0;
+}
+.import-modal .b-form-file.is-valid .custom-file-label{
+  opacity: 1;
+}
+.import-modal .custom-file-label::before{
+  content: 'Archivo seleccionado: '
+}
+.import-modal .custom-file-label:focus{
+  box-shadow: 0px 1px 10px .51px #06050533;
+}
+.import-modal .custom-file-label{
+  height: 200px;  
+  background: transparent;
+  text-align: center;
+  padding-top: 160px;
+  border: none;
+}
+.import-modal .custom-file-input{
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+  color: #ababab;
+  font-size: 1.15em;
+  bottom: 22px;
+  position: absolute;
+  text-align: center;
+  padding: 0 32px;  
+}
+.import-modal span.label-file{
+  position: absolute;
+  width: 100%;
+  bottom: 150px;
+  left: 0px;
+  text-align: center;
+}
+
+.import-modal span.label-file::before{
+  font-family: 'FontAwesome';  
+  content: "\f15b";
+  font-size: 3em;
+  color: #6ec6e5;
+  opacity: .65;
+  width: 100%;
+  position: absolute;
+  top: -80px;
+  left: 0;
+  text-align: center;
+}
+
+
 /* Fin Estilos modal */
 
 /* Estilos accordions */

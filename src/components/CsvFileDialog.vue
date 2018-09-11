@@ -1,7 +1,9 @@
 <template>
   <div>
     <p>{{ bodyMessage }}</p>
-    <b-form-file class="mt-4" :disabled="inProgress" @input="processCsv" id="fileDialog" ref="fileDialog" v-model="file" :state="Boolean(file)" accept=".csv, text/plain, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" placeholder="Seleccione un archivo..."></b-form-file>
+    <b-form-file class="mt-4" :disabled="inProgress" @input="processCsv" id="fileDialog" ref="fileDialog" v-model="file" :state="Boolean(file)" accept=".csv, text/plain, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+    </b-form-file>
+    <span class="label-file">Haga click aquí para adjuntar su archivo</span>
     <div class="modal-footer pb-0 mt-4" slot="modal-footer">
         <b-button variant="secondary" @click="onCancel" :disabled="inProgress">{{ cancellationMessage }}</b-button>
         <b-button variant="primary" @click="onConfirm" :disabled="count === 0 || inProgress">{{ buttonText }} <i v-show="inProgress" class="fa fa-cog fa-spin ml-1"></i></b-button>
