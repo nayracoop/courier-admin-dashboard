@@ -58,7 +58,17 @@
               </b-row>
               <c-cost-table :filter="filter" variant="provider"></c-cost-table>
             </b-tab>
-            <b-tab title="Costo de combustible" v-if="provider.isShipping">
+            <b-tab title="Costo de combustible" v-if="provider.isShipping"
+              ><b-row class="actions-bar">
+                <b-form-group class="ml-auto col-6">
+                  <b-input-group>
+                    <b-form-input v-model="filter" placeholder="Buscar..." />
+                    <b-input-group-append>
+                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
+              </b-row>
               <c-fuel-table :filter="filter" variant="provider"></c-fuel-table>
             </b-tab>
           </b-tabs>
@@ -70,11 +80,12 @@
         </b-card>
       </b-col>
     </b-row>
+
     <c-confirmation-modal
       classModal="delete-modal"
       ref="deleteModal"
       :modalTitle="'¿Está seguro que desea eliminar ' + provider.name + '?'"
-      :promptMessage="'Se eliminará el registro de la lista de clientes. Esta acción no se puede deshacer.'"
+      :promptMessage="'Se eliminará el registro de la lista de proveedores. Esta acción no se puede deshacer.'"
       confirmationMessage="Sí, lo eliminaré"
       cancellationMessage="No, lo conservaré"
       confirmationMethod="confirmDelete"
@@ -92,12 +103,10 @@
       confirmationMethod="confirmReturn"
       cancellationMethod="cancelReturn"
       @confirmReturn="confirmReturn(returnTo, provider)"
-      @cancelReturn="hideReturnModal()"
-    />
-    <!-- <pre>{{ JSON.stringify(this.provider, null, 2) }}</pre>
-    <pre>{{ JSON.stringify(this.cleanObject, null, 2) }}</pre> -->
+      @cancelReturn="hideReturnModal()" />
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import store from '@/store'

@@ -27,6 +27,7 @@ const getInitialState = () => {
       isShipping: null,
       costsTable: [],
       shippingZones: [],
+      fuelTable: [],
       insurance: null
     },
     providers: [],

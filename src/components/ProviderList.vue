@@ -145,6 +145,7 @@ export default {
         // porque el componente costsTable asume que existe
         provider.costsTable = []
         provider.shippingZones = []
+        provider.fuelTable = []
         promises.push(ProvidersService.create(provider))
       }
       Promise.all(promises).then(() => {

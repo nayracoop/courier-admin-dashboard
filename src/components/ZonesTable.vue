@@ -88,9 +88,9 @@
               :current-page="domesticCurrentPage"
               :per-page="perPage"
               :filter="filter"
-              @filtered="filtered">
-                <template slot="postalCode" slot-scope="data">
-                  <b-form-input readonly type="text" v-model="data.item.postalCode"></b-form-input>
+              @filtered="domesticFiltered">
+                <template slot="cod_postal" slot-scope="data">
+                  <b-form-input readonly type="text" v-model="data.item.cod_postal"></b-form-input>
                 </template>
                 <template slot="zone" slot-scope="data">
                   <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
@@ -119,19 +119,19 @@
     <b-row>
       <b-col sm="8" class="text-center">
         <nav>
-          <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente" :limit="8" />
+          <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente" :limit="4" />
         </nav>
       </b-col>
       <b-col sm="4">
          <nav>
-          <b-pagination :total-rows="domesticTotalRows" :per-page="perPage" v-model="domesticCurrentPage" prev-text="Anterior" next-text="Siguiente" :limit="8" />
+          <b-pagination :total-rows="domesticTotalRows" :per-page="perPage" v-model="domesticCurrentPage" prev-text="Anterior" next-text="Siguiente" :limit="4" />
         </nav>
       </b-col>
     </b-row>
   </b-form>
 </template>
 <script>
-import { countries } from '@/store/const'
+import { countries, zipCodes } from '@/store/const'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -148,13 +148,14 @@ export default {
         { key: 'actions', label: 'Acciones', class: 'cost-actions' }
       ],
       domesticFields: [
-        { key: 'postalCode', label: 'Código postal' },
+        { key: 'cod_postal', label: 'Código postal' },
         { key: 'zone', label: 'Zona' },
         { key: 'actions', label: 'Acciones', class: 'cost-actions' }
       ],
       // import and export countries list
       iCountriesList: this._.cloneDeep(countries),
       eCountriesList: this._.cloneDeep(countries),
+      zipCodesList: this._.cloneDeep(zipCodes),
       importItems: [],
       exportItems: [],
       domesticItems: [],
@@ -179,46 +180,47 @@ export default {
     resetFilter () {
       let providerImportZones = []
       let providerExportZones = []
-      // let providerDomesticZones = []
+      let providerDomesticZones = []
 
       if (this.provider.shippingZones && this.provider.shippingZones.length) {
         // TODO: sacar el horrible hardcode?
         let searchImportZones = this.provider.shippingZones.filter(el => el.shippingType === 1)
         let searchExportZones = this.provider.shippingZones.filter(el => el.shippingType === 2)
-        // let searchDomesticZones = this.provider.shippingZones.filter(el => el.shippingType === 3)
+        let searchDomesticZones = this.provider.shippingZones.filter(el => el.shippingType === 3)
 
         providerImportZones = searchImportZones && searchImportZones.length && searchImportZones[0].countries
         providerExportZones = searchExportZones && searchExportZones.length && searchExportZones[0].countries
-        // providerDomesticZones = searchDomesticZones && searchDomesticZones.length && searchDomesticZones[0].countries
+        providerDomesticZones = searchDomesticZones && searchDomesticZones.length && searchDomesticZones[0].zipCodes
 
         this.importItems = [...this.iCountriesList.concat(providerImportZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
         this.exportItems = [...this.eCountriesList.concat(providerExportZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
-        // this.domesticItems = [...this.countriesList.concat(providerDomesticZones).reduce((m, o) => m.set(o.numericCode, Object.assign((m && m.get(o.numericCode)) || {}, o)), new Map()).values()]
+        this.domesticItems = [...this.zipCodesList.concat(providerDomesticZones).reduce((m, o) => m.set(o.id, Object.assign((m && m.get(o.id)) || {}, o)), new Map()).values()]
       } else {
         // no quiero una referencia
         this.importItems = this._.cloneDeep(this.iCountriesList, true)
         this.exportItems = this._.cloneDeep(this.eCountriesList, true)
+        this.domesticItems = this._.cloneDeep(this.zipCodesList, true)
       }
 
       // todos van a tener el mismo largo
       if (!this.filter) {
         this.totalRows = this.importItems.length
+        this.domesticTotalRows = this.domesticItems.length
       }
     },
     add (el, shippingType) {
       if (!this.validateNumericValues(el)) return
       let newRow = {}
 
-      newRow = {
-        numericCode: el.numericCode,
-        zone: el.zone
-      }
-
       let searchTypes = this.provider.shippingZones && this.provider.shippingZones.filter(type => type.shippingType === shippingType)
 
       switch (shippingType) {
         case 1:
         case 2:
+          newRow = {
+            numericCode: el.numericCode,
+            zone: el.zone
+          }
           if (searchTypes.length) {
             searchTypes[0].countries.push(newRow)
           } else {
@@ -229,7 +231,18 @@ export default {
           }
           break
         case 3:
-          // otra cosa
+          newRow = {
+            id: el.id,
+            zone: el.zone
+          }
+          if (searchTypes.length) {
+            searchTypes[0].zipCodes.push(newRow)
+          } else {
+            this.provider.shippingZones.push({
+              shippingType: shippingType,
+              zipCodes: [newRow]
+            })
+          }
           break
       }
       // reseteo todo y el filtro
@@ -237,7 +250,9 @@ export default {
       this.resetFilter()
     },
     enableEdit (el, shippingType) {
-      if (el.numericCode !== undefined && el.numericCode !== null && el.numericCode > -1 && !this.inEdit) {
+      if (((el.numericCode !== undefined && el.numericCode !== null && el.numericCode > -1) ||
+      (el.id !== undefined && el.id !== null && el.id > -1)) &&
+      !this.inEdit) {
         this.inEdit = true
         Object.assign(this.oldRow, el)
         let selRow = []
@@ -252,7 +267,7 @@ export default {
             selRow = this.eCountriesList.find(country => country.numericCode === el.numericCode)
             break
           case 3:
-            // otra cosa
+            selRow = this.zipCodesList.find(zipCode => zipCode.id === el.id)
             break
         }
         // console.log(selRow)
@@ -263,11 +278,13 @@ export default {
       }
     },
     applyEdit (el, shippingType) {
-      if (el.numericCode !== undefined && el.numericCode !== null && el.numericCode > -1) {
+      if ((el.numericCode !== undefined && el.numericCode !== null && el.numericCode > -1) ||
+      (el.id !== undefined && el.id !== null && el.id > -1)) {
         let selRow = []
         // busco si el proveedor tiene esa categoría de shipping asociada
         let searchTypes = this.provider.shippingZones && this.provider.shippingZones.filter(type => type.shippingType === shippingType)
         let searchCountry = []
+        let searchZipCode = []
         switch (shippingType) {
           case 1:
             selRow = this.iCountriesList.find(country => country.numericCode === el.numericCode)
@@ -296,7 +313,17 @@ export default {
             }
             break
           case 3:
-            // otra cosa
+            selRow = this.zipCodesList.find(zipCode => zipCode.id === el.id)
+            searchZipCode = searchTypes.length && searchTypes[0].zipCodes && searchTypes[0].zipCodes.filter(zipCode => zipCode.id === el.id)
+
+            if (searchZipCode.length) {
+              if (el.zone !== this.oldRow.zone) {
+                searchZipCode[0].zone = el.zone
+                this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
+              }
+            } else {
+              this.add(el, shippingType)
+            }
             break
         }
 
@@ -307,7 +334,8 @@ export default {
       this.inEdit = false
     },
     revertEdit (el, shippingType) {
-      if (el.numericCode !== undefined && el.numericCode !== null && el.numericCode > -1) {
+      if ((el.numericCode !== undefined && el.numericCode !== null && el.numericCode > -1) ||
+      (el.id !== undefined && el.id !== null && el.id > -1)) {
         Object.assign(el, this.oldRow)
         let selRow = []
 
@@ -319,7 +347,7 @@ export default {
             selRow = this.eCountriesList.find(country => country.numericCode === el.numericCode)
             break
           case 3:
-            // otra cosa
+            selRow = this.zipCodesList.find(zipCode => zipCode.id === el.id)
             break
         }
         delete selRow.edit
@@ -330,7 +358,9 @@ export default {
     },
     filtered (totalRows) {
       this.totalRows = totalRows.length
-      // domestic total rows
+    },
+    domesticFiltered (totalRows) {
+      this.domesticTotalRows = totalRows.length
     },
     validateNumericValues (row) {
       let retVal = true

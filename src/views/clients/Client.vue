@@ -1,6 +1,5 @@
 <template>
   <div class="animated fadeIn">
-
     <b-row>
       <b-col sm="12">
         <b-card no-body>
@@ -22,7 +21,6 @@
                   </b-collapse>
                 </b-card>
               </div>
-
             </b-tab>
             <b-tab title="Descuentos">
               <b-row class="actions-bar">
@@ -48,7 +46,6 @@
               </b-row>
               <c-cost-table :filter="filter" variant="client" :providerList="providerList"></c-cost-table>
             </b-tab>
-
           </b-tabs>
           <b-col class="actions-bar" sm="12">
             <b-button variant="primary" :disabled="inProgress" @click="saveClient(client)">Guardar <i class="fa fa-save ml-1"></i></b-button>
@@ -59,8 +56,6 @@
       </b-col>
     </b-row>
 
-    <!-- <pre>{{ JSON.stringify(cleanObject, null, 4) }}</pre>
-    <pre>{{ JSON.stringify(client, null, 4) }}</pre> -->
     <c-confirmation-modal
       classModal="delete-modal"
       ref="deleteModal"
