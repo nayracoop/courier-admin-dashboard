@@ -111,9 +111,9 @@
 import { mapGetters } from 'vuex'
 import store from '@/store'
 
-import modals from '@/shared/modals'
-import common from '@/shared/common'
-import crud from '@/shared/crud'
+import { modalMixin } from '@/mixins/modalMixin'
+import { navigationMixin } from '@/mixins/navigationMixin'
+import { crudMixin } from '@/mixins/crudMixin'
 
 import CCostTable from '@/components/CostTable'
 import CZonesTable from '@/components/ZonesTable'
@@ -132,20 +132,9 @@ export default {
       required: false
     }
   },
+  mixins: [ modalMixin, navigationMixin, crudMixin ],
   mounted () {
     this.cleanObject = this._.cloneDeep(this.provider)
-    this.showDeleteModal = modals.showDeleteModal.bind(this)
-    this.hideDeleteModal = modals.hideDeleteModal.bind(this)
-    this.showReturnModal = modals.showReturnModal.bind(this)
-    this.hideReturnModal = modals.hideReturnModal.bind(this)
-    this.hideImportModal = modals.hideImportModal.bind(this)
-
-    this.confirmReturn = common.confirmReturn.bind(this)
-    this.goNavigate = common.goNavigate.bind(this)
-    this.dirtyCheck = common.dirtyCheck.bind(this)
-
-    this.save = crud.save.bind(this)
-    this.deleteEl = crud.deleteEl.bind(this)
   },
   async beforeRouteUpdate (to, from, next) {
     // Reset state if user goes from /editor/:id to /editor

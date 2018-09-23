@@ -59,9 +59,9 @@
 import { mapGetters } from 'vuex'
 import store from '@/store'
 
-import modals from '@/shared/modals'
-import common from '@/shared/common'
-import crud from '@/shared/crud'
+import { modalMixin } from '@/mixins/modalMixin'
+import { navigationMixin } from '@/mixins/navigationMixin'
+import { crudMixin } from '@/mixins/crudMixin'
 
 import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, FETCH_SHIPPING, FETCH_SHIPPING_PROVIDERS,
   FETCH_CLIENTS, FETCH_CLIENT, FETCH_PROVIDER, SHIPPING_RESET_STATE, CLIENT_RESET_STATE, PROVIDER_RESET_STATE } from '@/store/types/actions'
@@ -86,6 +86,7 @@ export default {
     clientId: { type: String, default: null },
     providerId: { type: String, default: null }
   },
+  mixins: [ modalMixin, navigationMixin, crudMixin ],
   mounted () {
     this.isEdit = !!this.shipping.objectId
     this.cleanObject = this._.cloneDeep(this.shipping)
@@ -103,19 +104,6 @@ export default {
       this.fetchProvider(this.providerId)
       this.shipping.provider = this.providerId
     }
-    this.showDeleteModal = modals.showDeleteModal.bind(this)
-    this.hideDeleteModal = modals.hideDeleteModal.bind(this)
-    this.showReturnModal = modals.showReturnModal.bind(this)
-    this.hideReturnModal = modals.hideReturnModal.bind(this)
-    this.hideImportModal = modals.hideImportModal.bind(this)
-
-    this.confirmReturn = common.confirmReturn.bind(this)
-    this.goNavigate = common.goNavigate.bind(this)
-    this.dirtyCheck = common.dirtyCheck.bind(this)
-
-    this.save = crud.save.bind(this)
-    this.deleteEl = crud.deleteEl.bind(this)
-
     this.fetchClients().then(() => {
       this.clientList = this.clients.map(client => {
         return ({ value: client.objectId, text: client.name })
