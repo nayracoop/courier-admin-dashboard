@@ -1,50 +1,20 @@
 <template>
-    <b-row>
-      <b-col sm="12">
-        <b-card>
-          <div slot="header">
-            <strong>Nuevo envío</strong>
-          </div>
-          <b-row>
+    <b-card>
+      <div slot="header">Envío</div>
+      <b-row>
+        <b-col sm="6">
+          <b-form-group>
+            <label for="clientName">Nombre o razón social del cliente</label>
+            <b-form-select id="clientName" :plain="true" :options="clientList" v-model="shipping.client" @input="fetchClient" />
+          </b-form-group>
+          <b-form-row>
             <b-col sm="6">
               <b-form-group>
-                <label for="clientName">Cliente</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social del cliente"></i>
-                <b-form-select id="clientName" :plain="true" :options="clientList" v-model="shipping.client" @input="fetchClient" />
-              </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="providerName">Proveedor</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social del proveedor"></i>
-                <b-form-select id="providerName" :plain="true" :options="providerList" v-model="shipping.provider" @input="fetchProvider" />
-              </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="shippingType">Tipo de envío</label>
-                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Elegir tipo de envío"></i>
-                <b-form-select id="shippingType" :plain="true" :options="shippingTypes" v-model="shipping.shippingType" />
-              </b-form-group>
-            </b-col>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="serviceType">Servicio</label>
-                <i class="fa fa-question-circle fa-sm"></i>
-                <b-form-select id="serviceType" :plain="true" :options="serviceTypes" value="Tipo de servicio" v-model="shipping.serviceType" />
-              </b-form-group>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col sm="6">
-              <b-form-group>
-                <label for="initialDate">Fecha actual</label>
+                <label for="initialDate">Fecha de inicio</label>
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
                 <div class="input-group datepicker-group">
                   <flat-pickr
-                    v-validate="'date_format:DD/MM/YYYY'"
+                    v-validate="'date_format:YYYY-MM-DD'"
                     v-model="shipping.initialDate"
                     data-vv-as="fecha actual"
                     name="initialDate"
@@ -63,7 +33,7 @@
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
                 <div class="input-group datepicker-group">
                   <flat-pickr
-                    v-validate="'date_format:DD/MM/YYYY|after:'+ shipping.initialDate +',inclusion:true'"
+                    v-validate="'date_format:YYYY-MM-DD|after:'+ shipping.initialDate +',inclusion:true'"
                     v-model="shipping.finalDate"
                     data-vv-as="fecha de cierre"
                     name="finalDate"
@@ -76,10 +46,32 @@
                 <span><small class="inv-feedback" v-show="errors.has('finalDate')">{{ errors.first('finalDate') }}</small></span>
               </b-form-group>
             </b-col>
-          </b-row>
-        </b-card>
-      </b-col>
-    </b-row>
+          </b-form-row>
+        </b-col>
+        <b-col sm="6">
+          <b-form-group>
+            <label for="providerName">Proveedor</label>
+            <b-form-select id="providerName" :plain="true" :options="providerList" v-model="shipping.provider" @input="fetchProvider" />
+          </b-form-group>
+          <b-form-row>
+            <b-col sm="6">
+              <b-form-group>
+                <label for="shippingType">Tipo de envío</label>
+                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Elegir tipo de envío"></i>
+                <b-form-select id="shippingType" :plain="true" :options="shippingTypes" v-model="shipping.shippingType" />
+              </b-form-group>
+            </b-col>
+            <b-col sm="6">
+              <b-form-group>
+                <label for="serviceType">Servicio</label>
+                <i class="fa fa-question-circle fa-sm"></i>
+                <b-form-select id="serviceType" :plain="true" :options="serviceTypes" value="Tipo de servicio" v-model="shipping.serviceType" />
+              </b-form-group>
+            </b-col>
+          </b-form-row>
+        </b-col>
+      </b-row>
+    </b-card>
 </template>
 
 <script>
@@ -104,9 +96,9 @@ export default {
       cleanObject: null,
       config: {
         wrap: true,
-        dateFormat: 'd/m/Y',
+        dateFormat: 'Y-m-d',
         locale: Spanish,
-        altFormat: 'j \\de F, Y',
+        altFormat: 'j \\de F \\de Y',
         altInput: true
         // allowInput: true
       }
@@ -131,6 +123,9 @@ export default {
     fetchProvider (id) {
       this.$store.dispatch(FETCH_PROVIDER, id, null)
     }
+  },
+  created () {
+    this.shipping.initialDate = new Date().toJSON().slice(0, 10)
   }
 }
 </script>

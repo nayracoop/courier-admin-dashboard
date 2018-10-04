@@ -7,7 +7,7 @@
       </div>
       <div class="ml-auto">
         <span>Desarrollado por</span>
-        <a href="https://nayra.coop">Nayra Coop</a>
+        <a href="https://nayra.coop">nayra.coop</a>
       </div>
     </slot>
   </footer>

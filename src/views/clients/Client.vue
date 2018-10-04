@@ -16,7 +16,7 @@
                   </b-card-header>
                   <b-collapse id="accordion1" accordion="my-accordion" role="tabpanel">
                     <b-card-body>
-                      <c-address />
+                      <c-addresses />
                     </b-card-body>
                   </b-collapse>
                 </b-card>
@@ -92,14 +92,14 @@ import { crudMixin } from '@/mixins/crudMixin'
 
 import CCostTable from '@/components/CostTable'
 import CConfirmationModal from '@/components/ConfirmationModal'
-import CAddress from '@/components/Address'
+import CAddresses from '@/components/Addresses'
 import CClientDetail from '@/components/ClientDetail'
 import CCsvFileDialog from '@/components/CsvFileDialog'
 import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, FETCH_CLIENT, CLIENT_RESET_STATE, PROVIDER_RESET_STATE, FETCH_SHIPPING_PROVIDERS } from '@/store/types/actions'
 
 export default {
   name: 'v-client',
-  components: { CCostTable, CConfirmationModal, CAddress, CClientDetail, CCsvFileDialog },
+  components: { CCostTable, CConfirmationModal, CAddresses, CClientDetail, CCsvFileDialog },
   props: {
     previousClient: {
       type: Object,

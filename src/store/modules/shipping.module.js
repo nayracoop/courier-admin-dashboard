@@ -10,16 +10,67 @@ const getInitialState = () => {
       provider: '',
       shippingType: '',
       serviceType: '',
-      packageType: '',
+      initialDate: '',
+      finalDate: '',
+
+      fromAddress: {
+        country: '',
+        name: '',
+        contactName: '',
+        address1: '',
+        address2: '',
+        address3: '',
+        postalCode: '',
+        state: '',
+        province: '',
+        location: '',
+        isResidential: false,
+        email: '',
+        phone: '',
+        comments: ''
+      },
+      toAddress: {
+        country: '',
+        name: '',
+        contactName: '',
+        address1: '',
+        address2: '',
+        address3: '',
+        postalCode: '',
+        state: '',
+        province: '',
+        location: '',
+        isResidential: false,
+        email: '',
+        phone: '',
+        comments: ''
+      },
       shippingZone: '',
-      initialDate: null,
-      finalDate: null,
-      weight: '',
-      grossPrice: '',
-      saleDiscount: '',
-      netPrice: '',
-      costDiscount: '',
-      cost: ''
+
+      package: {
+        type: '',
+        reference: '',
+        declaredValue: null,
+        weight: null,
+        length: null,
+        width: null,
+        height: null
+      },
+
+      tracking: {
+        guide: '',
+        flightDate: '',
+        attachment: ''
+      },
+
+      pricing: {
+        grossPrice: null,
+        saleDiscount: null,
+        netPrice: null,
+        costDiscount: null,
+        cost: null
+      }
+
     },
     shippings: [],
     shippingLoading: false,

@@ -1,57 +1,59 @@
 <template>
   <div class="animated fadeIn">
-    <c-shipping-data :clientList="clientList" :providerList="providerList"/>
-    <div role="tablist" class="mb-3">
-      <b-card no-body class="mb-1 bl-accordion">
-        <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn  block href="#" v-b-toggle.accordion1>Enviar desde</b-btn>
-        </b-card-header>
-        <b-collapse id="accordion1" visible accordion="my-accordion" role="tabpanel">
-          <b-card-body>
-            <c-address isShipping ref="addressFrom"></c-address>
-          </b-card-body>
-        </b-collapse>
-      </b-card>
-      <b-card no-body class="mb-1 bl-accordion">
-        <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn  block href="#" v-b-toggle.accordion2>Enviar hasta</b-btn>
-        </b-card-header>
-        <b-collapse id="accordion2" accordion="my-accordion" role="tabpanel">
-          <b-card-body>
-            <c-address isShipping ref="addressTo"></c-address>
-          </b-card-body>
-        </b-collapse>
-      </b-card>
-      <b-card no-body class="mb-1 bl-accordion">
-        <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn  block href="#" v-b-toggle.accordion3>Información del paquete</b-btn>
-        </b-card-header>
-        <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
-          <b-card-body>
-            <!-- <c-shipping-package></c-shipping-package> -->
-          </b-card-body>
-        </b-collapse>
-      </b-card>
-      <b-card no-body class="mb-1 bl-accordion">
-        <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-btn  block href="#" v-b-toggle.accordion4>Información de seguimiento</b-btn>
-        </b-card-header>
-        <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
-          <b-card-body>
-            <!-- <c-shipping-tracking></c-shipping-tracking> -->
-          </b-card-body>
-        </b-collapse>
-      </b-card>
-    </div>
-    <template>
-      <b-row class="actions-bar">
+    <b-form @submit.prevent="saveShipping">
+      <!-- <template>
+        <b-row class="actions-bar">
+          <b-col sm="12">
+            <b-button variant="primary" type="submit">Guardar <i class="fa fa-save ml-1"></i></b-button>
+          </b-col>
+        </b-row>
+      </template> -->
+      <b-row>
         <b-col sm="12">
-          <b-button variant="primary" type="submit">Guardar <i class="fa fa-save ml-1"></i></b-button>
-          <b-button variant="outline-danger">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-          <b-button variant="outline-primary">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
+          <c-shipping-data :clientList="clientList" :providerList="providerList" ref="shippingDataForm"/>
         </b-col>
       </b-row>
-    </template>
+      <b-row>
+        <b-col md="6">
+          <b-card>
+            <div slot="header">Origen</div>
+            <c-addresses isShipping ref="addressFromForm"></c-addresses>
+          </b-card>
+        </b-col>
+        <b-col md="6">
+          <b-card>
+            <div slot="header">Destino</div>
+            <c-addresses isShipping ref="addressToForm"></c-addresses>
+          </b-card>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col md="12">
+          <b-card>
+            <div slot="header">Información del paquete</div>
+            <c-shipping-package ref="packageForm"></c-shipping-package>
+          </b-card>
+        </b-col>
+        <b-col md="12">
+          <b-card>
+            <div slot="header">Información de seguimiento</div>
+            <c-shipping-tracking ref="trackingForm"></c-shipping-tracking>
+          </b-card>
+        </b-col>
+      </b-row>
+      <template>
+        <b-row class="actions-bar">
+          <b-col sm="12">
+            <b-button variant="primary" type="submit">
+              <!-- <i class="fa fa-save ml-1"></i> -->
+              Añadir envío
+            </b-button> o <b-link :to="{ path: '/envios' }">Cancelar</b-link>
+            <!-- <b-button variant="outline-danger">Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
+            <!-- <b-button variant="outline-primary">Volver <i class="fa fa-arrow-left ml-1"></i></b-button> -->
+          </b-col>
+        </b-row>
+      </template>
+    </b-form>
   </div>
 </template>
 
@@ -67,7 +69,7 @@ import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, FETCH_SHIPPING, FETCH_SH
   FETCH_CLIENTS, FETCH_CLIENT, FETCH_PROVIDER, SHIPPING_RESET_STATE, CLIENT_RESET_STATE, PROVIDER_RESET_STATE } from '@/store/types/actions'
 
 import CShippingData from '@/components/ShippingData'
-import CAddress from '@/components/Address'
+import CAddresses from '@/components/Addresses'
 import CShippingPackage from '@/components/ShippingPackage'
 import CShippingTracking from '@/components/ShippingTracking'
 
@@ -75,7 +77,7 @@ export default {
   name: 'v-shipping',
   components: {
     CShippingData,
-    CAddress,
+    CAddresses,
     CShippingPackage,
     CShippingTracking
   },
@@ -175,8 +177,17 @@ export default {
         this.$eventHub.$emit('refreshAddresses')
       })
     },
-    saveShipping (shipping) {
-      this.save(shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
+    saveShipping () {
+      // (this.$validator.validateAll()).then(res => {
+      //   if (!res) {
+      //     this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Corríjalos y vuelva a guardar' })
+      //     return false
+      //   }
+      //   // this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
+      // })
+      console.log(this.shipping)
+      if (false) this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
+      return false
     },
     deleteShipping () {
       this.deleteEl(SHIPPING_DELETE, '/envios')

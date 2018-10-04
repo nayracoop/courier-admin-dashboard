@@ -1,53 +1,60 @@
 <template>
-  <b-card :header="caption">
-    <template>
-      <b-row class="actions-bar">
-        <b-col sm="6">
-          <b-button variant="primary" :to="{ name: 'Nuevo Envío' }">Nuevo envío <i class="fa fa-plus-circle ml-1"></i></b-button>
-          <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-        </b-col>
-        <b-form-group class="ml-auto col-6">
-          <b-input-group>
-            <b-form-input v-model="filter" placeholder="Buscar..." />
-            <b-input-group-append>
-              <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </b-row>
-    </template>
-    <!-- tabla -->
-    <b-table :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="shippings" :fields="fields"
-      :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
-
-      <template slot="HEAD_selection" slot-scope="head">
-        <input type="checkbox" @click.stop="toggleSelected" v-model="allSelected" />
+  <div>
+    <b-row class="actions-bar">
+      <b-col sm="12">
+        <b-button variant="primary" :to="{ name: 'Nuevo Envío' }"><i class="fa fa-plus-circle ml-1"></i> Nuevo envío</b-button>
+      </b-col>
+    </b-row>
+    <b-card :header="caption">
+      <template>
+        <b-row class="actions-bar">
+          <b-col sm="8">
+            <!-- <b-button variant="primary" :to="{ name: 'Nuevo Envío' }">Nuevo envío <i class="fa fa-plus-circle ml-1"></i></b-button> -->
+            <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+          </b-col>
+          <b-form-group class="ml-auto col-4">
+            <b-input-group>
+              <b-form-input v-model="filter" placeholder="Buscar..." />
+              <b-input-group-append>
+                <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-row>
       </template>
+      <!-- tabla -->
+      <b-table :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="shippings" :fields="fields"
+        :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
 
-      <template slot="selection" slot-scope="data">
-        <input type="checkbox" name="checked" :key="data.index" :value="data.item" @click.stop v-model="checkedItems" />
-      </template>
+        <template slot="HEAD_selection" slot-scope="head">
+          <input type="checkbox" @click.stop="toggleSelected" v-model="allSelected" />
+        </template>
 
-      <template slot="actions" slot-scope="data">
-        <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Envío', params: { id: data.item.objectId } }">
-          <i class="fa fa-pencil"></i>
-        </b-button>
-        <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">
-          <i class="fa fa-trash"></i>
-        </b-button>
-      </template>
-    </b-table>
-    <!-- end tabla -->
-    <nav>
-      <b-pagination :total-rows="shippingsCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
-        hide-goto-end-buttons @click.native="clearSelected" />
-    </nav>
-    <c-confirmation-modal classModal="delete-modal" :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
-      ref="deleteModal" modalTitle="Eliminar registro"
-      :confirmationMessage="'Sí, deseo eliminarlo' + (deleteMultiple && checkedItems.length > 1 ? 's' : '')"
-      confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
-      @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
-  </b-card>
+        <template slot="selection" slot-scope="data">
+          <input type="checkbox" name="checked" :key="data.index" :value="data.item" @click.stop v-model="checkedItems" />
+        </template>
+
+        <template slot="actions" slot-scope="data">
+          <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Envío', params: { id: data.item.objectId } }">
+            <i class="fa fa-pencil"></i>
+          </b-button>
+          <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">
+            <i class="fa fa-trash"></i>
+          </b-button>
+        </template>
+      </b-table>
+      <!-- end tabla -->
+      <nav>
+        <b-pagination :total-rows="shippingsCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
+          hide-goto-end-buttons @click.native="clearSelected" />
+      </nav>
+      <c-confirmation-modal classModal="delete-modal" :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
+        ref="deleteModal" modalTitle="Eliminar registro"
+        :confirmationMessage="'Sí, deseo eliminarlo' + (deleteMultiple && checkedItems.length > 1 ? 's' : '')"
+        confirmationMethod="confirmDelete" cancellationMethod="cancelDelete"
+        @confirmDelete="confirmDelete" @cancelDelete="hideDeleteModal" />
+    </b-card>
+  </div>
 </template>
 
 <script>

@@ -1,7 +1,7 @@
 <template>
   <b-form v-on:submit.prevent>
-    <b-row>
-      <b-col sm="6">
+    <b-form-row>
+      <b-col sm="9">
         <b-form-group>
           <label for="name">Nombre</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre o razón social del cliente"></i>
@@ -10,7 +10,7 @@
           <span><small class="inv-feedback" v-show="errors.has('name')">{{ errors.first('name') }}</small></span>
         </b-form-group>
       </b-col>
-      <b-col sm="6">
+      <b-col sm="3">
         <b-form-group>
           <label for="code">Código</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Código identificatorio que asignaste al cliente"></i>
@@ -19,28 +19,30 @@
           <span><small class="inv-feedback" v-show="errors.has('ucode')">{{ errors.first('ucode') }}</small></span>
         </b-form-group>
       </b-col>
-    </b-row>
+    </b-form-row>
     <b-row>
-      <b-col sm="6">
-        <b-form-group>
-          <label for="idType">Tipo de identificación</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de identificación del cliente"></i>
-          <b-form-select id="idType" :plain="true" :options="docTypes" v-model="client.docType">
-          </b-form-select>
-        </b-form-group>
+      <b-col sm="5">
+        <b-form-row>
+          <b-col sm="5">
+            <b-form-group>
+              <label for="idType">Tipo de identificación</label>
+              <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de identificación del cliente"></i>
+              <b-form-select id="idType" :plain="true" :options="docTypes" v-model="client.docType">
+              </b-form-select>
+            </b-form-group>
+          </b-col>
+          <b-col sm="7">
+            <b-form-group>
+              <label for="docValue">N° de identificación</label>
+              <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de DNI, CUIT, CUIL. Este campo solo puede contener números y tiene que tener un mínimo de 8 dígitos"></i>
+              <b-form-input v-validate="'alpha_dash|min:8|max:20'" name="docValue" data-vv-as="número de identificación" id="docValue" type="text" v-model="client.docValue" placeholder="Ej: 20320508742"></b-form-input>
+              <!-- Debe ser numérico, tener un mínimo de 8 caracteres y un máximo de 20 -->
+              <span><small class="inv-feedback" v-show="errors.has('docValue')">{{ errors.first('docValue') }}</small></span>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
       </b-col>
-      <b-col sm="6">
-        <b-form-group>
-          <label for="docValue">N° de identificación</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de DNI, CUIT, CUIL. Este campo solo puede contener números y tiene que tener un mínimo de 8 dígitos"></i>
-          <b-form-input v-validate="'alpha_dash|min:8|max:20'" name="docValue" data-vv-as="número de identificación" id="docValue" type="text" v-model="client.docValue" placeholder="Ej: 20320508742"></b-form-input>
-          <!-- Debe ser numérico, tener un mínimo de 8 caracteres y un máximo de 20 -->
-          <span><small class="inv-feedback" v-show="errors.has('docValue')">{{ errors.first('docValue') }}</small></span>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col sm="6">
+      <b-col sm="3">
         <b-form-group>
           <label for="ivaCond">Condición IVA</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado del cliente"></i>
@@ -48,7 +50,7 @@
           </b-form-select>
         </b-form-group>
       </b-col>
-      <b-col sm="6">
+      <b-col sm="4">
         <b-form-group>
           <label for="cbu">CBU</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Clave Bancaria Unificada del cliente. Sin puntos ni espacios"></i>
@@ -56,6 +58,17 @@
           <!-- Debe ser numérico -->
           <span><small class="inv-feedback" v-show="errors.has('cbu')">{{ errors.first('cbu') }}</small></span>
         </b-form-group>
+      </b-col>
+      <b-col sm="12">
+        <b-form-group>
+          <b-form-checkbox id="perception" v-model="client.hasPerception">Recibe percepciones?</b-form-checkbox>
+        </b-form-group>
+      </b-col>
+    </b-row>
+    <br>
+    <b-row>
+      <b-col sm="12">
+        <c-address-form base v-model="singleAddress"></c-address-form>
       </b-col>
     </b-row>
     <b-row>
@@ -83,23 +96,23 @@
           <span><small class="inv-feedback" v-show="errors.has('phone')">{{ errors.first('phone') }}</small></span>
         </b-form-group>
       </b-col>
-      <b-col sm="6">
+      <!-- <b-col sm="6">
         <b-form-group>
           <label for="address">Domicilio</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Calle y número del cliente"></i>
           <b-form-input name="address" data-vv-as="domicilio" type="text" id="address" v-model="client.address" placeholder="Calle y número"></b-form-input>
           <span><small class="inv-feedback" v-show="errors.has('address')">{{ errors.first('address') }}</small></span>
         </b-form-group>
-      </b-col>
+      </b-col> -->
     </b-row>
-    <b-row>
+    <!-- <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="country">País</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre del país. Este campo solo puede contener letras y espacios"></i>
-          <b-form-select id="country" :plain="true" :options="countryList" v-model="client.country"></b-form-select>
+          <b-form-select id="country" :plain="true" :options="countryList" v-model="client.country"></b-form-select> -->
           <!-- Debe contener caracteres alfabéticos -->
-          <span><small class="inv-feedback" v-show="errors.has('country')">{{ errors.first('country') }}</small></span>
+          <!-- <span><small class="inv-feedback" v-show="errors.has('country')">{{ errors.first('country') }}</small></span>
         </b-form-group>
       </b-col>
       <b-col sm="6">
@@ -114,21 +127,17 @@
           <span><small class="inv-feedback" v-show="errors.has('state')">{{ errors.first('state') }}</small></span>
         </b-form-group>
       </b-col>
-    </b-row>
+    </b-row> -->
     <b-row>
-      <b-col sm="6">
+      <!-- <b-col sm="6">
         <b-form-group>
           <label for="location">Localidad / ciudad</label>
-          <b-form-input v-validate="{ regex: /[^\s*]$/ }" name="location" data-vv-as="localidad" type="text" id="location" v-model="client.location" placeholder="Ej: San Justo"></b-form-input>
+          <b-form-input v-validate="{ regex: /[^\s*]$/ }" name="location" data-vv-as="localidad" type="text" id="location" v-model="client.location" placeholder="Ej: San Justo"></b-form-input> -->
           <!-- No puede tener espacios en blanco intermedios ni puede ser únicamente un espacio en blanco  -->
-          <span><small class="inv-feedback" v-show="errors.has('location')">{{ errors.first('location') }}</small></span>
+          <!-- <span><small class="inv-feedback" v-show="errors.has('location')">{{ errors.first('location') }}</small></span>
         </b-form-group>
-      </b-col>
-      <b-col sm="6">
-        <b-form-group label="Recibe percepciones?">
-          <b-form-checkbox id="perception" v-model="client.hasPerception">Sí</b-form-checkbox>
-        </b-form-group>
-      </b-col>
+      </b-col> -->
+
     </b-row>
     <b-row>
       <b-col sm="12">
@@ -143,8 +152,11 @@
 import { taxCategories, docTypes, countries, argProvinces } from '@/store/const'
 import { mapGetters } from 'vuex'
 
+import CAddressForm from '@/components/AddressForm'
+
 export default {
   name: 'c-client-detail',
+  components: { CAddressForm },
   data () {
     return {
       inProgress: false,
@@ -166,7 +178,10 @@ export default {
     isEdit: { required: true }
   },
   computed: {
-    ...mapGetters(['client'])
+    ...mapGetters(['client']),
+    singleAddress () {
+      return { address:this.client.address }
+    }
   },
   methods: {
     validateBeforeSubmit () {

@@ -6,27 +6,44 @@ import { RESET_STATE, SET_CLIENT, FETCH_START, FETCH_CLIENTS_END, FETCH_SYNC_CLI
 const getInitialState = () => {
   return {
     client: {
-      taxCategory: null, // categoría, condición frente al IVA
+      name: '',
+      userCode: '',
       docType: null, // CUIT, DNI, etcétera
       docValue: '', // número de DNI, CUIT, etcétera
-      externalId: null,
-      userCode: '',
-      name: '',
-      businessName: '',
-      address: '',
-      country: null,
-      state: null,
-      province: null,
-      location: null,
-      postalCode: '',
+      taxCategory: null, // categoría, condición frente al IVA
+      cbu: '',
+
       email: '',
+      notifications: false,
       phone: '',
-      notifications: null,
+
+      address:  {
+        address1: '',
+        address2: '',
+        address3: '',
+        location: '',
+        postalCode: '',
+        state: '',
+        province: '',
+        country: ''
+      },
+      // Comentar
+      // country: null,
+      // state: null,
+      // province: null,
+      // location: null,
+      // postalCode: '',
+      // hasta aca
+
+      hasPerception: null,
       observation: '',
+
+      externalId: null,
+      businessName: '',
+
       purchaseAccount: null,
       saleAccount: null,
-      cbu: '',
-      hasPerception: null,
+
       addresses: [],
       costsTable: []
     },

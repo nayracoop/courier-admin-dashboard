@@ -1,23 +1,30 @@
 <template>
+  <div>
+    <b-row class="actions-bar">
+      <b-col sm="6">
+        <b-button variant="primary" :to="{ name: 'Nuevo Cliente' }">Nuevo cliente <i class="fa fa-plus-circle ml-1"></i></b-button>
+        <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+        <b-button variant="outline-primary" @click="showImportModal()">
+          Importar <i v-if="!clientLoading" class="fa fa-file ml-1"></i>
+          <i v-else class="fa fa-cog fa-spin ml-1"></i>
+        </b-button>
+      </b-col>
+    </b-row>
+
   <b-card :header="caption">
     <template>
       <b-row class="actions-bar">
         <b-col sm="6">
-          <b-button variant="primary" :to="{ name: 'Nuevo Cliente' }">Nuevo cliente <i class="fa fa-plus-circle ml-1"></i></b-button>
-          <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-          <b-button variant="outline-primary" @click="showImportModal()">
-            Importar <i v-if="!clientLoading" class="fa fa-file ml-1"></i>
-            <i v-else class="fa fa-cog fa-spin ml-1"></i>
-          </b-button>
+          <b-form-group >
+            <b-input-group>
+              <b-form-input v-model="filter" placeholder="Buscar..." />
+              <b-input-group-append>
+                <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
         </b-col>
-        <b-form-group class="ml-auto col-6">
-          <b-input-group>
-            <b-form-input v-model="filter" placeholder="Buscar..." />
-            <b-input-group-append>
-              <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
+
       </b-row>
     </template>
     <!-- tabla -->
@@ -71,6 +78,7 @@
       confirmationMethod="confirmImport" cancellationMethod="cancelImport"
       @confirmImport="confirmImport" @cancelImport="hideImportModal" />
   </b-card>
+  </div>
 </template>
 
 <script>

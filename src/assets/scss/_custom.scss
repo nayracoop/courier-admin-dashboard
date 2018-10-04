@@ -19,10 +19,10 @@ main {
 .actions-bar {
   margin-top: 0px;
   margin-bottom: 15px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-top: 1px solid #ebebebeb;
-  border-bottom: 1px solid #ebebebeb;
+  // padding-top: 10px;
+  // padding-bottom: 10px;
+  // border-top: 1px solid #ebebebeb;
+  // border-bottom: 1px solid #ebebebeb;
 
 }
 .fa-question-circle {
@@ -40,7 +40,7 @@ main {
   height: 10px;
   right: 20px;
   position: absolute;
-  display: inline-block;  
+  display: inline-block;
 }
 .card-header[role="tab"] a[aria-expanded="false"]::after {
   content: '\f107';
@@ -64,7 +64,7 @@ main {
 
 .custom-file-label::after{
   content: "Elegir archivo";
-} 
+}
 
 .tab-content{
   border: 0;
@@ -105,14 +105,14 @@ table td a.btn-link,
 table.table td a.btn-link{
   padding-top: 0;
   padding-bottom: 0;
-} 
+}
 table td,
 table.table td{
   vertical-align: middle;
 }
 table .selection,
 table.table .selection{
-  width: 40px;  
+  width: 40px;
 }
 
 table .cost-actions,
@@ -137,7 +137,7 @@ table .cost-discount{
 }
 .circular-icon-cont i{
   font-size: 30px;
-  top: 10px; 
+  top: 10px;
   left: 15px;
   position: absolute;
   margin: 0 auto;
@@ -252,11 +252,11 @@ input:read-only {
 }
 input[aria-invalid=true],
 select[aria-invalid=true]{
-  border-color: #f86c6b;  
+  border-color: #f86c6b;
 }
 /*.required-i::after{
   content: "(*)";
-  color: #f86c6b;  
+  color: #f86c6b;
   margin-left: 10px;
 }
 
@@ -285,7 +285,7 @@ select[aria-invalid=true]{
   background: #fff;
   color: #000;
 }
-#modal-confirm header .modal-title::before{  
+#modal-confirm header .modal-title::before{
   font-family: 'FontAwesome';
   display: block;
   font-size: 1.15em;
@@ -318,8 +318,8 @@ select[aria-invalid=true]{
 
 .delete-modal header .modal-title{
   color: #fff;
-}  
-.delete-modal header .modal-title::before{  
+}
+.delete-modal header .modal-title::before{
   content: "\f12a";
 }
 .delete-modal .modal-header .close{
@@ -351,7 +351,7 @@ select[aria-invalid=true]{
   color: white;
 }
 
-// Modal default 
+// Modal default
 
 
 // Modal importar
@@ -398,7 +398,7 @@ input[type="file"]{
   box-shadow: 0px 1px 10px .51px #06050533;
 }
 .import-modal .custom-file-label{
-  height: 200px;  
+  height: 200px;
   background: transparent;
   text-align: center;
   padding-top: 160px;
@@ -413,7 +413,7 @@ input[type="file"]{
   bottom: 22px;
   position: absolute;
   text-align: center;
-  padding: 0 32px;  
+  padding: 0 32px;
 }
 .import-modal span.label-file{
   position: absolute;
@@ -424,7 +424,7 @@ input[type="file"]{
 }
 
 .import-modal span.label-file::before{
-  font-family: 'FontAwesome';  
+  font-family: 'FontAwesome';
   content: "\f15b";
   font-size: 3em;
   color: #6ec6e5;
@@ -441,17 +441,17 @@ input[type="file"]{
 
 /* Estilos accordions */
 .card-header[role="tab"] a{
-  color: #23282c;  
+  color: #23282c;
   text-decoration: none;
   background: #f7f7f7!important;
   border: 0px;
   text-align: left;
   font-weight: bolder;
 }
-.card-header[role="tab"] a:hover{  
+.card-header[role="tab"] a:hover{
   color: #167495;
 }
-.card-header[role="tab"] a:focus { 
+.card-header[role="tab"] a:focus {
   box-shadow: none;
   -webkit-box-shadow: none;
 }
@@ -477,7 +477,7 @@ input[type="file"]{
   transition: .05s ease-in-out;
   font-family: 'FontAwesome';
   position: absolute;
-  display: inline-block;  
+  display: inline-block;
 }
 
 .card-header[role="tab"] a[aria-expanded="false"]::after{

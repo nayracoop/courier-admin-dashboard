@@ -1,7 +1,7 @@
 <template>
-  <b-form>
+  <div>
     <b-row>
-      <b-col sm="6">
+      <b-col sm="4">
         <b-form-group>
           <label for="package">Tipo de embalaje</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de embalaje del paquete"></i>
@@ -9,23 +9,14 @@
           </b-form-select>
         </b-form-group>
       </b-col>
-      <b-col sm="6">
-        <label for="weight">Peso</label>
-        <b-input-group>
-        <b-form-input horizontal type="text" id="weight" placeholder="Peso en kilogramos"></b-form-input>
-        <b-input-group-append><b-input-group-text>kg</b-input-group-text></b-input-group-append>
-        </b-input-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col sm="6">
+      <b-col sm="4">
         <b-form-group>
           <label for="packageValue">Valor declarado</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Valor declarado del paquete"></i>
           <b-form-input type="text" id="packageValue" placeholder="Ej: $2500"></b-form-input>
         </b-form-group>
       </b-col>
-      <b-col sm="6">
+      <b-col sm="4">
         <b-form-group>
           <label for="guideENumber">Número de referencia</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de referencia del envío"></i>
@@ -33,38 +24,48 @@
         </b-form-group>
       </b-col>
       </b-row>
-    <b-row>
-      <b-col sm="6">
+      <b-row class="---mt-2">
+        <b-col sm="3">
+          <label for="weight">Peso</label>
+          <b-input-group>
+          <b-form-input horizontal type="number" id="weight" placeholder="Peso en kilogramos"></b-form-input>
+          <b-input-group-append><b-input-group-text>kg</b-input-group-text></b-input-group-append>
+          </b-input-group>
+        </b-col>
+      <b-col sm="9">
         <b-form-group>
-          <span>Medidas</span>
+          <label for="length">Tamaño (en cm)</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Dimensiones del paquete en centímetros"></i>
-          <b-row class="mt-2">
+          <b-form-row>
             <b-col sm="4">
-              <label for="length">Largo</label>
+              <!-- <label for="length">Largo</label> -->
               <b-input-group>
-              <b-form-input horizontal type="text" id="length" placeholder="Largo en centímetros"></b-form-input>
-              <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
+                <b-input-group-prepend><b-input-group-text>Largo:</b-input-group-text></b-input-group-prepend>
+                <b-form-input horizontal type="number" id="length" placeholder="Largo en centímetros"></b-form-input>
+                <!-- <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append> -->
               </b-input-group>
             </b-col>
             <b-col sm="4">
-              <label for="width">Ancho</label>
+              <!-- <label for="width">Ancho</label> -->
               <b-input-group>
-              <b-form-input horizontal type="text" id="width" placeholder="Ancho en centímetros"></b-form-input>
-              <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
+                <b-input-group-prepend><b-input-group-text>Ancho:</b-input-group-text></b-input-group-prepend>
+                <b-form-input horizontal type="number" id="width" placeholder="Ancho en centímetros"></b-form-input>
+                <!-- <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append> -->
               </b-input-group>
             </b-col>
             <b-col sm="4">
-              <label for="width">Alto</label>
+              <!-- <label for="width">Alto</label> -->
               <b-input-group>
-              <b-form-input horizontal type="text" id="height" placeholder="Alto en centímetros"></b-form-input>
-              <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append>
+                <b-input-group-prepend><b-input-group-text>Alto:</b-input-group-text></b-input-group-prepend>
+                <b-form-input horizontal type="number" id="height" placeholder="Alto en centímetros"></b-form-input>
+                <!-- <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append> -->
               </b-input-group>
             </b-col>
-          </b-row>
+        </b-form-row>
         </b-form-group>
       </b-col>
     </b-row>
-  </b-form>
+  </div>
 </template>
 
 <script>
