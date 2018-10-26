@@ -1,6 +1,6 @@
 <template>
   <div class="animated fadeIn">
-    <b-form @submit.prevent="saveShipping">
+    <b-form @submit.prevent="saveShipping" enctype="multipart/form-data">
       <!-- <template>
         <b-row class="actions-bar">
           <b-col sm="12">
@@ -17,13 +17,15 @@
         <b-col md="6">
           <b-card>
             <div slot="header">Origen</div>
-            <c-addresses isShipping ref="addressFromForm"></c-addresses>
+            <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="originAddressUpdated" ref="addressOriginForm"></c-addresses>
+            <c-address-form v-else v-model="singleOriginAddress"></c-address-form>
           </b-card>
         </b-col>
         <b-col md="6">
           <b-card>
             <div slot="header">Destino</div>
-            <c-addresses isShipping ref="addressToForm"></c-addresses>
+            <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="destinationAddressUpdated" ref="addressDestinationForm"></c-addresses>
+            <c-address-form v-else v-model="singleDestinationAddress"></c-address-form>
           </b-card>
         </b-col>
       </b-row>
@@ -44,10 +46,8 @@
       <template>
         <b-row class="actions-bar">
           <b-col sm="12">
-            <b-button variant="primary" type="submit">
-              <!-- <i class="fa fa-save ml-1"></i> -->
-              Añadir envío
-            </b-button> o <b-link :to="{ path: '/envios' }">Cancelar</b-link>
+            <!-- <b-button variant="primary" type="submit"><i class="fa fa-save ml-1"></i> Añadir envío</b-button> -->
+            <b-button v-if="isEdit" variant="primary" type="submit">Guardar cambios</b-button><b-button v-else variant="primary" type="submit">Añadir envío</b-button> o <b-link :to="{ path: '/envios' }">Cancelar</b-link>
             <!-- <b-button variant="outline-danger">Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
             <!-- <b-button variant="outline-primary">Volver <i class="fa fa-arrow-left ml-1"></i></b-button> -->
           </b-col>
@@ -65,11 +65,12 @@ import { modalMixin } from '@/mixins/modalMixin'
 import { navigationMixin } from '@/mixins/navigationMixin'
 import { crudMixin } from '@/mixins/crudMixin'
 
-import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, FETCH_SHIPPING, FETCH_SHIPPING_PROVIDERS,
+import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, CLIENT_SAVE, FETCH_SHIPPING, FETCH_SHIPPING_PROVIDERS,
   FETCH_CLIENTS, FETCH_CLIENT, FETCH_PROVIDER, SHIPPING_RESET_STATE, CLIENT_RESET_STATE, PROVIDER_RESET_STATE } from '@/store/types/actions'
 
 import CShippingData from '@/components/ShippingData'
 import CAddresses from '@/components/Addresses'
+import CAddressForm from '@/components/AddressForm'
 import CShippingPackage from '@/components/ShippingPackage'
 import CShippingTracking from '@/components/ShippingTracking'
 
@@ -78,11 +79,18 @@ export default {
   components: {
     CShippingData,
     CAddresses,
+    CAddressForm,
     CShippingPackage,
     CShippingTracking
   },
   computed: {
-    ...mapGetters([ 'shippingLoading', 'clients', 'providers', 'shipping' ])
+    ...mapGetters([ 'shippingLoading', 'clients', 'providers', 'shipping' ]),
+    singleOriginAddress () {
+      return { address: this.shipping.origin }
+    },
+    singleDestinationAddress () {
+      return { address: this.shipping.destination }
+    }
   },
   props: {
     clientId: { type: String, default: null },
@@ -100,11 +108,11 @@ export default {
     }
     if (this.clientId) {
       this.fetchClient(this.clientId)
-      this.shipping.client = this.clientId
+      this.shipping.clientId = this.clientId
     }
     if (this.providerId) {
       this.fetchProvider(this.providerId)
-      this.shipping.provider = this.providerId
+      this.shipping.providerId = this.providerId
     }
     this.fetchClients().then(() => {
       this.clientList = this.clients.map(client => {
@@ -159,7 +167,8 @@ export default {
       cleanObject: null,
       clientList: [],
       providerList: [],
-      isEdit: false
+      addressUpdated: false,
+      isEdit: false,
     }
   },
   methods: {
@@ -185,12 +194,22 @@ export default {
       //   }
       //   // this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
       // })
-      console.log(this.shipping)
-      if (false) this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
-      return false
+      // console.log(this.shipping)
+      if (this.addressUpdated) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
+      this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
+      // return false
     },
     deleteShipping () {
       this.deleteEl(SHIPPING_DELETE, '/envios')
+    },
+    clientAddressUpdated (updated) {
+      this.addressUpdated = Boolean(updated)
+    },
+    originAddressUpdated (addressData) {
+      this.shipping.origin = addressData;
+    },
+    destinationAddressUpdated (addressData) {
+      this.shipping.destination = addressData;
     }
   }
 }

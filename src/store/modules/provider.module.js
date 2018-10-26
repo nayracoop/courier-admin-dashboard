@@ -13,12 +13,20 @@ const getInitialState = () => {
       userCode: '',
       name: '',
       businessName: '',
-      address: '',
-      country: null,
-      province: null, // usamos province cuando el country es argentina. Si no state
-      state: null,
-      city: null,
-      postalCode: '',
+      address: {
+        streetAddress: '',
+        city: '',
+        postalCode: '',
+        state: '',
+        province: null,
+        country: null
+      },
+      // address: '',
+      // country: null,
+      // province: null, // usamos province cuando el country es argentina. Si no state
+      // state: null,
+      // city: null,
+      // postalCode: '',
       email: '',
       phone: '',
       observation: '',

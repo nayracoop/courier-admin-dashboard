@@ -2,19 +2,22 @@
   <b-form>
     <b-row>
       <b-col sm="12">
-        <b-table hover striped bordered small fixed responsive="sm"
+        <b-table hover fixed outlined small responsive="sm"
         :items="items"
         :fields="fields"
         :foot-clone="true"
         :current-page="currentPage"
         :per-page="perPage"
         :filter="filter"
+        :sort-by="sortBy"
+        :sort-desc="sortDesc"
+        no-sort-reset
         @filtered="filtered">
           <template slot="fromDate" slot-scope="data">
             <div class="input-group datepicker-group">
               <flat-pickr
                 :readonly="(inProgress || !data.item.edit) ? true : false"
-                v-validate="'date_format:DD/MM/YYYY'"
+                v-validate="'date_format:YYYY-MM-DD'"
                 v-model="data.item.fromDate"
                 data-vv-as="fecha inicial"
                 name="initialDate"
@@ -36,7 +39,7 @@
             <div class="input-group datepicker-group">
               <flat-pickr
                 :readonly="(inProgress || !data.item.edit) ? true : false"
-                v-validate="'date_format:DD/MM/YYYY|after:'+ data.item.fromDate +',inclusion:true'"
+                v-validate="'date_format:YYYY-MM-DD|after:'+ data.item.fromDate +',inclusion:true'"
                 v-model="data.item.toDate"
                 data-vv-as="fecha final"
                 name="finalDate"
@@ -58,17 +61,30 @@
           </template>
 
           <template slot="actions" slot-scope="data">
-            <template v-if="data.item.edit">
-              <b-button v-b-tooltip.hover title="Descartar cambios" variant="warning" @click.prevent="revertEdit(data.item)">
-                <i class="fa fa-undo"></i>
+            <template v-if="data.item.deleted">
+              <span class="mr-1">¿Seguro?</span>
+              <b-button size="sm" variant="danger" @click.prevent="confirmRemove(data.item)">
+                Si
               </b-button>
-              <b-button v-b-tooltip.hover title="Aplicar cambios" variant="primary" @click.prevent="applyEdit(data.item)">
-                <strong><i class="fa fa-check"></i></strong>
+              <b-button size="sm" variant="success" @click.prevent="restore(data.item)">
+                No
               </b-button>
             </template>
-            <template v-else>
-              <b-button  v-b-tooltip.hover title="Editar fila" variant="primary" @click.prevent="enableEdit(data.item)">
-                <strong><i class="fa fa-edit"></i></strong>
+            <template v-if="data.item.edit && !data.item.deleted">
+              <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item)">
+                <i class="fa fa-check"></i> Aplicar
+              </b-button>
+              <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item)">
+                Cancelar
+              </b-button>
+              <b-button size="sm" variant="danger" @click.prevent="remove(data.item)">
+                <i class="fa fa-trash-o"></i> Eliminar
+              </b-button>
+              <!-- <b-link :to="{ path: '/proveedores' }">Eliminar</b-link> -->
+            </template>
+            <template v-else-if="!data.item.deleted">
+              <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item)">
+                <i class="fa fa-edit"></i> Editar
               </b-button>
             </template>
           </template>
@@ -77,7 +93,7 @@
             <div class="input-group datepicker-group">
               <flat-pickr
                 :disabled="inProgress"
-                v-validate="'date_format:DD/MM/YYYY'"
+                v-validate="'date_format:YYYY-MM-DD'"
                 v-model="newRow.fromDate"
                 data-vv-as="fecha inicial"
                 name="newInitialDate"
@@ -98,7 +114,7 @@
             <div class="input-group datepicker-group">
               <flat-pickr
                 :disabled="inProgress"
-                v-validate="'date_format:DD/MM/YYYY|after:'+ newRow.fromDate +',inclusion:true'"
+                v-validate="'date_format:YYYY-MM-DD|after:'+ newRow.fromDate +',inclusion:true'"
                 v-model="newRow.toDate"
                 data-vv-as="fecha final"
                 name="newFinalDate"
@@ -119,15 +135,13 @@
             <b-form-input type="number" placeholder="% Costo Combustible" v-model.number="newRow.fuelPercent" :disabled="inProgress"></b-form-input>
           </template>
           <template slot="FOOT_actions" slot-scope="data">
-            <b-button v-b-tooltip.hover title="Añadir costo" variant="secondary" @click.prevent="add">
-              <strong><i class="fa fa-plus"></i></strong>
+            <b-button size="sm" variant="success" @click.prevent="add">
+              <i class="fa fa-plus"></i> Agregar
             </b-button>
           </template>
         </b-table>
       </b-col>
     </b-row>
-    <pre>{{ `proveedor fuel: ${JSON.stringify(this.provider && this.provider.fuelTable, null, 2)}` }}</pre>
-    <pre>{{ `items: ${JSON.stringify(this.provider && this.items, null, 2)}` }}</pre>
   </b-form>
 </template>
 <script>
@@ -147,7 +161,7 @@ export default {
         { key: 'fromDate', label: 'Fecha inicial' },
         { key: 'toDate', label: 'Fecha final' },
         { key: 'fuelPercent', label: '% Costo Combustible' },
-        { key: 'actions', label: 'Acciones', class: 'cost-actions' }
+        { key: 'actions', label: 'Acciones', class: 'fuel-cost-actions' }
       ],
       items: [],
       newRow: {
@@ -156,6 +170,9 @@ export default {
         toDate: null,
         fuelPercent: null
       },
+      // sortBy: [ 'fromDate', 'fuelPercent' ],
+      sortBy: 'fromDate',
+      sortDesc: true,
       inProgress: false,
       inEdit: false,
       oldRow: {},
@@ -164,24 +181,49 @@ export default {
       totalRows: 1,
       config: {
         wrap: true,
-        dateFormat: 'd/m/Y',
+        dateFormat: 'Y-m-d',
         locale: Spanish,
         altFormat: 'j \\de F, Y',
-        altInput: true
+        altInput: true,
+        clickOpens: false
       }
     }
   },
   created () {
     this.items = this._.cloneDeep(this.provider.fuelTable)
+    // this.items.forEach(item => {
+    //   item._rowVariant = 'secondary'
+    // })
   },
   methods: {
     add () {
       if (!this.validateNumericValues(this.newRow)) return
-      this.newRow.id = this.provider.fuelTable.length
+      if (!this.validateDates(this.newRow)) return
+      this.newRow.id = Math.max.apply(Math, this.provider.fuelTable.map((item) => { return item.id; })) + 1; //this.provider.fuelTable.length
       this.provider.fuelTable.push(this.newRow)
       this.items = this._.cloneDeep(this.provider.fuelTable)
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
       this.newRow = {}
+    },
+    remove(el) {
+      let selRow = this.provider.fuelTable.find(fuel => fuel.id === el.id)
+
+      const index = this.provider.fuelTable.indexOf(selRow);
+      this.provider.fuelTable.splice(index, 1);
+
+      el.deleted = true;
+      el._rowVariant = 'warning';
+
+    },
+    confirmRemove(el) {
+      this.items = this._.cloneDeep(this.provider.fuelTable)
+      this.inEdit = false
+    },
+    restore(el) {
+      delete el.deleted;
+      delete el._rowVariant;
+      this.provider.fuelTable.push(el);
+      // this.revertEdit(el)
     },
     enableEdit (el) {
       if (!this.inEdit) {
@@ -229,6 +271,17 @@ export default {
         retVal = false
       }
       return retVal
+    },
+    validateDates (row) {
+      let retVal = true
+      if (!row.fromDate || !row.toDate) {
+        this.$toasted.global.error_toast({ message: 'Ingrese Fecha inicial y Fecha final' })
+        retVal = false
+      } else if (row.fromDate >= row.toDate) {
+        this.$toasted.global.error_toast({ message: 'La Fecha inicial no puede ser mayor a la Fecha final' })
+        retVal = false
+      }
+      return retVal
     }
   },
   computed: {
@@ -236,3 +289,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  tbody .datepicker-group input[readonly] ~ * {
+    pointer-events: none;
+  }
+  tbody tr {
+    background-color: #f9f9f9;
+  }
+</style>

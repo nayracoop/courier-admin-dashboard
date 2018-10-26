@@ -2,33 +2,33 @@
   <div>
     <b-row class="actions-bar">
       <b-col sm="6">
-        <b-button variant="primary" :to="{ name: 'Nuevo Cliente' }">Nuevo cliente <i class="fa fa-plus-circle ml-1"></i></b-button>
-        <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-        <b-button variant="outline-primary" @click="showImportModal()">
-          Importar <i v-if="!clientLoading" class="fa fa-file ml-1"></i>
-          <i v-else class="fa fa-cog fa-spin ml-1"></i>
-        </b-button>
+        <b-button variant="primary" :to="{ name: 'Nuevo Cliente' }"><i class="fa fa-plus-circle ml-1"></i> Nuevo cliente</b-button>
+        <!-- <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
+        <b-button variant="outline-primary" @click="showImportModal()"><i v-if="!clientLoading" class="fa fa-file ml-1"></i><i v-else class="fa fa-cog fa-spin ml-1"></i> Importar</b-button>
       </b-col>
     </b-row>
 
   <b-card :header="caption">
     <template>
       <b-row class="actions-bar">
-        <b-col sm="6">
-          <b-form-group >
-            <b-input-group>
-              <b-form-input v-model="filter" placeholder="Buscar..." />
-              <b-input-group-append>
-                <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-              </b-input-group-append>
-            </b-input-group>
-          </b-form-group>
+        <b-col sm="8">
+          <b-dropdown class="mx-1" variant="danger" text="Acciones en lote">
+            <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center>Eliminar seleccionados</b-dropdown-item>
+            <!-- <b-dropdown-item>Item 2</b-dropdown-item> -->
+          </b-dropdown>
         </b-col>
-
+        <b-col sm="4">
+          <b-input-group>
+            <b-form-input v-model="filter" placeholder="Buscar..." />
+            <b-input-group-append>
+              <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-col>
       </b-row>
     </template>
     <!-- tabla -->
-    <b-table class="list-table" :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="clients" :fields="fields"
+    <b-table class="list-table" :hover="true" :striped="true" :bordered="true" :small="false" :fixed="true" :items="clients" :fields="fields"
       :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
 
       <template slot="HEAD_selection" slot-scope="head">
@@ -45,15 +45,15 @@
       </template>
 
       <template slot="actions" slot-scope="data">
-        <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Cliente', params: { id: data.item.objectId } }">
-          <i class="fa fa-pencil"></i>
+        <b-button variant="primary" size="sm" :to="{ name: 'Editar Cliente', params: { id: data.item.objectId } }">
+          <i class="fa fa-pencil"></i> Editar
         </b-button>
-        <b-button v-b-tooltip.hover title="Nuevo envío" :small="true" :to="{ name: 'Nuevo Envío', params: { clientId: data.item.objectId } }">
-          <i class="fa fa-plane"></i>
+        <b-button :small="false" size="sm" :to="{ name: 'Nuevo Envío', params: { clientId: data.item.objectId } }">
+          <i class="fa fa-plane"></i> Nuevo envío
         </b-button>
-        <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">
-          <i class="fa fa-trash"></i>
-        </b-button>
+        <!-- <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="false" size="sm" @click="showDeleteModal(data.item.objectId)">
+          <i class="fa fa-trash"></i> Eliminar
+        </b-button> -->
       </template>
     </b-table>
     <!-- end tabla -->
@@ -99,7 +99,7 @@ export default {
         { key: 'docValue', label: 'CUIT / Nº doc.', sortable: true },
         // { key: 'taxCategory', label: 'CondiciónIVA' },
         { key: 'phone', label: 'Teléfono' },
-        { key: 'address', label: 'Dirección' },
+        { key: 'address.streetAddress', label: 'Dirección' },
         { key: 'email', label: 'Email', sortable: true },
         // { key: 'province', label: 'Provincia' },
         { key: 'actions', label: 'Acciones' }
@@ -145,11 +145,32 @@ export default {
     confirmImport () {
       let promises = []
       for (const client of this.syncClients) {
+        let clientData = {
+          address: {
+            streetAddress: '',
+            city: '',
+            postalCode: '',
+            state: '',
+            province: null,
+            country: null
+          }
+        }
         // le defino una tabla vacía de precios de costo
         // porque el componente costsTable asume que existe
-        client.costsTable = []
-        client.addresses = []
-        promises.push(ClientsService.create(client))
+        clientData.costsTable = []
+        clientData.addresses = []
+
+        let addressProperties = [ 'address', 'country', 'state', 'province', 'location', 'postalCode', 'city' ]
+        for (let property in client) {
+          if (addressProperties.find((prop) => { return prop === property })) {
+            if (property === 'address') clientData.address['streetAddress'] = client[property]
+            if (property === 'location') clientData.address['city'] = client[property]
+            else clientData.address[property] = client[property]
+          } else {
+            clientData[property] = client[property]
+          }
+        }
+        promises.push(ClientsService.create(clientData))
       }
       Promise.all(promises).then(() => {
         this.$toasted.global.success_toast({ message: `${this.syncClientsCount} registros importados con éxito` })

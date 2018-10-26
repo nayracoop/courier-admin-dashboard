@@ -1,134 +1,147 @@
 <template>
-  <b-form>
+  <div>
     <b-row>
-      <b-col sm="4">
+      <b-col sm="8">
         <b-form-group>
-          <label for="import">Importación</label>
-          <b-row id="import">
-            <b-col sm="12">
-              <b-table hover bordered small fixed responsive="sm"
-              :items="importItems"
-              :fields="fields"
-              :current-page="currentPage"
-              :per-page="perPage"
-              :filter="filter"
-              @filtered="filtered">
-                <template slot="country" slot-scope="data">
-                  <b-form-input readonly type="text" v-model="data.item.name"></b-form-input>
-                </template>
-                <template slot="zone" slot-scope="data">
-                  <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
-                </template>
-                <template slot="actions" slot-scope="data">
-                  <template v-if="data.item.edit">
-                    <b-button variant="warning" @click.prevent="revertEdit(data.item, 1)">
-                      <i class="fa fa-undo"></i>
-                    </b-button>
-                    <b-button variant="primary" @click.prevent="applyEdit(data.item, 1)">
-                      <strong><i class="fa fa-check"></i></strong>
-                    </b-button>
-                  </template>
-                  <template v-else>
-                    <b-button variant="primary" @click.prevent="enableEdit(data.item, 1)">
-                      <strong><i class="fa fa-edit"></i></strong>
-                    </b-button>
-                  </template>
-                </template>
-              </b-table>
-            </b-col>
-          </b-row>
-        </b-form-group>
-      </b-col>
-      <b-col sm="4">
-        <b-form-group>
-          <label for="export">Exportación</label>
-          <b-row id="export">
-            <b-col sm="12">
-              <b-table hover bordered small fixed responsive="sm"
-              :items="exportItems"
-              :fields="fields"
-              :current-page="currentPage"
-              :per-page="perPage"
-              :filter="filter"
-              @filtered="filtered">
-                <template slot="country" slot-scope="data">
-                  <b-form-input readonly type="text" v-model="data.item.name"></b-form-input>
-                </template>
-                <template slot="zone" slot-scope="data">
-                  <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
-                </template>
-                <template slot="actions" slot-scope="data">
-                  <template v-if="data.item.edit">
-                    <b-button variant="warning" @click.prevent="revertEdit(data.item, 2)">
-                      <i class="fa fa-undo"></i>
-                    </b-button>
-                    <b-button variant="primary" @click.prevent="applyEdit(data.item, 2)">
-                      <strong><i class="fa fa-check"></i></strong>
-                    </b-button>
-                  </template>
-                  <template v-else>
-                    <b-button variant="primary" @click.prevent="enableEdit(data.item, 2)">
-                      <strong><i class="fa fa-edit"></i></strong>
-                    </b-button>
-                  </template>
-                </template>
-              </b-table>
-            </b-col>
-          </b-row>
-        </b-form-group>
-      </b-col>
-      <b-col sm="4">
-        <b-form-group>
-          <label for="domestic">Doméstico</label>
-          <b-row id="domestic">
-            <b-col sm="12">
-              <b-table hover bordered small fixed responsive="sm"
-              :items="domesticItems"
-              :fields="domesticFields"
-              :current-page="domesticCurrentPage"
-              :per-page="perPage"
-              :filter="filter"
-              @filtered="domesticFiltered">
-                <template slot="cod_postal" slot-scope="data">
-                  <b-form-input readonly type="text" v-model="data.item.cod_postal"></b-form-input>
-                </template>
-                <template slot="zone" slot-scope="data">
-                  <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
-                </template>
-                <template slot="actions" slot-scope="data">
-                  <template v-if="data.item.edit">
-                    <b-button variant="warning" @click.prevent="revertEdit(data.item, 3)">
-                      <i class="fa fa-undo"></i>
-                    </b-button>
-                    <b-button variant="primary" @click.prevent="applyEdit(data.item, 3)">
-                      <strong><i class="fa fa-check"></i></strong>
-                    </b-button>
-                  </template>
-                  <template v-else>
-                    <b-button variant="primary" @click.prevent="enableEdit(data.item, 3)">
-                      <strong><i class="fa fa-edit"></i></strong>
-                    </b-button>
-                  </template>
-                </template>
-              </b-table>
-            </b-col>
-          </b-row>
+          Mostrar zonas para: <b-form-checkbox v-model="showImport">Importación</b-form-checkbox> <b-form-checkbox v-model="showExport">Exportación</b-form-checkbox> <b-form-checkbox v-model="showDomestic">Doméstico</b-form-checkbox>
         </b-form-group>
       </b-col>
     </b-row>
     <b-row>
-      <b-col sm="8" class="text-center">
-        <nav>
-          <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente" :limit="4" />
-        </nav>
+      <b-col :sm="showDomestic ? (!showImport || !showExport ? 6 : 8) : 12" v-if="showImport || showExport">
+        <b-row>
+          <b-col :sm="showExport ? 6 : 12" v-if="showImport">
+            <b-form-group>
+              <label for="import">Importación</label>
+              <b-row id="import">
+                <b-col sm="12">
+                  <b-table hover outlined small fixed responsive="sm"
+                  :items="importItems"
+                  :fields="fields"
+                  :current-page="currentPage"
+                  :per-page="perPage"
+                  :filter="filter"
+                  @filtered="filtered">
+                    <template slot="country" slot-scope="data">
+                      <b-form-input readonly type="text" v-model="data.item.name"></b-form-input>
+                    </template>
+                    <template slot="zone" slot-scope="data">
+                      <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
+                    </template>
+                    <template slot="actions" slot-scope="data">
+                      <template v-if="data.item.edit">
+                        <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item, 1)">
+                          <i class="fa fa-check"></i> Aplicar
+                        </b-button>
+                        <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item, 1)">
+                          Cancelar
+                        </b-button>
+                      </template>
+                      <template v-else>
+                        <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item, 1)">
+                          <i class="fa fa-edit"></i> Editar
+                        </b-button>
+                      </template>
+                    </template>
+                  </b-table>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col :sm="showImport ? 6 : 12" v-if="showExport">
+            <b-form-group>
+              <label for="export">Exportación</label>
+              <b-row id="export">
+                <b-col sm="12">
+                  <b-table hover outlined small fixed responsive="sm"
+                  :items="exportItems"
+                  :fields="fields"
+                  :current-page="currentPage"
+                  :per-page="perPage"
+                  :filter="filter"
+                  @filtered="filtered">
+                    <template slot="country" slot-scope="data">
+                      <b-form-input readonly type="text" v-model="data.item.name"></b-form-input>
+                    </template>
+                    <template slot="zone" slot-scope="data">
+                      <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
+                    </template>
+                    <template slot="actions" slot-scope="data">
+                      <template v-if="data.item.edit">
+                        <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item, 2)">
+                          <i class="fa fa-check"></i> Aplicar
+                        </b-button>
+                        <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item, 2)">
+                          Cancelar
+                        </b-button>
+                      </template>
+                      <template v-else>
+                        <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item, 2)">
+                          <i class="fa fa-edit"></i> Editar
+                        </b-button>
+                      </template>
+                    </template>
+                  </b-table>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col sm="12" class="text-center">
+            <nav>
+              <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente" :limit="4" />
+            </nav>
+          </b-col>
+        </b-row>
       </b-col>
-      <b-col sm="4">
-         <nav>
-          <b-pagination :total-rows="domesticTotalRows" :per-page="perPage" v-model="domesticCurrentPage" prev-text="Anterior" next-text="Siguiente" :limit="4" />
-        </nav>
+      <b-col  :sm="(!showImport && !showExport) ? 12 : (!showImport || !showExport) ? 6 : 4" v-if="showDomestic">
+        <b-row>
+          <b-col sm="12">
+            <b-form-group>
+              <label for="domestic">Doméstico</label>
+              <b-row id="domestic">
+                <b-col sm="12">
+                  <b-table hover outlined small fixed responsive="sm"
+                  :items="domesticItems"
+                  :fields="domesticFields"
+                  :current-page="domesticCurrentPage"
+                  :per-page="perPage"
+                  :filter="filter"
+                  @filtered="domesticFiltered">
+                    <template slot="cod_postal" slot-scope="data">
+                      <b-form-input readonly type="text" v-model="data.item.cod_postal"></b-form-input>
+                    </template>
+                    <template slot="zone" slot-scope="data">
+                      <b-form-input :readonly="(inProgress || !data.item.edit) ? true : false" type="number" placeholder="Zona" v-model.number="data.item.zone"></b-form-input>
+                    </template>
+                    <template slot="actions" slot-scope="data">
+                      <template v-if="data.item.edit">
+                        <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item, 3)">
+                          <i class="fa fa-check"></i> Aplicar
+                        </b-button>
+                        <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item, 3)">
+                          Cancelar
+                        </b-button>
+                      </template>
+                      <template v-else>
+                        <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item, 3)">
+                          <i class="fa fa-edit"></i> Editar
+                        </b-button>
+                      </template>
+                    </template>
+                  </b-table>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </b-col>
+          <b-col sm="12">
+             <nav>
+              <b-pagination :total-rows="domesticTotalRows" :per-page="perPage" v-model="domesticCurrentPage" prev-text="Anterior" next-text="Siguiente" :limit="4" />
+            </nav>
+          </b-col>
+        </b-row>
       </b-col>
     </b-row>
-  </b-form>
+  </div>
 </template>
 <script>
 import { countries, zipCodes } from '@/store/const'
@@ -163,6 +176,9 @@ export default {
       // inEdit tiene que compartirse con el parent
       // para el botón guardar
       inEdit: false,
+      showImport: true,
+      showExport: true,
+      showDomestic: true,
       oldRow: {},
       // hasWeight: false,
       perPage: 10,

@@ -10,20 +10,25 @@
         <b-row class="actions-bar">
           <b-col sm="8">
             <!-- <b-button variant="primary" :to="{ name: 'Nuevo Envío' }">Nuevo envío <i class="fa fa-plus-circle ml-1"></i></b-button> -->
-            <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+            <b-dropdown class="mx-1" variant="danger" text="Acciones en lote">
+              <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center>Eliminar seleccionados</b-dropdown-item>
+            </b-dropdown>
+            <!-- <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
           </b-col>
-          <b-form-group class="ml-auto col-4">
+          <!-- <b-form-group class="ml-auto col-4"> -->
+          <b-col sm="4">
             <b-input-group>
               <b-form-input v-model="filter" placeholder="Buscar..." />
               <b-input-group-append>
                 <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
               </b-input-group-append>
             </b-input-group>
-          </b-form-group>
+          </b-col>
+          <!-- </b-form-group> -->
         </b-row>
       </template>
       <!-- tabla -->
-      <b-table :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="shippings" :fields="fields"
+      <b-table :hover="true" :striped="true" :bordered="true" :fixed="true" :items="shippingsList" :fields="fields"
         :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
 
         <template slot="HEAD_selection" slot-scope="head">
@@ -35,12 +40,12 @@
         </template>
 
         <template slot="actions" slot-scope="data">
-          <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Envío', params: { id: data.item.objectId } }">
-            <i class="fa fa-pencil"></i>
+          <b-button variant="primary" size="sm" :to="{ name: 'Editar Envío', params: { id: data.item.objectId } }">
+            <i class="fa fa-pencil"></i> Editar
           </b-button>
-          <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">
+          <!-- <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" size="sm" @click="showDeleteModal(data.item.objectId)">
             <i class="fa fa-trash"></i>
-          </b-button>
+          </b-button> -->
         </template>
       </b-table>
       <!-- end tabla -->
@@ -59,8 +64,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_SHIPPINGS, IMPORT_SHIPPINGS, SHIPPING_DELETE } from '@/store/types/actions'
+import { FETCH_SHIPPINGS, FETCH_CLIENTS, FETCH_PROVIDERS, IMPORT_SHIPPINGS, SHIPPING_DELETE } from '@/store/types/actions'
 import CConfirmationModal from '@/components/ConfirmationModal'
+import { countries, shippingTypes, serviceTypes } from '@/store/const'
 
 export default {
   name: 'c-shipping-list',
@@ -68,12 +74,19 @@ export default {
   props: { caption: { type: String, default: 'Envíos' } },
   data: () => {
     return {
-      fields: [ 'selection',
-        { key: 'providerName', label: 'Proveedor', sortable: true },
-        { key: 'clientName', label: 'Cliente', sortable: true },
-        { key: 'clientDocType', label: 'CUIT / Nº doc.', sortable: true },
-        { key: 'destinationCountry', label: 'País de destino' },
-        { key: 'cost', label: 'Costo final' }
+      fields: [ { key: 'selection', class: 'selection' },
+        // { key: 'finalDate', label: 'Fecha de cierre', sortable: true },
+        { key: 'initialDate', label: 'Fecha de inicio', sortable: true },
+        { key: 'client', label: 'Cliente', sortable: true },
+        // { key: 'clientDocValue', label: 'CUIT / Nº doc.' },
+        // { key: 'origin', label: 'País de origen', sortable: true  },
+        // { key: 'route', label: 'Origen / Destino', sortable: true  },
+        { key: 'provider', label: 'Proveedor', sortable: true },
+        { key: 'shippingType', label: 'Tipo de envío', sortable: true  },
+        { key: 'serviceType', label: 'Servicio', sortable: true  },
+        { key: 'destination', label: 'País de destino', sortable: true  },
+        { key: 'cost', label: 'Costo final' },
+        { key: 'actions', label: 'Acciones' }
       ],
       allSelected: false,
       checkedItems: [],
@@ -83,14 +96,41 @@ export default {
       currentPage: 1,
       perPage: 5,
       totalRows: 0,
-      filter: null
+      filter: null,
+      verque: [],
+      shippingsList: [],
+      countryList: []
     }
   },
   computed: {
-    ...mapGetters([ 'shippingsCount', 'shippingLoading', 'shippings' ])
+    ...mapGetters([ 'shippingsCount', 'shippingLoading', 'shippings', 'clients', 'providers' ])
+  },
+  created () {
+    // cargo las listas de país
+    countries.map(el => {
+      this.countryList.push({ code: el.numericCode, name: el.name })
+    })
   },
   mounted () {
-    this.fetchShippings()
+    Promise.all( [ this.fetchShippings(), this.fetchClients(), this.fetchProviders() ] ).then(values => {
+      this.shippingsList = this.shippings.map(shipping => {
+        return {
+          objectId: shipping.objectId,
+          initialDate: shipping.initialDate,
+          // finalDate: shipping.finalDate,
+          client: this.clients.find(element => element.objectId === shipping.clientId).name,
+          provider: this.providers.find(element => element.objectId === shipping.providerId).name,
+          clientDocValue: this.clients.find(element => element.objectId === shipping.clientId).docValue,
+          origin: this.countryList.find(element => element.code === shipping.origin.country).name,
+          destination: this.countryList.find(element => element.code === shipping.destination.country).name,
+          // route: this.countryList.find(element => element.code === shipping.origin.country).name + ' -> ' + this.countryList.find(element => element.code === shipping.destination.country).name,
+          shippingType: shippingTypes.find(element => element.value === shipping.shippingType).text,
+          serviceType: serviceTypes.find(element => element.value === shipping.serviceType).text,
+          cost: shipping.cost,
+          selection: false
+        }
+      })
+    })
   },
   watch: {
     checkedItems (a, b) {
@@ -99,7 +139,23 @@ export default {
   },
   methods: {
     fetchShippings () {
-      this.$store.dispatch(FETCH_SHIPPINGS)
+      return this.$store.dispatch(FETCH_SHIPPINGS)
+    },
+    fetchClients () {
+      return this.$store.dispatch(FETCH_CLIENTS)/*.then(() => {
+        this.clients.forEach((client) => {
+          let result = this.shippingsList.find(obj => obj.client == client.objectId)
+          //if (result) result.client = client.name
+        })
+      })*/
+    },
+    fetchProviders () {
+      return this.$store.dispatch(FETCH_PROVIDERS)/*.then(() => {
+        this.providers.forEach((provider) => {
+          let result = this.shippingsList.find(obj => obj.provider == provider.objectId)
+        //  if (result) result.provider = provider.name
+        })
+      })*/
     },
     importShippings () {
       this.$store.dispatch(IMPORT_SHIPPINGS)

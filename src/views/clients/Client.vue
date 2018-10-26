@@ -1,61 +1,75 @@
 <template>
   <div class="animated fadeIn">
-    <b-row>
-      <b-col sm="12">
-        <b-card no-body>
-          <b-tabs card>
-            <b-tab v-bind:title="isEdit ? client.name : 'Nuevo cliente'" active>
-              <div slot="header">
-                <strong>{{ isEdit ? client.name : 'Nuevo cliente' }}</strong>
-              </div>
-              <c-client-detail ref="clientDetail" :isEdit="isEdit"></c-client-detail>
-              <div role="tablist" class="mb-3">
-                <b-card no-body class="mb-1">
-                  <b-card-header header-tag="header" class="p-1" role="tab">
-                    <b-btn block href="#" v-b-toggle.accordion1>Direcciones</b-btn>
-                  </b-card-header>
-                  <b-collapse id="accordion1" accordion="my-accordion" role="tabpanel">
-                    <b-card-body>
-                      <c-addresses />
-                    </b-card-body>
-                  </b-collapse>
-                </b-card>
-              </div>
-            </b-tab>
-            <b-tab title="Descuentos">
-              <b-row class="actions-bar">
-                <b-col sm="6">
-                  <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
-                  <b-button variant="outline-primary" disabled>Imprimir lista de descuentos<i class="fa fa-print  ml-1"></i></b-button>
-                  <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar lista de descuentos" class="import-modal">
-                    <c-csv-file-dialog
-                      bodyMessage="Elija un archivo para importar la lista de descuentos. Únicamente se permiten archivos .csv"
-                      cancellationMessage="Cancelar"
-                      cancellationMethod="cancelImport"
-                      @cancelImport="hideImportModal()" />
-                  </b-modal>
-                </b-col>
-                <b-form-group class="ml-auto col-6">
-                  <b-input-group>
-                    <b-form-input v-model="filter" placeholder="Buscar..." />
-                    <b-input-group-append>
-                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-form-group>
-              </b-row>
-              <c-cost-table :filter="filter" variant="client" :providerList="providerList"></c-cost-table>
-            </b-tab>
-          </b-tabs>
-          <b-col class="actions-bar" sm="12">
-            <b-button variant="primary" :disabled="inProgress" @click="saveClient(client)">Guardar <i class="fa fa-save ml-1"></i></b-button>
-            <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(client.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-            <b-button variant="outline-primary" @click="goNavigate('/clientes', client)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
-          </b-col>
-        </b-card>
-      </b-col>
-    </b-row>
-
+    <b-form @submit.prevent="saveClient(client)">
+      <b-row>
+        <b-col sm="12">
+          <b-card no-body>
+            <b-tabs card>
+              <b-tab v-bind:title="isEdit ? client.name : 'Datos personales'" active>
+                <div slot="header">
+                  <strong>{{ isEdit ? client.name : 'Datos personales' }}</strong>
+                </div>
+                <c-client-detail ref="clientDetail" :isEdit="isEdit"></c-client-detail>
+                <!-- <div role="tablist" class="mb-3">
+                  <b-card no-body class="mb-1">
+                    <b-card-header header-tag="header" class="p-1" role="tab">
+                      <b-btn block href="#" v-b-toggle.accordion1>Direcciones</b-btn>
+                    </b-card-header>
+                    <b-collapse id="accordion1" accordion="my-accordion" role="tabpanel">
+                      <b-card-body>
+                        <c-addresses />
+                      </b-card-body>
+                    </b-collapse>
+                  </b-card>
+                </div> -->
+              </b-tab>
+              <b-tab title="Direcciones">
+                <c-addresses></c-addresses>
+                <!-- <div role="tablist" class="mb-3">
+                  <b-card no-body class="mb-1">
+                    <b-card-header header-tag="header" class="p-1" role="tab">
+                      <b-btn block href="#" v-b-toggle.accordion1>Direcciones</b-btn>
+                    </b-card-header>
+                  </b-card>
+                </div> -->
+              </b-tab>
+              <b-tab title="Descuentos">
+                <b-row class="actions-bar">
+                  <b-col sm="8">
+                    <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                    <b-button variant="outline-primary" disabled>Imprimir lista de descuentos<i class="fa fa-print  ml-1"></i></b-button>
+                    <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar lista de descuentos" class="import-modal">
+                      <c-csv-file-dialog
+                        bodyMessage="Elija un archivo para importar la lista de descuentos. Únicamente se permiten archivos .csv"
+                        cancellationMessage="Cancelar"
+                        cancellationMethod="cancelImport"
+                        @cancelImport="hideImportModal()" />
+                    </b-modal>
+                  </b-col>
+                  <b-col sm="4">
+                    <b-form-group>
+                      <b-input-group>
+                        <b-form-input v-model="filter" placeholder="Buscar..." />
+                        <b-input-group-append>
+                          <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
+                <c-cost-table :filter="filter" variant="client" :providerList="providerList"></c-cost-table>
+              </b-tab>
+            </b-tabs>
+          </b-card>
+        </b-col>
+        <b-col class="actions-bar" sm="12">
+          <b-button v-if="isEdit" variant="primary" :disabled="inProgress" type="submit">Guardar cambios</b-button><b-button v-else variant="primary" :disabled="inProgress" type="submit">Añadir cliente</b-button> o <b-link :to="{ path: '/clientes' }">Cancelar</b-link>
+          <!-- <b-button variant="primary" :disabled="inProgress" @click="saveClient(client)">Guardar <i class="fa fa-save ml-1"></i></b-button> -->
+          <!-- <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(client.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
+          <!-- <b-button variant="outline-primary" @click="goNavigate('/clientes', client)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button> -->
+        </b-col>
+      </b-row>
+    </b-form>
     <c-confirmation-modal
       classModal="delete-modal"
       ref="deleteModal"
@@ -170,6 +184,14 @@ export default {
       return this.$store.dispatch(FETCH_SHIPPING_PROVIDERS)
     },
     saveClient (client) {
+      // provider.fuelTable.forEach(item => {
+      //   delete item.edit
+      // })
+      // provider.costsTable.forEach(cost => {
+      //   cost.costs.forEach(item => {
+      //     delete item.edit
+      //   })
+      // })
       this.$refs.clientDetail.validateBeforeSubmit().then(res => {
         if (!res) {
           this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Corríjalos y vuelva a guardar' })

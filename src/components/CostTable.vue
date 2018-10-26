@@ -1,50 +1,46 @@
 <template>
   <b-form>
-    <b-row>
-      <b-col sm="2" v-if="variant === 'client'">
-        <b-form-group>
-          <label for="providerId">Proveedor</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Proveedor asociado"></i>
-          <b-form-select id="providerId" :plain="true" :disabled="inProgress" :options="providerList" v-model="costsFilter.providerId" @input="resetFilter(); fetchProvider();">
-          </b-form-select>
+    <!-- <b-form-row> -->
+      <!-- <b-col sm="3" v-if="variant === 'client'"> -->
+        <b-form-group class="form-inline">
+          <!-- <label for="providerId">Proveedor</label> -->
+          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Proveedor asociado"></i> -->
+          <b>Variante:</b>
+          <b-form-select v-if="variant === 'client'" id="providerId" :disabled="inProgress" :options="providerList" v-model="costsFilter.providerId" @input="resetFilter(); fetchProvider();"></b-form-select>
+        <!-- </b-form-group> -->
+      <!-- </b-col> -->
+      <!-- <b-col sm="3"> -->
+        <!-- <b-form-group> -->
+          <!-- <label for="shippingType">Tipo de envío</label> -->
+          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de envío"></i> -->
+          <b-form-select id="shippingType" :disabled="inProgress" :options="shippingTypes" v-model="costsFilter.shippingType" @input="resetFilter()"></b-form-select>
+        <!-- </b-form-group> -->
+      <!-- </b-col> -->
+      <!-- <b-col sm="3"> -->
+        <!-- <b-form-group> -->
+          <!-- <label for="serviceType">Servicio</label> -->
+          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de servicio"></i> -->
+          <b-form-select id="serviceType" :disabled="inProgress" :options="serviceTypes" v-model="costsFilter.serviceType" @input="resetFilter()"></b-form-select>
+        <!-- </b-form-group> -->
+      <!-- </b-col> -->
+      <!-- <b-col sm="3"> -->
+        <!-- <b-form-group> -->
+          <!-- <label for="packageType">Tipo de embalaje</label> -->
+          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de embalaje del paquete"></i> -->
+          <b-form-select id="packageType" :disabled="inProgress" :options="packageTypes" v-model="costsFilter.packageType" @input="resetFilter()"></b-form-select>
+        <!-- </b-form-group> -->
+      <!-- </b-col> -->
+      <!-- <b-col sm="3"> -->
+        <!-- <b-form-group> -->
+          <!-- <label for="shippingZone">Zona</label> -->
+          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Zona de envío"></i> -->
+          <b-form-select id="shippingZone" :disabled="inProgress" :options="shippingZones" v-model="costsFilter.shippingZone" @input="resetFilter()"></b-form-select>
         </b-form-group>
-      </b-col>
-      <b-col sm="2">
-        <b-form-group>
-          <label for="shippingType">Tipo de envío</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de envío"></i>
-          <b-form-select id="shippingType" :plain="true" :disabled="inProgress" :options="shippingTypes" v-model="costsFilter.shippingType" @input="resetFilter()">
-          </b-form-select>
-        </b-form-group>
-      </b-col>
-      <b-col sm="2">
-        <b-form-group>
-          <label for="serviceType">Servicio</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de servicio"></i>
-          <b-form-select id="serviceType" :plain="true" :disabled="inProgress" :options="serviceTypes" v-model="costsFilter.serviceType" @input="resetFilter()">
-          </b-form-select>
-        </b-form-group>
-      </b-col>
-      <b-col sm="2">
-        <b-form-group>
-          <label for="packageType">Tipo de embalaje</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de embalaje del paquete"></i>
-          <b-form-select id="packageType" :plain="true" :disabled="inProgress" :options="packageTypes" v-model="costsFilter.packageType" @input="resetFilter()">
-          </b-form-select>
-        </b-form-group>
-      </b-col>
-      <b-col sm="2">
-        <b-form-group>
-          <label for="shippingZone">Zona</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Zona de envío"></i>
-          <b-form-select id="shippingZone" :plain="true" :disabled="inProgress" :options="shippingZones" v-model="costsFilter.shippingZone" @input="resetFilter()">
-          </b-form-select>
-        </b-form-group>
-      </b-col>
-    </b-row>
+      <!-- </b-col> -->
+    <!-- </b-form-row> -->
     <b-row>
       <b-col sm="12">
-        <b-table hover striped bordered small fixed responsive="sm"
+        <b-table hover outlined small fixed responsive="sm"
         :items="items"
         :fields="fields"
         :foot-clone="(hasWeight || providerCostsTableIndex === -1) && variant === 'provider'"
@@ -74,16 +70,16 @@
           </template>
           <template slot="actions" slot-scope="data">
             <template v-if="data.item.edit">
-              <b-button v-b-tooltip.hover title="Descartar cambios" variant="warning" @click.prevent="revertEdit(data.item.weight)">
-                <i class="fa fa-undo"></i>
+              <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item)">
+                <i class="fa fa-check"></i> Aplicar
               </b-button>
-              <b-button v-b-tooltip.hover title="Aplicar cambios" variant="primary" @click.prevent="applyEdit(data.item)">
-                <strong><i class="fa fa-check"></i></strong>
+              <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item.weight)">
+                Cancelar
               </b-button>
             </template>
             <template v-else>
-              <b-button  v-b-tooltip.hover title="Editar fila" variant="primary" @click.prevent="enableEdit(data.item.weight)">
-                <strong><i class="fa fa-edit"></i></strong>
+              <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item.weight, $event)">
+                <i class="fa fa-edit"></i> Editar
               </b-button>
             </template>
           </template>
@@ -93,7 +89,7 @@
             <b-form-input v-model="newRow.weight" readonly></b-form-input>
           </template>
           <template slot="FOOT_grossPrice" slot-scope="data">
-            <b-form-input type="number" placeholder="Precio bruto" v-model="newRow.grossPrice" :disabled="inProgress"></b-form-input>
+            <b-form-input type="number" placeholder="Precio bruto" v-model="newRow.grossPrice" ref="inputPrice" :disabled="inProgress"></b-form-input>
           </template>
           <template slot="FOOT_costDiscount" slot-scope="data">
             <b-form-input type="number" placeholder="% Descuento Costo" v-model="newRow.costDiscount" :disabled="inProgress"></b-form-input>
@@ -109,8 +105,8 @@
             <b-form-input type="number" v-model="netPrice" readonly></b-form-input>
           </template> -->
           <template slot="FOOT_actions" slot-scope="data">
-            <b-button v-b-tooltip.hover title="Añadir costo" variant="secondary" @click.prevent="add">
-              <strong><i class="fa fa-plus"></i></strong>
+            <b-button size="sm" variant="success" @click.prevent="add">
+              <i class="fa fa-plus"></i> Agregar
             </b-button>
           </template>
 
@@ -151,7 +147,7 @@ export default {
       shippingTypes: shippingTypes,
       serviceTypes: serviceTypes,
       packageTypes: packageTypes,
-      shippingZones: shippingZones,
+      shippingZones: [],
       // si el proveedor tiene costsTable, uso la primera posición
       providerCostsTableIndex: -1,
       clientCostsTableIndex: -1,
@@ -225,6 +221,15 @@ export default {
     this.hasWeight = this.costsFilter.packageType !== 3
     this.totalRows = this.items.length
     this.setWeight()
+
+    this.shippingZones = shippingZones.map(zone => {
+      return ({ value: zone.value, text: "Zona: " + zone.text })
+    })
+
+    // this.shippingZones.forEach(item => {
+    //   item.text = "Zona: " + item.text
+    //
+    // })
   },
   methods: {
     resetFilter () {
@@ -303,6 +308,7 @@ export default {
     },
     add (el) {
       let newRow = {}
+      if(this.$refs.inputPrice) this.$refs.inputPrice.$el.focus()
       // valido los datos
       switch (this.variant) {
         case 'provider':
@@ -361,14 +367,10 @@ export default {
       this.newRow.saleDiscount = null
       this.resetFilter()
     },
-    enableEdit (selectedWeight) {
+    enableEdit (selectedWeight, event) {
       if (selectedWeight !== undefined && selectedWeight !== null && selectedWeight > -1 && !this.inEdit) {
         this.inEdit = true
-        // TODO: cambiar esto porque si paso directo el elemento desde la tabla
-        // puedo guardarlo como oldRow
-        // acá no hago switch
-        // y siempre seteo "edit" al registro de proveedor
-        // porque es el que pivotea
+        event.target.parentNode.parentNode.querySelector('td:nth-child(' + (this.variant === 'client' ? 5 : 2 ) + ') input').focus()
         let selRow = this.provider.costsTable[this.providerCostsTableIndex].costs.find(el => el.weight === selectedWeight)
         // esta asignación mantiene los datos previos a la edición
         // para revertirlos si es necesario, así que tengo que mantener si es cliente o proveedor

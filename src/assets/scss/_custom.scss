@@ -121,6 +121,10 @@ table .cost-discount{
   width: 140px;
 }
 
+table .fuel-cost-actions {
+  width: 240px;
+}
+
 
 
 
@@ -440,6 +444,11 @@ input[type="file"]{
 /* Fin Estilos modal */
 
 /* Estilos accordions */
+
+.card {
+  overflow: hidden;
+}
+
 .card-header[role="tab"] a{
   color: #23282c;
   text-decoration: none;

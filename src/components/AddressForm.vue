@@ -16,32 +16,40 @@
           </b-col>
         </b-form-row>
         <b-form-group>
-              <b-form-row>
-              <b-col sm="8">
-                <label :for="id + '_address1'">Dirección</label>
+            <b-form-row v-if="base">
+              <b-col sm="12">
+                <label :for="id + '_address'">Dirección</label>
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Calle y número"></i>
-                <b-form-input v-validate="{ required: true, regex: /[^\s*]$/ }" :name="id + '_address1'" data-vv-as="dirección línea 1 (calle y número)" type="text" :id="id + '_address1'" placeholder="Calle y número" v-model="value.address.address1" />
-                <span><small class="inv-feedback" v-show="errors.has(id + '_address1')">{{ errors.first(id + '_address1') }}</small></span>
+                <b-form-input v-validate="{ required: true, regex: /[^\s*]$/ }" :name="id + '_address'" data-vv-as="dirección línea 1 (calle y número)" type="text" :id="id + '_address'" placeholder="Calle y número" v-model="value.address.streetAddress" />
+                <span><small class="inv-feedback" v-show="errors.has(id + '_address')">{{ errors.first(id + '_address') }}</small></span>
+              </b-col>
+            </b-form-row>
+            <b-form-row v-else>
+              <b-col sm="8">
+                <label :for="id + '_streetAddress'">Dirección</label>
+                <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Calle y número"></i>
+                <b-form-input v-validate="{ required: true, regex: /[^\s*]$/ }" :name="id + '_streetAddress'" data-vv-as="dirección línea 1 (calle y número)" type="text" :id="id + '_streetAddress'" placeholder="Calle y número" v-model="value.address.streetAddress" />
+                <span><small class="inv-feedback" v-show="errors.has(id + '_streetAddress')">{{ errors.first(id + '_streetAddress') }}</small></span>
               </b-col>
               <b-col sm="2">
-                <label :for="id + '_address2'">Piso</label>
+                <label :for="id + '_floor'">Piso</label>
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Piso / Unidad / Edificio"></i>
-                <b-form-input type="text" :id="id + '_address2'" placeholder="Piso / Unidad / Edificio"  v-model="value.address.address2" />
+                <b-form-input type="text" :id="id + '_floor'" placeholder="Piso / Unidad / Edificio"  v-model="value.address.floor" />
               </b-col>
               <b-col sm="2">
-                <label :for="id + '_address3'">Dpto.</label>
+                <label :for="id + '_apartment'">Dpto.</label>
                 <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Departamento / Sección / ℅ (a nombre de)"></i>
-               <b-form-input type="text" :id="id + '_address3'" placeholder="Departamento / Sección / ℅ (a nombre de)" v-model="value.address.address3" />
+               <b-form-input type="text" :id="id + '_apartment'" placeholder="Departamento / Sección / ℅ (a nombre de)" v-model="value.address.apartment" />
               </b-col>
             </b-form-row>
           </b-form-group>
       <b-form-row>
         <b-col sm="4">
           <b-form-group>
-            <label :for="id + '_location'">Localidad / ciudad</label>
-            <b-form-input v-validate="{ required: true, regex: /[^\s*]$/ }" :name="id + '_location'" data-vv-as="localidad" type="text" :id="id + '_location'" v-model="value.address.location" placeholder="Ej: San Justo"></b-form-input>
+            <label :for="id + '_city'">Localidad / ciudad</label>
+            <b-form-input v-validate="{ required: true, regex: /[^\s*]$/ }" :name="id + '_city'" data-vv-as="localidad" type="text" :id="id + '_city'" v-model="value.address.city" placeholder="Ej: San Justo"></b-form-input>
             <!-- No puede tener espacios en blanco intermedios ni puede ser únicamente un espacio en blanco  -->
-            <span><small class="inv-feedback" v-show="errors.has(id + '_location')">{{ errors.first(id + '_location') }}</small></span>
+            <span><small class="inv-feedback" v-show="errors.has(id + '_city')">{{ errors.first(id + '_city') }}</small></span>
           </b-form-group>
         </b-col>
         <b-col sm="3">
@@ -54,7 +62,7 @@
           </b-form-group>
         </b-col>
         <b-col sm="5">
-          <b-form-group v-if="value.country === '032'">
+          <b-form-group v-if="value.address.country === '032'">
             <label :for="id + '_province'">Provincia / estado</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
             <b-form-select :id="id + '_province'" :plain="true" :options="argProvinceList" v-model="value.address.province" @change="updateStateText"></b-form-select>
@@ -148,13 +156,13 @@ export default {
             country: '',
             name: '',
             contactName: '',
-            address1: '',
-            address2: '',
-            address3: '',
+            streetAddress: '',
+            floor: '',
+            apartment: '',
             postalCode: '',
             state: '',
             province: '',
-            location: '',
+            city: '',
             isResidential: false,
             email: '',
             phone: '',

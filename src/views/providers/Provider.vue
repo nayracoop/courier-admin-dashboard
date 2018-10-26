@@ -1,86 +1,97 @@
 <template>
   <div class="animated fadeIn">
-    <b-row>
-      <b-col sm="12">
-        <b-card no-body>
-          <b-tabs card>
-            <b-tab v-bind:title="isEdit ? provider.name : 'Nuevo proveedor'" active>
-              <div slot="header">
-                <strong>{{ isEdit ? provider.name : 'Nuevo proveedor' }}</strong>
-              </div>
-              <c-provider-detail ref="providerDetail" :isEdit="isEdit"></c-provider-detail>
-            </b-tab>
-            <b-tab title="Zonas" v-if="provider.isShipping">
-              <b-row class="actions-bar">
-                <b-col sm="6">
-                  <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
-                  <b-button variant="outline-primary" disabled>Imprimir zonas por país<i class="fa fa-print ml-1"></i></b-button>
-                  <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar zonas por país" class="import-modal">
-                    <c-csv-file-dialog
-                      bodyMessage="Elija un archivo para importar zonas por país. Únicamente se permiten archivos .csv"
-                      cancellationMessage="Cancelar"
-                      cancellationMethod="cancelImport"
-                      @cancelImport="hideImportModal()" />
-                  </b-modal>
-                </b-col>
-                <b-form-group class="ml-auto col-6">
-                  <b-input-group>
-                    <b-form-input v-model="filter" placeholder="Buscar..." />
-                    <b-input-group-append>
-                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-form-group>
-              </b-row>
-              <c-zones-table :filter="filter" variant="provider"></c-zones-table>
-            </b-tab>
-            <b-tab title="Precios de venta" v-if="provider.isShipping">
-              <b-row class="actions-bar">
-                <b-col sm="6">
-                  <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
-                  <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print ml-1"></i></b-button>
-                  <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar precios de venta" class="import-modal">
-                    <c-csv-file-dialog
-                      bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv"
-                      cancellationMessage="Cancelar"
-                      cancellationMethod="cancelImport"
-                      @cancelImport="hideImportModal()" />
-                  </b-modal>
-                </b-col>
-                <b-form-group class="ml-auto col-6">
-                  <b-input-group>
-                    <b-form-input v-model="filter" placeholder="Buscar..." />
-                    <b-input-group-append>
-                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-form-group>
-              </b-row>
-              <c-cost-table :filter="filter" variant="provider"></c-cost-table>
-            </b-tab>
-            <b-tab title="Costo de combustible" v-if="provider.isShipping"
-              ><b-row class="actions-bar">
-                <b-form-group class="ml-auto col-6">
-                  <b-input-group>
-                    <b-form-input v-model="filter" placeholder="Buscar..." />
-                    <b-input-group-append>
-                      <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-form-group>
-              </b-row>
-              <c-fuel-table :filter="filter" variant="provider"></c-fuel-table>
-            </b-tab>
-          </b-tabs>
-          <b-col class="actions-bar" sm="12">
-            <b-button variant="primary" :disabled="inProgress" @click="saveProvider(provider)">Guardar <i class="fa fa-floppy-o ml-1"></i></b-button>
-            <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(provider.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-            <b-button variant="outline-primary" @click="goNavigate('/proveedores', provider)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button>
-          </b-col>
-        </b-card>
-      </b-col>
-    </b-row>
+    <b-form @submit.prevent="saveProvider(provider)" enctype="multipart/form-data">
+      <b-row class="actions-bar" v-if="isEdit && provider.isShipping">
+        <b-col sm="12" v-if="isEdit && provider.isShipping">
+          <b-button variant="primary" :to="{ name: 'Nuevo Envío', params: { providerId: provider.objectId } }"><i class="fa fa-plane ml-1"></i> Confeccionar envío</b-button>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col sm="12">
+          <b-card no-body>
+            <b-tabs card>
+              <b-tab v-bind:title="isEdit ? provider.name : 'Nuevo proveedor'" active>
+                <div slot="header">
+                  <strong>{{ isEdit ? provider.name : 'Nuevo proveedor' }}</strong>
+                </div>
+                <c-provider-detail ref="providerDetail" :isEdit="isEdit"></c-provider-detail>
+              </b-tab>
+              <b-tab title="Zonas" v-if="provider.isShipping">
+                <b-row class="actions-bar">
+                  <b-col sm="8">
+                    <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                    <!-- <b-button variant="outline-primary" disabled>Imprimir zonas por país<i class="fa fa-print ml-1"></i></b-button> -->
+                    <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar zonas por país" class="import-modal">
+                      <c-csv-file-dialog
+                        bodyMessage="Elija un archivo para importar zonas por país. Únicamente se permiten archivos .csv"
+                        cancellationMessage="Cancelar"
+                        cancellationMethod="cancelImport"
+                        @cancelImport="hideImportModal()" />
+                    </b-modal>
+                  </b-col>
+                  <b-col sm="4">
+                    <b-form-group>
+                      <b-input-group>
+                        <b-form-input v-model="filter" placeholder="Buscar..." />
+                        <b-input-group-append>
+                          <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
+                <c-zones-table :filter="filter" variant="provider"></c-zones-table>
+              </b-tab>
+              <b-tab title="Precios de venta" v-if="provider.isShipping">
+                <b-row class="actions-bar">
+                  <b-col sm="8">
+                    <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                    <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print ml-1"></i></b-button>
+                    <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar precios de venta" class="import-modal">
+                      <c-csv-file-dialog
+                        bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv"
+                        cancellationMessage="Cancelar"
+                        cancellationMethod="cancelImport"
+                        @cancelImport="hideImportModal()" />
+                    </b-modal>
+                  </b-col>
+                  <b-col sm="4">
+                    <b-form-group>
+                      <b-input-group>
+                        <b-form-input v-model="filter" placeholder="Buscar..." />
+                        <b-input-group-append>
+                          <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
+                <c-cost-table :filter="filter" variant="provider"></c-cost-table>
+              </b-tab>
+              <b-tab title="Costo de combustible" v-if="provider.isShipping"><b-row class="actions-bar">
+                  <b-form-group class="ml-auto col-4">
+                    <b-input-group>
+                      <b-form-input v-model="filter" placeholder="Buscar..." />
+                      <b-input-group-append>
+                        <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+                      </b-input-group-append>
+                    </b-input-group>
+                  </b-form-group>
+                </b-row>
+                <c-fuel-table :filter="filter" variant="provider"></c-fuel-table>
+              </b-tab>
+            </b-tabs>
+          </b-card>
+        </b-col>
+        <b-col class="actions-bar" sm="12">
+          <b-button v-if="isEdit" variant="primary" :disabled="inProgress" type="submit">Guardar cambios</b-button><b-button v-else variant="primary" :disabled="inProgress" type="submit">Añadir proveedor</b-button> o <b-link :to="{ path: '/proveedores' }">Cancelar</b-link>
 
+          <!-- <b-button variant="primary" :disabled="inProgress" @click="saveProvider(provider)">Guardar <i class="fa fa-floppy-o ml-1"></i></b-button>
+          <b-button variant="outline-danger" :disabled="inProgress" v-if="isEdit" @click="showDeleteModal(provider.objectId)">Eliminar <i class="fa fa-trash ml-1"></i></b-button>
+          <b-button variant="outline-primary" @click="goNavigate('/proveedores', provider)">Volver <i class="fa fa-arrow-left ml-1"></i></b-button> -->
+        </b-col>
+      </b-row>
+    </b-form>
     <c-confirmation-modal
       classModal="delete-modal"
       ref="deleteModal"
@@ -185,6 +196,14 @@ export default {
   },
   methods: {
     saveProvider (provider) {
+      provider.fuelTable.forEach(item => {
+        delete item.edit
+      })
+      provider.costsTable.forEach(cost => {
+        cost.costs.forEach(item => {
+          delete item.edit
+        })
+      })
       this.$refs.providerDetail.validateBeforeSubmit().then(res => {
         if (!res) {
           this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Corríjalos y vuelva a guardar' })

@@ -1,81 +1,86 @@
 <template>
-  <b-card :header="caption">
-    <template>
-      <b-row class="actions-bar">
-        <b-col sm="6">
-          <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }">Nuevo proveedor <i class="fa fa-plus-circle ml-1"></i></b-button>
-          <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button>
-          <b-button variant="outline-primary" @click="showImportModal()">
-            Importar <i v-if="!providerLoading" class="fa fa-file ml-1"></i>
-            <i v-else class="fa fa-cog fa-spin ml-1"></i>
+  <div>
+    <b-row class="actions-bar">
+      <b-col sm="12">
+        <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }"><i class="fa fa-plus-circle ml-1"></i> Nuevo proveedor</b-button>
+        <b-button variant="outline-primary" @click="showImportModal()"><i v-if="!providerLoading" class="fa fa-file ml-1"></i><i v-else class="fa fa-cog fa-spin ml-1"></i> Importar </b-button>
+      </b-col>
+    </b-row>
+    <b-card :header="caption">
+      <template>
+        <b-row class="actions-bar">
+          <b-col sm="8">
+            <b-dropdown class="mx-1" variant="danger" text="Acciones en lote">
+              <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center>Eliminar seleccionados</b-dropdown-item>
+            </b-dropdown>
+          </b-col>
+          <b-col sm="4">
+            <b-input-group>
+              <b-form-input v-model="filter" placeholder="Buscar..." />
+              <b-input-group-append>
+                <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
+              </b-input-group-append>
+            </b-input-group>
+          </b-col>
+        </b-row>
+      </template>
+      <!-- tabla -->
+      <b-table class="list-table" :hover="true" :striped="true" :bordered="true" :small="false" :fixed="true" :items="providers" :fields="fields"
+        :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
+
+        <template slot="HEAD_selection" slot-scope="head">
+          <input type="checkbox" @click.stop="toggleSelected" v-model="allSelected" />
+        </template>
+
+        <template slot="selection" slot-scope="data">
+          <input type="checkbox" name="checked" :key="data.index" :value="data.item" @click.stop v-model="checkedItems" />
+        </template>
+        <template slot="name" slot-scope="data">
+          <b-button variant="link" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
+            {{ data.item.name }}
           </b-button>
-        </b-col>
-        <b-form-group class="ml-auto col-6">
-          <b-input-group>
-            <b-form-input v-model="filter" placeholder="Buscar..." />
-            <b-input-group-append>
-              <b-btn :disabled="!filter" @click="filter = ''">Limpiar</b-btn>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </b-row>
-    </template>
-    <!-- tabla -->
-    <b-table class="list-table" :hover="true" :striped="true" :bordered="true" :small="true" :fixed="true" :items="providers" :fields="fields"
-      :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
+        </template>
 
-      <template slot="HEAD_selection" slot-scope="head">
-        <input type="checkbox" @click.stop="toggleSelected" v-model="allSelected" />
-      </template>
-
-      <template slot="selection" slot-scope="data">
-        <input type="checkbox" name="checked" :key="data.index" :value="data.item" @click.stop v-model="checkedItems" />
-      </template>
-      <template slot="name" slot-scope="data">
-        <b-button variant="link" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
-          {{ data.item.name }}
-        </b-button>
-      </template>
-
-      <template slot="actions" slot-scope="data">
-        <b-button v-b-tooltip.hover title="Editar registro" variant="primary" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
-          <i class="fa fa-pencil"></i>
-        </b-button>
-        <b-button v-b-tooltip.hover title="Nuevo envío" :small="true" :to="{ name: 'Nuevo Envío', params: { providerId: data.item.objectId } }" :disabled="!data.item.isShipping">
-          <i class="fa fa-plane"></i>
-        </b-button>
-        <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">
-          <i class="fa fa-trash"></i>
-        </b-button>
-      </template>
-    </b-table>
-    <!-- end tabla -->
-    <nav>
-      <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
-        hide-goto-end-buttons @click.native="clearSelected" />
-    </nav>
-    <c-confirmation-modal
-      classModal="delete-modal"
-      ref="deleteModal"
-      :modalTitle="'¿Está seguro que desea eliminar ' +  (deleteMultiple && checkedItems.length > 1 ? 'los registros seleccionados' : 'este registro') + '?'"
-      :promptMessage="'Se ' + (deleteMultiple && checkedItems.length > 1 ? `eliminarán los ${checkedItems.length} registros seleccionados` : 'eliminará el registro seleccionado') + ' de la lista de proveedores. Esta acción no se puede deshacer'"
-      :confirmationMessage="'Sí, ' + (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' eliminaré'"
-      :cancellationMessage="'No, ' +  (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' conservaré '  "
-      confirmationMethod="confirmDelete"
-      cancellationMethod="cancelDelete"
-      @confirmDelete="confirmDelete"
-      @cancelDelete="hideDeleteModal" />
-    <c-confirmation-modal
-    classModal="import-modal"
-    ref="importModal"
-    :promptMessage="'¿Desea importar ' + (syncProvidersCount && syncProvidersCount > 1 ? `${syncProvidersCount} registros` : 'un registro') + '?'"
-    title="Confirmar importación"
-    :confirmationMessage="'Sí, deseo importarlo' + (syncProvidersCount && syncProvidersCount > 1 ? 's' : '')"
-    confirmationMethod="confirmImport"
-    cancellationMethod="cancelImport"
-    @confirmImport="confirmImport"
-    @cancelImport="hideImportModal" />
-  </b-card>
+        <template slot="actions" slot-scope="data">
+          <b-button variant="primary" size="sm" :to="{ name: 'Editar Proveedor', params: { id: data.item.objectId } }">
+            <i class="fa fa-pencil"></i> Editar
+          </b-button>
+          <b-button size="sm" :to="{ name: 'Nuevo Envío', params: { providerId: data.item.objectId } }" v-if="data.item.isShipping">
+            <i class="fa fa-plane"></i> Nuevo envío
+          </b-button>
+          <!-- <b-button v-b-tooltip.hover title="Eliminar registro" class="btn-danger" :small="true" @click="showDeleteModal(data.item.objectId)">
+            <i class="fa fa-trash"></i>
+          </b-button> -->
+        </template>
+      </b-table>
+      <!-- end tabla -->
+      <nav>
+        <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
+          hide-goto-end-buttons @click.native="clearSelected" />
+      </nav>
+      <c-confirmation-modal
+        classModal="delete-modal"
+        ref="deleteModal"
+        :modalTitle="'¿Está seguro que desea eliminar ' +  (deleteMultiple && checkedItems.length > 1 ? 'los registros seleccionados' : 'este registro') + '?'"
+        :promptMessage="'Se ' + (deleteMultiple && checkedItems.length > 1 ? `eliminarán los ${checkedItems.length} registros seleccionados` : 'eliminará el registro seleccionado') + ' de la lista de proveedores. Esta acción no se puede deshacer'"
+        :confirmationMessage="'Sí, ' + (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' eliminaré'"
+        :cancellationMessage="'No, ' +  (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' conservaré '  "
+        confirmationMethod="confirmDelete"
+        cancellationMethod="cancelDelete"
+        @confirmDelete="confirmDelete"
+        @cancelDelete="hideDeleteModal" />
+      <c-confirmation-modal
+      classModal="import-modal"
+      ref="importModal"
+      :promptMessage="'¿Desea importar ' + (syncProvidersCount && syncProvidersCount > 1 ? `${syncProvidersCount} registros` : 'un registro') + '?'"
+      title="Confirmar importación"
+      :confirmationMessage="'Sí, deseo importarlo' + (syncProvidersCount && syncProvidersCount > 1 ? 's' : '')"
+      confirmationMethod="confirmImport"
+      cancellationMethod="cancelImport"
+      @confirmImport="confirmImport"
+      @cancelImport="hideImportModal" />
+    </b-card>
+  </div>
 </template>
 
 <script>
@@ -96,7 +101,7 @@ export default {
         { key: 'docValue', label: 'CUIT / Nº doc.', sortable: true },
         // { key: 'taxCategory', label: 'CondiciónIVA' },
         { key: 'phone', label: 'Teléfono' },
-        { key: 'address', label: 'Dirección' },
+        { key: 'address.streetAddress', label: 'Dirección' },
         { key: 'email', label: 'Email', sortable: true },
         // { key: 'province', label: 'Provincia' },
         { key: 'actions', label: 'Acciones' }
@@ -141,12 +146,34 @@ export default {
     confirmImport () {
       let promises = []
       for (const provider of this.syncProviders) {
+        let providerData = {
+          address: {
+            streetAddress: '',
+            city: '',
+            postalCode: '',
+            state: '',
+            province: null,
+            country: null
+          }
+        }
         // le defino una tabla vacía de precios de costo
         // porque el componente costsTable asume que existe
-        provider.costsTable = []
-        provider.shippingZones = []
-        provider.fuelTable = []
-        promises.push(ProvidersService.create(provider))
+        providerData.costsTable = []
+        providerData.shippingZones = []
+        providerData.fuelTable = []
+
+        let addressProperties = [ 'address', 'country', 'state', 'province', 'location', 'postalCode', 'city' ]
+        for (let property in provider) {
+          if (addressProperties.find((prop) => { return prop === property })) {
+            if (property === 'address') providerData.address['streetAddress'] = provider[property]
+            if (property === 'location') providerData.address['city'] = provider[property]
+            else providerData.address[property] = provider[property]
+          } else {
+            providerData[property] = provider[property]
+          }
+        }
+        promises.push(ProvidersService.create(providerData))
+        // promises.push(ProvidersService.create(provider))
       }
       Promise.all(promises).then(() => {
         this.$toasted.global.success_toast({ message: `${this.syncProvidersCount} registros importados con éxito` })

@@ -61,7 +61,7 @@
       </b-col>
       <b-col sm="12">
         <b-form-group>
-          <b-form-checkbox id="perception" v-model="client.hasPerception">Recibe percepciones?</b-form-checkbox>
+          <b-form-checkbox id="perception" v-model="client.hasPerception">Recibe percepciones</b-form-checkbox>
         </b-form-group>
       </b-col>
     </b-row>
@@ -73,20 +73,22 @@
     </b-row>
     <b-row>
       <b-col sm="6">
+        <!-- <b-input-group>
+          <b-input-group-prepend><b-input-group-text>Alias:</b-input-group-text></b-input-group-prepend>
+          <b-form-input :id="id + '_alias'" type="text" v-model="value.alias" placeholder="Ej: Depósito" />
+          <b-input-group-append><b-input-group-text><b-check :id="id + '_defaultAddress'" v-model="value.isDefault">Dirección por defecto</b-check></b-input-group-text></b-input-group-append>
+        </b-input-group> -->
+
         <b-form-group>
           <label for="email">Email</label>
-          <b-form-input v-validate="{ email: true, regex: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ }" name="email" data-vv-as="email" id="email" type="email" autocomplete="email" v-model="client.email" placeholder="Ej: envios@empresa.com"></b-form-input>
-          <!-- Debe ser un email válido (Matchea mínimo de caracteres, caracteres inválidos, etc)  -->
-          <span><small class="inv-feedback" v-show="errors.has('email')">{{ errors.first('email') }}</small></span>
+          <b-input-group>
+            <b-form-input v-validate="{ email: true, regex: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ }" name="email" data-vv-as="email" id="email" type="email" autocomplete="email" v-model="client.email" placeholder="Ej: envios@empresa.com"></b-form-input>
+            <b-input-group-append><b-input-group-text><b-check :id="id + '_defaultAddress'" v-model="client.notifications">Recibe notificaciones</b-check></b-input-group-text></b-input-group-append>
+            <!-- Debe ser un email válido (Matchea mínimo de caracteres, caracteres inválidos, etc)  -->
+            <span><small class="inv-feedback" v-show="errors.has('email')">{{ errors.first('email') }}</small></span>
+          </b-input-group>
         </b-form-group>
       </b-col>
-      <b-col sm="6">
-        <b-form-group label="Recibe notificaciones?">
-          <b-form-checkbox id="notifications" v-model="client.notifications">Sí</b-form-checkbox>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
       <b-col sm="6">
         <b-form-group>
           <label for="phone">Teléfono</label>
@@ -96,6 +98,9 @@
           <span><small class="inv-feedback" v-show="errors.has('phone')">{{ errors.first('phone') }}</small></span>
         </b-form-group>
       </b-col>
+    </b-row>
+    <b-row>
+
       <!-- <b-col sm="6">
         <b-form-group>
           <label for="address">Domicilio</label>
@@ -142,7 +147,7 @@
     <b-row>
       <b-col sm="12">
         <b-form-group label="Observaciones" label-for="notes" :label-cols="3" :horizontal="false">
-          <b-form-textarea id="notes" :no-resize="true" :textarea="true" :rows="4" v-model="client.observation" placeholder="Escriba una observación..."></b-form-textarea>
+          <b-form-textarea id="notes" :no-resize="true" :textarea="true" :rows="2" v-model="client.observation" placeholder="Escriba una observación..."></b-form-textarea>
         </b-form-group>
       </b-col>
     </b-row>
@@ -180,7 +185,7 @@ export default {
   computed: {
     ...mapGetters(['client']),
     singleAddress () {
-      return { address:this.client.address }
+      return { address: this.client.address }
     }
   },
   methods: {

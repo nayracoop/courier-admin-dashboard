@@ -17,15 +17,13 @@ const getInitialState = () => {
       notifications: false,
       phone: '',
 
-      address:  {
-        address1: '',
-        address2: '',
-        address3: '',
-        location: '',
+      address: {
+        streetAddress: '',
+        city: '',
         postalCode: '',
         state: '',
-        province: '',
-        country: ''
+        province: null,
+        country: null
       },
       // Comentar
       // country: null,

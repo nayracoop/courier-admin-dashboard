@@ -13,9 +13,9 @@
               <b v-if="currentAddress.address.contactName">{{ currentAddress.address.contactName }}</b>
               <span v-if="currentAddress.address.name"> - <i>{{ currentAddress.address.name }}</i></span>
               <br>
-              <span>{{ currentAddress.address.address1 }}<br></span>
-              <span v-if="currentAddress.address.address2 || currentAddress.address.address3">{{ currentAddress.address.address2 }}º{{ currentAddress.address.address3 }}<br></span>
-              <span>{{ currentAddress.address.location }}, {{ currentAddress.address.state }} {{ currentAddress.address.postalCode }}<br></span>
+              <span>{{ currentAddress.address.streetAddress }}<br></span>
+              <span v-if="currentAddress.address.floor || currentAddress.address.apartment">{{ currentAddress.address.floor }}º{{ currentAddress.address.apartment }}<br></span>
+              <span>{{ currentAddress.address.city }}, {{ currentAddress.address.state }} {{ currentAddress.address.postalCode }}<br></span>
               <span v-if="selectedCountry">{{ selectedCountry.name }}</span>
               <!-- <br>
               <span v-for="(direccion, key) in currentAddress">{{ key }}: {{ direccion }}<br></span> -->
@@ -27,7 +27,7 @@
         </div>
       </b-col>
       <b-col sm="12" v-else>
-        <b-alert show variant="info">El cliente seleccionado no posee direcciones de envío guardadas</b-alert>
+        <b-alert show variant="info">Este cliente no posee direcciones de envío guardadas</b-alert>
       </b-col>
     </b-row>
     <b-form-group v-show="isNew || editMode">
@@ -52,9 +52,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+// import store from '@/store'
 import { countries, argProvinces } from '@/store/const'
 
 import CAddressForm from '@/components/AddressForm'
+// import { CLIENT_EDIT } from '@/store/types/actions'
+// import { crudMixin } from '@/mixins/crudMixin'
 
 export default {
   name: 'c-addresses',
@@ -77,7 +80,7 @@ export default {
       argProvinceList: [],
       editMode: false,
       currentAddress: this.getEmptyAddress(),
-      warningMessage: '',
+      // warningMessage: '',
       id: null
     }
   },
@@ -143,7 +146,7 @@ export default {
       }
       this.editMode = !this.editMode
       this.currentAddress = this.editMode ? this.getAddressCopy() : this.client.addresses[this.selAddressId]
-      this.warningMessage = ''
+      // this.warningMessage = ''
     },
     getAddressCopy () {
       return Object.assign({}, this.client.addresses[this.selAddressId])
@@ -154,13 +157,13 @@ export default {
           country: '',
           name: '',
           contactName: '',
-          address1: '',
-          address2: '',
-          address3: '',
+          streetAddress: '',
+          floor: '',
+          apartment: '',
           postalCode: '',
           state: '',
           province: '',
-          location: '',
+          city: '',
           isResidential: false,
           email: '',
           phone: '',
@@ -173,9 +176,12 @@ export default {
     updateClientAddress () {
       this.client.addresses[this.selAddressId] = Object.assign({}, this.currentAddress)
       // this.$toasted.global.success_toast({ message: 'Se aplicaron los cambios en la dirección' })
+      this.$emit('saved-address-updated', true)
       this.toggleEditMode('Se aplicaron los cambios en la dirección')
+      // this.save(this.client, CLIENT_EDIT, 'Editar Cliente')
     },
     setAddressList () {
+      this.$emit('saved-address-updated', false)
       console.log('client list created')
       let addressList = []
       this.editMode = false
@@ -183,7 +189,6 @@ export default {
         // si está recargando la página no quiero volver a meter un registro
         // evaluo la primer posición a ver si está vacía
         let text = ''
-        console.log(this.client.addresses)
         let hasName = this.client.addresses[0].address.name !== ''
         let hasAlias = this.client.addresses[0].alias !== ''
 
@@ -232,6 +237,15 @@ export default {
           }
         }
       }
+    }
+  },
+  watch: {
+    currentAddress: {
+       handler(value){
+         // console.log(value)
+         this.$emit('address-updated', value.address)
+       },
+       deep: true
     }
   }
 }

@@ -5,7 +5,7 @@
         <b-col sm="6">
           <b-form-group>
             <label for="clientName">Nombre o razón social del cliente</label>
-            <b-form-select id="clientName" :plain="true" :options="clientList" v-model="shipping.client" @input="fetchClient" />
+            <b-form-select id="clientName" :plain="true" :options="clientList" v-model="shipping.clientId" @input="fetchClient" />
           </b-form-group>
           <b-form-row>
             <b-col sm="6">
@@ -51,7 +51,7 @@
         <b-col sm="6">
           <b-form-group>
             <label for="providerName">Proveedor</label>
-            <b-form-select id="providerName" :plain="true" :options="providerList" v-model="shipping.provider" @input="fetchProvider" />
+            <b-form-select id="providerName" :plain="true" :options="providerList" v-model="shipping.providerId" @input="fetchProvider" />
           </b-form-group>
           <b-form-row>
             <b-col sm="6">

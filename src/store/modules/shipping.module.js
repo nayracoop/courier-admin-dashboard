@@ -6,40 +6,41 @@ import { RESET_STATE, SET_SHIPPING, FETCH_START, FETCH_SHIPPINGS_END } from '@/s
 const getInitialState = () => {
   return {
     shipping: {
-      client: '',
-      provider: '',
-      shippingType: '',
-      serviceType: '',
+      clientId: '',
+      providerId: '',
+      shippingType: null,
+      serviceType: null,
       initialDate: '',
       finalDate: '',
 
-      fromAddress: {
+      origin: {
         country: '',
         name: '',
         contactName: '',
-        address1: '',
-        address2: '',
-        address3: '',
+        streetAddress: '',
+        floor: '',
+        apartment: '',
         postalCode: '',
         state: '',
         province: '',
-        location: '',
+        city: '',
         isResidential: false,
         email: '',
         phone: '',
         comments: ''
       },
-      toAddress: {
+
+      destination: {
         country: '',
         name: '',
         contactName: '',
-        address1: '',
-        address2: '',
-        address3: '',
+        streetAddress: '',
+        floor: '',
+        apartment: '',
         postalCode: '',
         state: '',
         province: '',
-        location: '',
+        city: '',
         isResidential: false,
         email: '',
         phone: '',
@@ -48,7 +49,7 @@ const getInitialState = () => {
       shippingZone: '',
 
       package: {
-        type: '',
+        type: null,
         reference: '',
         declaredValue: null,
         weight: null,
