@@ -19,14 +19,14 @@
               <b-tab title="Zonas" v-if="provider.isShipping">
                 <b-row class="actions-bar">
                   <b-col sm="8">
-                    <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                    <b-button variant="outline-primary" v-b-modal.fileDialogZones>Importar <i class="fa fa-file ml-1"></i></b-button>
                     <!-- <b-button variant="outline-primary" disabled>Imprimir zonas por país<i class="fa fa-print ml-1"></i></b-button> -->
-                    <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar zonas por país" class="import-modal">
+                    <b-modal id="fileDialogZones" ref="fileDialogModalZones" hide-footer centered title="Importar zonas por país" class="import-modal">
                       <c-csv-file-dialog
                         bodyMessage="Elija un archivo para importar zonas por país. Únicamente se permiten archivos .csv"
                         cancellationMessage="Cancelar"
                         cancellationMethod="cancelImport"
-                        @cancelImport="hideImportModal()" />
+                        @cancelImport="hideImportModals" />
                     </b-modal>
                   </b-col>
                   <b-col sm="4">
@@ -45,14 +45,14 @@
               <b-tab title="Precios de venta" v-if="provider.isShipping">
                 <b-row class="actions-bar">
                   <b-col sm="8">
-                    <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
+                    <b-button variant="outline-primary" v-b-modal.fileDialogCosts>Importar <i class="fa fa-file ml-1"></i></b-button>
                     <b-button variant="outline-primary" disabled>Imprimir lista de precios<i class="fa fa-print ml-1"></i></b-button>
-                    <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar precios de venta" class="import-modal">
+                    <b-modal id="fileDialogCosts" ref="fileDialogModalCosts" hide-footer centered title="Importar precios de venta" class="import-modal">
                       <c-csv-file-dialog
                         bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv"
                         cancellationMessage="Cancelar"
                         cancellationMethod="cancelImport"
-                        @cancelImport="hideImportModal()" />
+                        @cancelImport="hideImportModals" />
                     </b-modal>
                   </b-col>
                   <b-col sm="4">
@@ -214,6 +214,10 @@ export default {
     },
     deleteProvider () {
       this.deleteEl(PROVIDER_DELETE, '/proveedores')
+    },
+    hideImportModals () {
+      this.$refs.fileDialogModalCosts.hide()
+      this.$refs.fileDialogModalZones.hide()
     }
   }
 }

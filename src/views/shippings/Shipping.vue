@@ -168,7 +168,7 @@ export default {
       clientList: [],
       providerList: [],
       addressUpdated: false,
-      isEdit: false,
+      isEdit: false
     }
   },
   methods: {
@@ -206,10 +206,10 @@ export default {
       this.addressUpdated = Boolean(updated)
     },
     originAddressUpdated (addressData) {
-      this.shipping.origin = addressData;
+      this.shipping.origin = addressData
     },
     destinationAddressUpdated (addressData) {
-      this.shipping.destination = addressData;
+      this.shipping.destination = addressData
     }
   }
 }

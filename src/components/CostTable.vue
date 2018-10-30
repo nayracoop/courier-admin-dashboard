@@ -223,7 +223,7 @@ export default {
     this.setWeight()
 
     this.shippingZones = shippingZones.map(zone => {
-      return ({ value: zone.value, text: "Zona: " + zone.text })
+      return ({ value: zone.value, text: 'Zona: ' + zone.text })
     })
 
     // this.shippingZones.forEach(item => {
@@ -308,7 +308,7 @@ export default {
     },
     add (el) {
       let newRow = {}
-      if(this.$refs.inputPrice) this.$refs.inputPrice.$el.focus()
+      if (this.$refs.inputPrice) this.$refs.inputPrice.$el.focus()
       // valido los datos
       switch (this.variant) {
         case 'provider':
@@ -370,7 +370,7 @@ export default {
     enableEdit (selectedWeight, event) {
       if (selectedWeight !== undefined && selectedWeight !== null && selectedWeight > -1 && !this.inEdit) {
         this.inEdit = true
-        event.target.parentNode.parentNode.querySelector('td:nth-child(' + (this.variant === 'client' ? 5 : 2 ) + ') input').focus()
+        event.target.parentNode.parentNode.querySelector('td:nth-child(' + (this.variant === 'client' ? 5 : 2) + ') input').focus()
         let selRow = this.provider.costsTable[this.providerCostsTableIndex].costs.find(el => el.weight === selectedWeight)
         // esta asignación mantiene los datos previos a la edición
         // para revertirlos si es necesario, así que tengo que mantener si es cliente o proveedor

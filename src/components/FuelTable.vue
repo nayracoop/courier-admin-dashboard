@@ -14,18 +14,21 @@
         no-sort-reset
         @filtered="filtered">
           <template slot="fromDate" slot-scope="data">
-            <div class="input-group datepicker-group">
+            <!-- <div>
+              {{ data.item.fromDate }}
+            </div> -->
+            <div class="input-group datepicker-group" :style="data.item.edit ? '' : 'pointer-events:none'">
               <flat-pickr
-                :readonly="(inProgress || !data.item.edit) ? true : false"
-                v-validate="'date_format:YYYY-MM-DD'"
-                v-model="data.item.fromDate"
-                data-vv-as="fecha inicial"
-                name="initialDate"
-                id="initialDate"
-                class="form-control"
-                :config="config"
-                placeholder="Seleccionar fecha de inicio"></flat-pickr>
-              <b-input-group-append>
+              :readonly="(inProgress || !data.item.edit) ? true : false"
+              v-validate="'date_format:YYYY-MM-DD'"
+              v-model="data.item.fromDate"
+              data-vv-as="fecha inicial"
+              name="initialDate"
+              id="initialDate"
+              class="form-control"
+              :config="config"
+              placeholder="Seleccionar fecha de inicio"></flat-pickr>
+              <b-input-group-append v-if="data.item.edit">
                 <b-input-group-text>
                   <a class="input-button" title="Seleccionar fecha de inicio" data-toggle>
                     <i class="fa fa-calendar"></i>
@@ -36,7 +39,7 @@
           </template>
           <!-- estos dos están deshabilitados siempre en el client -->
           <template slot="toDate" slot-scope="data">
-            <div class="input-group datepicker-group">
+            <div class="input-group datepicker-group" :style="data.item.edit ? '' : 'pointer-events:none'">
               <flat-pickr
                 :readonly="(inProgress || !data.item.edit) ? true : false"
                 v-validate="'date_format:YYYY-MM-DD|after:'+ data.item.fromDate +',inclusion:true'"
@@ -47,7 +50,7 @@
                 class="form-control"
                 :config="config"
                 placeholder="Seleccionar fecha de finalización"></flat-pickr>
-              <b-input-group-append>
+              <b-input-group-append v-if="data.item.edit">
                 <b-input-group-text>
                   <a class="input-button" title="Seleccionar fecha de finalización" data-toggle>
                     <i class="fa fa-calendar"></i>
@@ -183,46 +186,46 @@ export default {
         wrap: true,
         dateFormat: 'Y-m-d',
         locale: Spanish,
-        altFormat: 'j \\de F, Y',
-        altInput: true,
-        clickOpens: false
+        altFormat: 'j \\de F \\de Y',
+        altInput: true
+        // clickOpens: false
       }
     }
   },
   created () {
     this.items = this._.cloneDeep(this.provider.fuelTable)
     // this.items.forEach(item => {
-    //   item._rowVariant = 'secondary'
+    //   item.config = this._.cloneDeep(this.config)
+    //   item.config.clickOpens = false
     // })
   },
   methods: {
     add () {
       if (!this.validateNumericValues(this.newRow)) return
       if (!this.validateDates(this.newRow)) return
-      this.newRow.id = Math.max.apply(Math, this.provider.fuelTable.map((item) => { return item.id; })) + 1; //this.provider.fuelTable.length
+      this.newRow.id = Math.max.apply(Math, this.provider.fuelTable.map((item) => { return item.id })) + 1 // this.provider.fuelTable.length
       this.provider.fuelTable.push(this.newRow)
       this.items = this._.cloneDeep(this.provider.fuelTable)
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en Guardar para registrar los cambios' })
       this.newRow = {}
     },
-    remove(el) {
+    remove (el) {
       let selRow = this.provider.fuelTable.find(fuel => fuel.id === el.id)
 
-      const index = this.provider.fuelTable.indexOf(selRow);
-      this.provider.fuelTable.splice(index, 1);
+      const index = this.provider.fuelTable.indexOf(selRow)
+      this.provider.fuelTable.splice(index, 1)
 
-      el.deleted = true;
-      el._rowVariant = 'warning';
-
+      el.deleted = true
+      el._rowVariant = 'warning'
     },
-    confirmRemove(el) {
+    confirmRemove (el) {
       this.items = this._.cloneDeep(this.provider.fuelTable)
       this.inEdit = false
     },
-    restore(el) {
-      delete el.deleted;
-      delete el._rowVariant;
-      this.provider.fuelTable.push(el);
+    restore (el) {
+      delete el.deleted
+      delete el._rowVariant
+      this.provider.fuelTable.push(el)
       // this.revertEdit(el)
     },
     enableEdit (el) {
@@ -291,10 +294,10 @@ export default {
 </script>
 
 <style scoped>
-  tbody .datepicker-group input[readonly] ~ * {
+  /* tbody .datepicker-group input[readonly] ~ * {
     pointer-events: none;
   }
   tbody tr {
     background-color: #f9f9f9;
-  }
+  } */
 </style>

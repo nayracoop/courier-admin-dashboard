@@ -79,12 +79,12 @@ export default {
         { key: 'initialDate', label: 'Fecha de inicio', sortable: true },
         { key: 'client', label: 'Cliente', sortable: true },
         // { key: 'clientDocValue', label: 'CUIT / Nº doc.' },
-        // { key: 'origin', label: 'País de origen', sortable: true  },
-        // { key: 'route', label: 'Origen / Destino', sortable: true  },
+        // { key: 'origin', label: 'País de origen', sortable: true },
+        // { key: 'route', label: 'Origen / Destino', sortable: true },
         { key: 'provider', label: 'Proveedor', sortable: true },
-        { key: 'shippingType', label: 'Tipo de envío', sortable: true  },
-        { key: 'serviceType', label: 'Servicio', sortable: true  },
-        { key: 'destination', label: 'País de destino', sortable: true  },
+        { key: 'shippingType', label: 'Tipo de envío', sortable: true },
+        { key: 'serviceType', label: 'Servicio', sortable: true },
+        { key: 'destination', label: 'País de destino', sortable: true },
         { key: 'cost', label: 'Costo final' },
         { key: 'actions', label: 'Acciones' }
       ],
@@ -112,7 +112,7 @@ export default {
     })
   },
   mounted () {
-    Promise.all( [ this.fetchShippings(), this.fetchClients(), this.fetchProviders() ] ).then(values => {
+    Promise.all([ this.fetchShippings(), this.fetchClients(), this.fetchProviders() ]).then(values => {
       this.shippingsList = this.shippings.map(shipping => {
         return {
           objectId: shipping.objectId,
@@ -142,20 +142,10 @@ export default {
       return this.$store.dispatch(FETCH_SHIPPINGS)
     },
     fetchClients () {
-      return this.$store.dispatch(FETCH_CLIENTS)/*.then(() => {
-        this.clients.forEach((client) => {
-          let result = this.shippingsList.find(obj => obj.client == client.objectId)
-          //if (result) result.client = client.name
-        })
-      })*/
+      return this.$store.dispatch(FETCH_CLIENTS)
     },
     fetchProviders () {
-      return this.$store.dispatch(FETCH_PROVIDERS)/*.then(() => {
-        this.providers.forEach((provider) => {
-          let result = this.shippingsList.find(obj => obj.provider == provider.objectId)
-        //  if (result) result.provider = provider.name
-        })
-      })*/
+      return this.$store.dispatch(FETCH_PROVIDERS)
     },
     importShippings () {
       this.$store.dispatch(IMPORT_SHIPPINGS)

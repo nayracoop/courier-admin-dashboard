@@ -70,7 +70,10 @@ const getInitialState = () => {
         netPrice: null,
         costDiscount: null,
         cost: null
-      }
+      },
+
+      status: '',
+      billingStatus: ''
 
     },
     shippings: [],

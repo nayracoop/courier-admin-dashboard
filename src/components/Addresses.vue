@@ -241,11 +241,11 @@ export default {
   },
   watch: {
     currentAddress: {
-       handler(value){
-         // console.log(value)
-         this.$emit('address-updated', value.address)
-       },
-       deep: true
+      handler (value) {
+        // console.log(value)
+        this.$emit('address-updated', value.address)
+      },
+      deep: true
     }
   }
 }

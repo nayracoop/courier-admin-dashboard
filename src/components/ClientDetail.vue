@@ -83,7 +83,7 @@
           <label for="email">Email</label>
           <b-input-group>
             <b-form-input v-validate="{ email: true, regex: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ }" name="email" data-vv-as="email" id="email" type="email" autocomplete="email" v-model="client.email" placeholder="Ej: envios@empresa.com"></b-form-input>
-            <b-input-group-append><b-input-group-text><b-check :id="id + '_defaultAddress'" v-model="client.notifications">Recibe notificaciones</b-check></b-input-group-text></b-input-group-append>
+            <b-input-group-append><b-input-group-text><b-check v-model="client.notifications">Recibe notificaciones</b-check></b-input-group-text></b-input-group-append>
             <!-- Debe ser un email válido (Matchea mínimo de caracteres, caracteres inválidos, etc)  -->
             <span><small class="inv-feedback" v-show="errors.has('email')">{{ errors.first('email') }}</small></span>
           </b-input-group>
