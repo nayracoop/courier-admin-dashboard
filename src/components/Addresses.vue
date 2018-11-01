@@ -181,7 +181,7 @@ export default {
       }
     },
     updateClientAddress () {
-      if(this.currentAddress.isDefault) this.convertToDefault()
+      if (this.currentAddress.isDefault) this.convertToDefault()
       this.client.addresses[this.selAddressId] = Object.assign({}, this.currentAddress)
 
       // this.$toasted.global.success_toast({ message: 'Se aplicaron los cambios en la dirección' })
@@ -262,9 +262,9 @@ export default {
     },
     convertToDefault () {
       this.client.addresses.forEach(address => {
-        address.isDefault = false;
+        address.isDefault = false
       })
-      this.client.addresses[this.selAddressId].isDefault = true;
+      this.client.addresses[this.selAddressId].isDefault = true
     }
   },
   watch: {

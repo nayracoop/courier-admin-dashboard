@@ -26,7 +26,7 @@ export default {
     variantConfirmation: { type: String, default: 'danger' },
     confirmationMethod: { type: String, default: 'confirm' },
     cancellationMethod: { type: String, default: 'cancel' },
-    defaultStyles: false,
+    defaultStyles: false
   },
   methods: {
     onConfirm () {
