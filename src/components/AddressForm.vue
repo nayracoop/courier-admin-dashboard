@@ -131,7 +131,7 @@
               <b-input-group>
                 <b-input-group-prepend><b-input-group-text>Alias:</b-input-group-text></b-input-group-prepend>
                 <b-form-input :id="id + '_alias'" type="text" v-model="value.alias" placeholder="Ej: Depósito" />
-                <b-input-group-append><b-input-group-text><b-check :id="id + '_defaultAddress'" v-model="value.isDefault">Dirección por defecto</b-check></b-input-group-text></b-input-group-append>
+                <b-input-group-append><b-input-group-text><b-check :id="id + '_defaultAddress'" v-model="value.isDefault">Dirección principal</b-check></b-input-group-text></b-input-group-append>
                 <!-- <b-input-group-append><b-input-group-text><b-check :id="id + '_defaultAddress'" v-model="value.isDefault" @change="changeDefault">Dirección por defecto</b-check></b-input-group-text></b-input-group-append> -->
               </b-input-group>
             </b-col>

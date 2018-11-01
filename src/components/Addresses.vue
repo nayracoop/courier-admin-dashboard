@@ -1,6 +1,9 @@
 <template>
   <div>
     <b-row>
+      <b-col v-if="deletedAddress !== null" sm="12">
+        <b-alert show variant="warning" dismissible>La dirección "{{ deletedAddress[0].alias }}" será eliminada. <a href="#" @click.prevent="restoreAddress"><b>Deshacer</b></a></b-alert>
+      </b-col>
       <b-col v-if="addressList.length > 1" sm="12">
         <b-form-group>
           <label :for="id + '_myAddresses'">Direcciones guardadas</label>
@@ -9,7 +12,7 @@
         </b-form-group>
         <div class="address-card" v-show="!isNew && !editMode">
 
-            <!-- <p> -->
+            <p>
               <b v-if="currentAddress.address.contactName">{{ currentAddress.address.contactName }}</b>
               <span v-if="currentAddress.address.name"> - <i>{{ currentAddress.address.name }}</i></span>
               <br>
@@ -19,11 +22,14 @@
               <span v-if="selectedCountry">{{ selectedCountry.name }}</span>
               <!-- <br>
               <span v-for="(direccion, key) in currentAddress">{{ key }}: {{ direccion }}<br></span> -->
-            <!-- </p> -->
-            <br>
-            <br>
+            </p>
+            <p v-if="currentAddress.isDefault"><i class="fa fa-check"></i> Dirección predeterminada</p>
+            <!-- <br>
+            <br> -->
             <!-- <b-link @click.prevent="toggleEditMode"  v-if="!edit">Editar dirección <i class="fa fa-pencil"></i></b-link> -->
             <b-button size="sm" variant="primary" @click.prevent="toggleEditMode" v-if="!editMode"><i class="fa fa-pencil"></i> Editar dirección</b-button>
+            <b-button size="sm" variant="danger" @click.prevent="deleteAddress" v-if="!editMode"><i class="fa fa-trash-o"></i> Eliminar</b-button>
+            <b-button size="sm" variant="outline-primary" @click.prevent="convertToDefault" v-if="!editMode && !currentAddress.isDefault"><i class="fa fa-map-marker"></i> Convertir en principal</b-button>
         </div>
       </b-col>
       <b-col sm="12" v-else>
@@ -31,7 +37,7 @@
       </b-col>
     </b-row>
     <b-form-group v-show="isNew || editMode">
-      <b-alert show variant="warning" v-if="editMode" dismissible>Para guardar los cambios haga click en <b><a href="#" @click.prevent="updateClientAddress">Aplicar</a></b></b-alert>
+      <b-alert show variant="warning" v-if="editMode" dismissible>Para guardar los cambios en esta dirección haga click en <b><a href="#" @click.prevent="updateClientAddress">Aplicar</a></b></b-alert>
       <c-address-form v-model="currentAddress" :id="id" :savable="saveAddress"></c-address-form>
       <div v-if="editMode">
         <b-button size="sm" variant="primary" @click.prevent="updateClientAddress" v-if="editMode"><i class="fa fa-dot-circle-o"></i> Aplicar</b-button>
@@ -81,6 +87,7 @@ export default {
       editMode: false,
       currentAddress: this.getEmptyAddress(),
       // warningMessage: '',
+      deletedAddress: null,
       id: null
     }
   },
@@ -174,8 +181,11 @@ export default {
       }
     },
     updateClientAddress () {
+      if(this.currentAddress.isDefault) this.convertToDefault()
       this.client.addresses[this.selAddressId] = Object.assign({}, this.currentAddress)
+
       // this.$toasted.global.success_toast({ message: 'Se aplicaron los cambios en la dirección' })
+
       this.$emit('saved-address-updated', true)
       this.toggleEditMode('Se aplicaron los cambios en la dirección')
       // this.save(this.client, CLIENT_EDIT, 'Editar Cliente')
@@ -237,6 +247,24 @@ export default {
           }
         }
       }
+    },
+    deleteAddress () {
+      this.deletedAddress = this.client.addresses.splice(this.selAddressId, 1)
+      this.$toasted.global.success_toast({ message: 'La dirección ' + this.deletedAddress[0].alias + ' se eliminará cuando guarde los cambios.' })
+      this.setAddressList()
+      console.log(this.selAddressId)
+    },
+    restoreAddress () {
+      this.$toasted.global.success_toast({ message: 'La dirección se ha restaurado' })
+      this.client.addresses.unshift(this.deletedAddress[0])
+      this.deletedAddress = null
+      this.setAddressList()
+    },
+    convertToDefault () {
+      this.client.addresses.forEach(address => {
+        address.isDefault = false;
+      })
+      this.client.addresses[this.selAddressId].isDefault = true;
     }
   },
   watch: {

@@ -6,7 +6,10 @@
         <b-button variant="outline-primary" @click="showImportModal()"><i v-if="!providerLoading" class="fa fa-file ml-1"></i><i v-else class="fa fa-cog fa-spin ml-1"></i> Importar </b-button>
       </b-col>
     </b-row>
-    <b-card :header="caption">
+    <b-card :header="caption" v-if="providers.length === 0">
+      No hay proveedores cargados. Crear un <b-link :to="{ name: 'Nuevo Proveedor' }">nuevo proveedor</b-link>.
+    </b-card>
+    <b-card :header="caption" v-else>
       <template>
         <b-row class="actions-bar">
           <b-col sm="8">

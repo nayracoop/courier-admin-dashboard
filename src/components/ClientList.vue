@@ -7,8 +7,10 @@
         <b-button variant="outline-primary" @click="showImportModal()"><i v-if="!clientLoading" class="fa fa-file ml-1"></i><i v-else class="fa fa-cog fa-spin ml-1"></i> Importar</b-button>
       </b-col>
     </b-row>
-
-  <b-card :header="caption">
+    <b-card :header="caption" v-if="clients.length === 0">
+      No hay clientes cargados. Crear un <b-link :to="{ name: 'Nuevo Cliente' }">nuevo cliente</b-link>.
+    </b-card>
+  <b-card :header="caption" v-else>
     <template>
       <b-row class="actions-bar">
         <b-col sm="8">
@@ -73,7 +75,7 @@
       @confirmDelete="confirmDelete"
       @cancelDelete="hideDeleteModal" />
     <c-confirmation-modal classModal="import-modal" modalTitle="Importar clientes" :promptMessage="'¿Desea importar ' + (syncClientsCount && syncClientsCount > 1 ? `${syncClientsCount} registros` : 'un registro') + '?'"
-      ref="importModal" title="Confirmar importación"
+      ref="importModal" title="Confirmar importación" variantConfirmation="primary" defaultStyles
       :confirmationMessage="'Sí, deseo importarlo' + (syncClientsCount && syncClientsCount > 1 ? 's' : '')"
       confirmationMethod="confirmImport" cancellationMethod="cancelImport"
       @confirmImport="confirmImport" @cancelImport="hideImportModal" />

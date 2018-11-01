@@ -5,7 +5,10 @@
         <b-button variant="primary" :to="{ name: 'Nuevo Envío' }"><i class="fa fa-plus-circle ml-1"></i> Nuevo envío</b-button>
       </b-col>
     </b-row>
-    <b-card :header="caption">
+    <b-card :header="caption" v-if="shippingsList.length === 0">
+      No hay envíos cargados. Crear un <b-link :to="{ name: 'Nuevo Envío' }">nuevo envío</b-link>.
+    </b-card>
+    <b-card :header="caption" v-else>
       <template>
         <b-row class="actions-bar">
           <b-col sm="8">
