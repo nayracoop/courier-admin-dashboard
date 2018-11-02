@@ -61,28 +61,28 @@
         <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
           hide-goto-end-buttons @click.native="clearSelected" />
       </nav>
-      <c-confirmation-modal
-        classModal="delete-modal"
-        ref="deleteModal"
-        :modalTitle="'¿Está seguro que desea eliminar ' +  (deleteMultiple && checkedItems.length > 1 ? 'los registros seleccionados' : 'este registro') + '?'"
-        :promptMessage="'Se ' + (deleteMultiple && checkedItems.length > 1 ? `eliminarán los ${checkedItems.length} registros seleccionados` : 'eliminará el registro seleccionado') + ' de la lista de proveedores. Esta acción no se puede deshacer'"
-        :confirmationMessage="'Sí, ' + (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' eliminaré'"
-        :cancellationMessage="'No, ' +  (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' conservaré '  "
-        confirmationMethod="confirmDelete"
-        cancellationMethod="cancelDelete"
-        @confirmDelete="confirmDelete"
-        @cancelDelete="hideDeleteModal" />
-      <c-confirmation-modal
-      classModal="import-modal"
-      ref="importModal"
-      :promptMessage="'¿Desea importar ' + (syncProvidersCount && syncProvidersCount > 1 ? `${syncProvidersCount} registros` : 'un registro') + '?'"
-      title="Confirmar importación"
-      :confirmationMessage="'Sí, deseo importarlo' + (syncProvidersCount && syncProvidersCount > 1 ? 's' : '')"
-      confirmationMethod="confirmImport"
-      cancellationMethod="cancelImport"
-      @confirmImport="confirmImport"
-      @cancelImport="hideImportModal" />
     </b-card>
+    <c-confirmation-modal
+    classModal="delete-modal"
+    ref="deleteModal"
+    :modalTitle="'¿Está seguro que desea eliminar ' +  (deleteMultiple && checkedItems.length > 1 ? 'los registros seleccionados' : 'este registro') + '?'"
+    :promptMessage="'Se ' + (deleteMultiple && checkedItems.length > 1 ? `eliminarán los ${checkedItems.length} registros seleccionados` : 'eliminará el registro seleccionado') + ' de la lista de proveedores. Esta acción no se puede deshacer'"
+    :confirmationMessage="'Sí, ' + (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' eliminaré'"
+    :cancellationMessage="'No, ' +  (deleteMultiple && checkedItems.length > 1 ? 'los' : 'lo') + ' conservaré '  "
+    confirmationMethod="confirmDelete"
+    cancellationMethod="cancelDelete"
+    @confirmDelete="confirmDelete"
+    @cancelDelete="hideDeleteModal" />
+    <c-confirmation-modal
+    classModal="import-modal"
+    ref="importModal"
+    :promptMessage="'¿Desea importar ' + (syncProvidersCount && syncProvidersCount > 1 ? `${syncProvidersCount} registros` : 'un registro') + '?'"
+    title="Confirmar importación"
+    :confirmationMessage="'Sí, deseo importarlo' + (syncProvidersCount && syncProvidersCount > 1 ? 's' : '')"
+    confirmationMethod="confirmImport"
+    cancellationMethod="cancelImport"
+    @confirmImport="confirmImport"
+    @cancelImport="hideImportModal" />
   </div>
 </template>
 
