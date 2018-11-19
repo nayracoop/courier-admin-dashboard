@@ -1,0 +1,102 @@
+import Vue from 'vue'
+import { UsersService } from '@/api'
+import { USER_SAVE, USER_EDIT, USER_DELETE, USER_RESET_STATE, FETCH_USER, FETCH_USERS } from '@/store/types/actions'
+import { RESET_STATE, SET_USER, FETCH_START, FETCH_USERS_END } from '@/store/types/mutations'
+
+const getInitialState = () => {
+  return {
+    user: {
+      username: ''
+    },
+    users: [],
+    userLoading: false,
+    usersCount: 0
+  }
+}
+
+const state = getInitialState()
+
+export const actions = {
+  [USER_SAVE] ({ state }) {
+    return UsersService.create(state.user)
+  },
+  [FETCH_USERS] ({ commit }) {
+    commit(FETCH_START)
+    return UsersService.getAll()
+      .then(data => {
+        commit(FETCH_USERS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_USER] (context, userId, prevUser) {
+    // avoid extronuous network call if object exists
+    if (prevUser !== undefined) {
+      return context.commit(SET_USER, prevUser)
+    }
+    return UsersService.get(userId)
+      .then(data => {
+        context.commit(SET_USER, data)
+        return data
+      })
+  },
+  [USER_EDIT] ({ commit, state }) {
+    return UsersService.update(state.user.objectId, state.user)
+      .then(data => {
+        commit(SET_USER, data)
+        return data
+      })
+  },
+  [USER_DELETE] (context, id) {
+    return UsersService.delete(id)
+  },
+  [USER_RESET_STATE] ({ commit }) {
+    commit(RESET_STATE)
+  }
+}
+
+/* eslint no-param-reassign: ["error", { "props": false }] */
+export const mutations = {
+  [FETCH_START] (state) {
+    state.userLoading = true
+  },
+  [FETCH_USERS_END] (state, users) {
+    state.users = users.map(function (e) {
+      return e.toJSON()
+    })
+    state.usersCount = users.length
+    state.userLoading = false
+  },
+  [SET_USER] (state, user) {
+    state.user = user.toJSON()
+  },
+  [RESET_STATE] () {
+    const initialState = getInitialState()
+    for (let f in state) {
+      Vue.set(state, f, initialState[f])
+    }
+  }
+}
+
+const getters = {
+  users (state) {
+    return state.users
+  },
+  user (state) {
+    return state.user
+  },
+  usersCount (state) {
+    return state.usersCount
+  },
+  userLoading (state) {
+    return state.userLoading
+  }
+}
+
+export default {
+  state,
+  actions,
+  mutations,
+  getters
+}
