@@ -1,52 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import store from '@/store'
+import { CHECK_AUTH } from '@/store/types/actions'
+
 // Containers
 import DefaultContainer from '@/containers/DefaultContainer'
 
 // Views
 import Dashboard from '@/views/Dashboard'
-
-// import Colors from '@/views/theme/Colors'
-// import Typography from '@/views/theme/Typography'
-
-// import Charts from '@/views/Charts'
-// import Widgets from '@/views/Widgets'
-
-// Views - Components
-// import Cards from '@/views/base/Cards'
-// import Forms from '@/views/base/Forms'
-// import Switches from '@/views/base/Switches'
-// import Tables from '@/views/base/Tables'
-// import Tabs from '@/views/base/Tabs'
-// import Breadcrumbs from '@/views/base/Breadcrumbs'
-// import Carousels from '@/views/base/Carousels'
-// import Collapses from '@/views/base/Collapses'
-// import Jumbotrons from '@/views/base/Jumbotrons'
-// import ListGroups from '@/views/base/ListGroups'
-// import Navs from '@/views/base/Navs'
-// import Navbars from '@/views/base/Navbars'
-// import Paginations from '@/views/base/Paginations'
-// import Popovers from '@/views/base/Popovers'
-// import ProgressBars from '@/views/base/ProgressBars'
-// import Tooltips from '@/views/base/Tooltips'
-
-// Views - Buttons
-// import StandardButtons from '@/views/buttons/StandardButtons'
-// import ButtonGroups from '@/views/buttons/ButtonGroups'
-// import Dropdowns from '@/views/buttons/Dropdowns'
-// import BrandButtons from '@/views/buttons/BrandButtons'
-
-// Views - Icons
-// import Flags from '@/views/icons/Flags'
-// import FontAwesome from '@/views/icons/FontAwesome'
-// import SimpleLineIcons from '@/views/icons/SimpleLineIcons'
-// import CoreUIIcons from '@/views/icons/CoreUIIcons'
-
-// Views - Notifications
-// import Alerts from '@/views/notifications/Alerts'
-// import Badges from '@/views/notifications/Badges'
-// import Modals from '@/views/notifications/Modals'
 
 // Courier
 import Providers from '@/views/providers/Providers'
@@ -58,19 +20,18 @@ import Client from '@/views/clients/Client'
 import Shippings from '@/views/shippings/Shippings'
 import Shipping from '@/views/shippings/Shipping'
 
-// import Providers from '@/views/providers/ProviderList'
-// import ProviderSingle from '@/views/providers/ProviderSingle'
-// import ClientSingle from '@/views/clients/ClientSingle'
+import Users from '@/views/users/Users'
+import User from '@/views/users/User'
 
 // Views - Pages
 import Page404 from '@/views/pages/Page404'
-// import Page500 from '@/views/pages/Page500'
 import Login from '@/views/pages/Login'
+// import Page500 from '@/views/pages/Page500'
 // import Register from '@/views/pages/Register'
 
 Vue.use(Router)
 
-export default new Router({
+let router = new Router({
   mode: 'history',
   base: String(process.env.BASE_URL),
   linkActiveClass: 'open active',
@@ -136,6 +97,23 @@ export default new Router({
           name: 'Editar Envío',
           props: true,
           component: Shipping
+        },
+        {
+          path: 'usuarios',
+          name: 'Usuarios',
+          component: Users
+        },
+        {
+          path: 'usuarios/nuevo',
+          name: 'Nuevo Usuario',
+          props: true,
+          component: User
+        },
+        {
+          path: 'usuarios/editar/:id',
+          name: 'Editar Usuario',
+          props: true,
+          component: User
         }
       ]
     },
@@ -147,3 +125,25 @@ export default new Router({
     { path: '*', component: Page404 }
   ]
 })
+
+router.beforeEach(
+  (to, from, next) => {
+    if (to.name !== 'Login') {
+      return store.dispatch(CHECK_AUTH)
+        .then(isAuthenticated => {
+          if (isAuthenticated) {
+            next()
+          } else {
+            next({ name: 'Login' })
+          }
+        }, error => {
+          console.log(error)
+          next({ name: 'Login' })
+        })
+    } else {
+      next()
+    }
+  }
+)
+
+export default router
