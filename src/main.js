@@ -9,9 +9,7 @@ import BootstrapVue from 'bootstrap-vue'
 import App from '@/App'
 import router from '@/router'
 import store from '@/store'
-import { CHECK_AUTH } from '@/store/types/actions'
 
-import ApiService from '@/api'
 import DateFilter from '@/common/filters/date'
 import ErrorFilter from '@/common/filters/error'
 
@@ -39,28 +37,6 @@ Parse.serverURL = process.env.PARSE_URI
 
 Vue.filter('date', DateFilter)
 Vue.filter('error', ErrorFilter)
-
-ApiService.init()
-
-router.beforeEach(
-  (to, from, next) => {
-    if (to.name !== 'Login') {
-      return store.dispatch(CHECK_AUTH)
-        .then(isAuthenticated => {
-          if (isAuthenticated) {
-            next()
-          } else {
-            next({ name: 'Login' })
-          }
-        }, error => {
-          console.log(error)
-          next({ name: 'Login' })
-        })
-    } else {
-      next()
-    }
-  }
-)
 
 /* eslint-disable no-new */
 new Vue({

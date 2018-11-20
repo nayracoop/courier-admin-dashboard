@@ -18,6 +18,11 @@ export default {
       name: 'Envios',
       url: '/envios',
       icon: 'fa fa-plane'
+    },
+    {
+      name: 'Usuarios',
+      url: '/usuarios',
+      icon: 'fa fa-users'
     }
   ]
 }
