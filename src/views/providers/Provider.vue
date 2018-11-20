@@ -80,6 +80,17 @@
                 </b-row>
                 <c-fuel-table :filter="filter" variant="provider"></c-fuel-table>
               </b-tab>
+              <b-tab title="Seguro" v-if="provider.isShipping">
+                <p>Costo de seguro</p>
+                <div class="form-inline">
+                  <b-input-group>
+                    <b-form-input  type="text" v-model="provider.insurance" />
+                    <b-input-group-append><b-input-group-text>%</b-input-group-text></b-input-group-append>
+                    <!-- <b-input-group-append><b-input-group-text><b-check :id="id + '_defaultAddress'" v-model="value.isDefault" @change="changeDefault">Dirección por defecto</b-check></b-input-group-text></b-input-group-append> -->
+                  </b-input-group>
+
+                </div>
+              </b-tab>
             </b-tabs>
           </b-card>
         </b-col>

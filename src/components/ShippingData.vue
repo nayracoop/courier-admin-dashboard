@@ -1,6 +1,6 @@
 <template>
-    <b-card>
-      <div slot="header">Envío</div>
+    <!-- <b-card> -->
+      <!-- <div slot="header">Envío</div> -->
       <b-row>
         <b-col sm="6">
           <b-form-group>
@@ -71,7 +71,7 @@
           </b-form-row>
         </b-col>
       </b-row>
-    </b-card>
+    <!-- </b-card> -->
 </template>
 
 <script>

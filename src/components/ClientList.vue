@@ -76,7 +76,7 @@
   @confirmDelete="confirmDelete"
   @cancelDelete="hideDeleteModal" />
   <c-confirmation-modal classModal="import-modal" modalTitle="Importar clientes" :promptMessage="'¿Desea importar ' + (syncClientsCount && syncClientsCount > 1 ? `${syncClientsCount} registros` : 'un registro') + '?'"
-    ref="importModal" title="Confirmar importación" variantConfirmation="primary" defaultStyles
+    ref="importModal" title="Confirmar importación" variantConfirmation="primary" defaultStyles="true"
     :confirmationMessage="'Sí, deseo importarlo' + (syncClientsCount && syncClientsCount > 1 ? 's' : '')"
     confirmationMethod="confirmImport" cancellationMethod="cancelImport"
     @confirmImport="confirmImport" @cancelImport="hideImportModal" />

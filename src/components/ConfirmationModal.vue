@@ -1,7 +1,7 @@
 <template>
   <b-modal :class="classModal" :id="defaultStyles ? '' : 'modal-confirm'" ref="confirmationModal" centered :title="modalTitle">
     <b-row>
-      <b-col class="col-md-10" :class="{ 'text-center':defaultStyles, 'prompt-col':defaultStyles }">
+      <b-col :class="{ 'col-md-10':!defaultStyles, 'text-center':!defaultStyles, 'prompt-col':!defaultStyles }">
         <p>{{ promptMessage }}</p>
       </b-col>
     </b-row>
@@ -22,7 +22,7 @@ export default {
     promptMessage: { type: String, default: '¿Desea continuar?' },
     confirmationMessage: { type: String, default: 'Sí, deseo continuar' },
     cancellationMessage: { type: String, default: 'Cancelar' },
-    modalTitle: { type: String },
+    modalTitle: { type: String, default: '' },
     variantConfirmation: { type: String, default: 'danger' },
     confirmationMethod: { type: String, default: 'confirm' },
     cancellationMethod: { type: String, default: 'cancel' },

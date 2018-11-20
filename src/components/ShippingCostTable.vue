@@ -1,109 +1,70 @@
 <template>
-  <b-form>
-    <!-- <b-form-row> -->
-      <!-- <b-col sm="3" v-if="variant === 'client'"> -->
-        <b-form-group class="form-inline">
-          <!-- <label for="providerId">Proveedor</label> -->
-          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Proveedor asociado"></i> -->
-          <b>Variante:</b>
-          <b-form-select v-if="variant === 'client' || variant === 'shipping'" id="providerId" :disabled="inProgress" :options="providerList" v-model="costsFilter.providerId" @input="resetFilter(); fetchProvider();"></b-form-select>
-        <!-- </b-form-group> -->
-      <!-- </b-col> -->
-      <!-- <b-col sm="3"> -->
-        <!-- <b-form-group> -->
-          <!-- <label for="shippingType">Tipo de envío</label> -->
-          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de envío"></i> -->
-          <b-form-select id="shippingType" :disabled="inProgress" :options="shippingTypes" v-model="costsFilter.shippingType" @input="resetFilter()"></b-form-select>
-        <!-- </b-form-group> -->
-      <!-- </b-col> -->
-      <!-- <b-col sm="3"> -->
-        <!-- <b-form-group> -->
-          <!-- <label for="serviceType">Servicio</label> -->
-          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de servicio"></i> -->
-          <b-form-select id="serviceType" :disabled="inProgress" :options="serviceTypes" v-model="costsFilter.serviceType" @input="resetFilter()"></b-form-select>
-        <!-- </b-form-group> -->
-      <!-- </b-col> -->
-      <!-- <b-col sm="3"> -->
-        <!-- <b-form-group> -->
-          <!-- <label for="packageType">Tipo de embalaje</label> -->
-          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de embalaje del paquete"></i> -->
-          <b-form-select id="packageType" :disabled="inProgress" :options="packageTypes" v-model="costsFilter.packageType" @input="resetFilter()"></b-form-select>
-        <!-- </b-form-group> -->
-      <!-- </b-col> -->
-      <!-- <b-col sm="3"> -->
-        <!-- <b-form-group> -->
-          <!-- <label for="shippingZone">Zona</label> -->
-          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Zona de envío"></i> -->
-          <b-form-select id="shippingZone" :disabled="inProgress" :options="shippingZones" v-model="costsFilter.shippingZone" @input="resetFilter()"></b-form-select>
-        </b-form-group>
-      <!-- </b-col> -->
-    <!-- </b-form-row> -->
+  <section>
     <b-row>
       <b-col sm="12">
-        <b-table hover outlined small fixed responsive="sm"
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col sm="12">
+        <b-table hover outlined small fixed responsive="sm" v-if="pricing !== null"
         :items="items"
         :fields="fields"
-        :foot-clone="(hasWeight || providerCostsTableIndex === -1) && variant === 'provider'"
         :current-page="currentPage"
-        :per-page="perPage"
-        :filter="filter"
-        @filtered="filtered">
-          <template slot="weight" slot-scope="data">
-            <b-form-input readonly type="text" placeholder="Hasta Kgs." v-model="data.item.weight"></b-form-input>
+        :foot-clone="true"
+        :per-page="perPage">
+          <template slot="concept" slot-scope="data">
+            <b-form-input readonly type="text" placeholder="Producto / servicio" v-model="data.item.concept"></b-form-input>
           </template>
-          <!-- estos dos están deshabilitados siempre en el client -->
-          <template slot="grossPrice" slot-scope="data">
-            <b-form-input :readonly="((inProgress || !data.item.edit) || variant === 'client') ? true : false" type="number" placeholder="Precio bruto" v-model="data.item.grossPrice"></b-form-input>
-          </template>
-          <template slot="costDiscount" slot-scope="data">
-            <b-form-input :readonly="((inProgress || !data.item.edit) || variant === 'client') ? true : false" type="number" placeholder="% Descuento Costo" v-model="data.item.costDiscount"></b-form-input>
-          </template>
+          <!-- <template slot="taxDetails" slot-scope="data">
+            <b-form-input readonly type="text" placeholder="0%" :value="data.item.taxDetails"></b-form-input>
+          </template> -->
           <template slot="cost" slot-scope="data">
-            <b-form-input readonly type="number" placeholder="Costo" :value="data.item.grossPrice - (data.item.grossPrice * data.item.costDiscount / 100)"></b-form-input>
+            <b-form-input readonly type="number" placeholder="0" :value="data.item.cost"></b-form-input>
           </template>
-          <!-- este está está deshabilitado siempre en el provider. Aparte de que para el provider está invisible -->
-          <template slot="saleDiscount" slot-scope="data">
-            <b-form-input :readonly="((inProgress | !data.item.edit) || variant === 'provider') ? true : false" type="number" placeholder="% Descuento venta" v-model="data.item.saleDiscount"></b-form-input>
-          </template>
-          <template slot="netPrice" slot-scope="data">
-            <b-form-input readonly type="number" placeholder="Neto" :value="data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)"></b-form-input>
+          <!-- <template slot="tax" slot-scope="data">
+            <b-form-input type="number" placeholder="0" v-model="data.item.tax"></b-form-input>
+          </template> -->
+          <!-- <template slot="total" slot-scope="data">
+            <b-form-input type="number" placeholder="0" v-model="data.item.total"></b-form-input>
+          </template> -->
+          <template slot="subtotal" slot-scope="data">
+            <b-form-input type="number" placeholder="0" v-model="data.item.subtotal"></b-form-input>
           </template>
           <template slot="actions" slot-scope="data">
             <template v-if="data.item.edit">
               <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item)">
                 <i class="fa fa-check"></i> Aplicar
               </b-button>
-              <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item.weight)">
+              <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item.concept)">
                 Cancelar
               </b-button>
             </template>
-            <template v-else>
-              <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item.weight, $event)">
+            <template v-else-if="!data.item.static">
+              <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item.concept, $event)">
                 <i class="fa fa-edit"></i> Editar
               </b-button>
             </template>
           </template>
 
           <!-- NEW ROW FOOTER -->
-          <template slot="FOOT_weight" slot-scope="data">
+          <template slot="FOOT_concept" slot-scope="data">
             <b-form-input v-model="newRow.weight" readonly></b-form-input>
           </template>
-          <template slot="FOOT_grossPrice" slot-scope="data">
+          <!-- <template slot="FOOT_taxDetails" slot-scope="data">
             <b-form-input type="number" placeholder="Precio bruto" v-model="newRow.grossPrice" ref="inputPrice" :disabled="inProgress"></b-form-input>
-          </template>
-          <template slot="FOOT_costDiscount" slot-scope="data">
-            <b-form-input type="number" placeholder="% Descuento Costo" v-model="newRow.costDiscount" :disabled="inProgress"></b-form-input>
-          </template>
+          </template> -->
           <template slot="FOOT_cost" slot-scope="data">
+            <b-form-input type="number" placeholder="Precio neto" v-model="newRow.grossPrice" ref="inputPrice" :disabled="inProgress"></b-form-input>
+          </template>
+          <!-- <template slot="FOOT_tax" slot-scope="data">
+            <b-form-input type="number" placeholder="% Descuento Costo" v-model="newRow.costDiscount" :disabled="inProgress"></b-form-input>
+          </template> -->
+          <!-- <template slot="FOOT_total" slot-scope="data">
+            <b-form-input type="number" v-model="cost" readonly></b-form-input>
+          </template> -->
+          <template slot="FOOT_subtotal" slot-scope="data">
             <b-form-input type="number" v-model="cost" readonly></b-form-input>
           </template>
-          <!-- estos dos no tienen más sentido en agregar -->
-          <!-- <template slot="FOOT_saleDiscount" slot-scope="data">
-            <b-form-input type="number" placeholder="% Descuento venta" v-model="newRow.saleDiscount" :disabled="inProgress"></b-form-input>
-          </template>
-          <template slot="FOOT_netPrice" slot-scope="data">
-            <b-form-input type="number" v-model="netPrice" readonly></b-form-input>
-          </template> -->
           <template slot="FOOT_actions" slot-scope="data">
             <b-button size="sm" variant="success" @click.prevent="add">
               <i class="fa fa-plus"></i> Agregar
@@ -111,23 +72,25 @@
           </template>
 
         </b-table>
+        --
+        {{ pricing }}
+        --
+        {{ items }}
       </b-col>
     </b-row>
-    <nav>
-      <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente" :limit="8" />
-    </nav>
     <!-- <pre>{{ `proveedor CT: ${JSON.stringify(this.provider && this.provider.costsTable, null, 2)}` }}</pre>
     <pre>{{ `cliente CT: ${JSON.stringify(this.client && this.client.costsTable, null, 2)}` }}</pre> -->
-  </b-form>
+  </section>
 </template>
 <script>
 import { shippingTypes, serviceTypes, packageTypes, shippingZones } from '@/store/const'
 import { mapGetters } from 'vuex'
-import { FETCH_PROVIDER } from '@/store/types/actions'
+import { FETCH_PROVIDER, FETCH_SHIPPING } from '@/store/types/actions'
 
 export default {
   name: 'c-cost-table',
   props: {
+    pricing: null,
     filter: { type: String },
     variant: { type: String }, // variant puede ser: client, provider, shipping
     providerList: { type: Array }
@@ -135,14 +98,15 @@ export default {
   data () {
     return {
       fields: [
-        { key: 'weight', label: 'Hasta Kgs.', class: 'cost-weight' },
-        { key: 'grossPrice', label: 'Precio Bruto' },
-        { key: 'costDiscount', label: '% Descuento Costo', class: 'cost-discount' },
-        { key: 'cost', label: 'Costo' },
-        { key: 'saleDiscount', label: '% Descuento Venta', class: `cost-discount${this.variant === 'provider' ? ' d-none' : ''}` },
-        { key: 'netPrice', label: 'Neto', class: (this.variant === 'provider' ? ' d-none' : '') },
+        { key: 'concept', label: 'Concepto' },
+        // { key: 'taxDetails', label: 'Tasa IVA' },
+        { key: 'cost', label: 'Importe Neto' },
+        // { key: 'tax', label: 'Importe IVA' },
+        // { key: 'total', label: 'Importe' },
+        { key: 'subtotal', label: 'Subtotal' },
         { key: 'actions', label: 'Acciones', class: 'cost-actions' }
       ],
+
       // el cliente también va a necesitar la lista de proveedores
       shippingTypes: shippingTypes,
       serviceTypes: serviceTypes,
@@ -172,64 +136,43 @@ export default {
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
   async created () {
-    // si tengo cliente, voy a usar el provider asociado al primer registro de la tabla de costos del cliente
-    if (this.client && this.client.costsTable && this.client.costsTable.length > 0) {
-      this.costsFilter.providerId = this.client.costsTable[0].providerId
-      await this.fetchProvider()
-    } else {
-      this.costsFilter.providerId = -1
-    }
-    // si el proveedor en cuestión no tiene costos asociados, tampoco le voy a poder asociar descuentos
-    // entonces, si costsTableIndex es -1 acá, fin para el vínculo cliente <-> proveedor
-    this.providerCostsTableIndex = (this.provider.costsTable && this.provider.costsTable.length > 0 ? 0 : -1)
-    this.costsFilter.shippingType = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingType : 1)
-    this.costsFilter.serviceType = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].serviceType : 1)
-    this.costsFilter.packageType = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].packageType : 1)
-    this.costsFilter.shippingZone = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].shippingZone : 1)
 
-    // el proveedor tiene: weight / grossPrice / costDiscount
-    // el cliente tiene:   weight / saleDiscount
-    let providerCosts = (this.provider.costsTable && this.provider.costsTable.length > 0 ? this.provider.costsTable[0].costs : [])
-    let clientCosts = []
-
-    // si hay cliente, busco los items a través del set de filtros
-    if (this.client && this.client.costsTable && this.client.costsTable.length > 0) {
-      let filtered = []
-      if (this.client.costsTable) {
-        filtered = this.client.costsTable.filter(
-          (cost, i) => {
-            if (cost.providerId === this.costsFilter.providerId &&
-            cost.shippingType === this.costsFilter.shippingType &&
-            cost.serviceType === this.costsFilter.serviceType &&
-            cost.packageType === this.costsFilter.packageType &&
-            cost.shippingZone === this.costsFilter.shippingZone) {
-              this.clientCostsTableIndex = i
-              return true
-            }
-          })
-      }
-      if (filtered && filtered.length !== 0 && !filtered[0]) {
-        clientCosts = filtered
-      }
-    }
-
-    // tengo la lista de items asociados al proveedor, si el cliente existe, tengo que mergear los arrays a través de weight
-    // gran manera en ES6 de combinar dos Arrays, basada en un campo
-    this.items = [...providerCosts.concat(clientCosts).reduce((m, o) => m.set(o.weight, Object.assign(m.get(o.weight) || {}, o)), new Map()).values()]
-
-    // inicializo hasWeight
-    this.hasWeight = this.costsFilter.packageType !== 3
-    this.totalRows = this.items.length
-    this.setWeight()
-
-    this.shippingZones = shippingZones.map(zone => {
-      return ({ value: zone.value, text: 'Zona: ' + zone.text })
+    let total = this.pricing.grossPrice
+    this.items.push({
+      concept: 'Envío',
+      taxDetails: '0%',
+      cost: this.pricing.grossPrice,
+      tax: 0,
+      total: this.pricing.grossPrice,
+      subtotal: total,
+      static: true
     })
+    if(this.pricing.costDiscount > 0) {
+      total += total * -(this.pricing.costDiscount / 100)
+      this.items.push({
+        concept: this.pricing.costDiscount + '% descuento',
+        taxDetails: '0%',
+        cost: this.pricing.grossPrice * -(this.pricing.costDiscount / 100),
+        tax: 0,
+        total: this.pricing.grossPrice * -(this.pricing.costDiscount / 100),
+        subtotal: total,
+        static: true
+      })
+    }
+    if(this.pricing.saleDiscount > 0) {
+      total += total * -(this.pricing.saleDiscount / 100)
+      this.items.push({
+        concept: this.pricing.saleDiscount + '% descuento cliente',
+        taxDetails: '0%',
+        cost: this.pricing.grossPrice * -(this.pricing.saleDiscount / 100),
+        tax: 0,
+        total: this.pricing.grossPrice * -(this.pricing.saleDiscount / 100),
+        subtotal: total,
+        static: true
+      })
+    }
 
-    // this.shippingZones.forEach(item => {
-    //   item.text = "Zona: " + item.text
-    //
-    // })
+
   },
   methods: {
     resetFilter () {
@@ -477,6 +420,7 @@ export default {
     // agregar a los map getters la lista de proveedores y el cliente
     // para pivotear entre una y otra entidad
     ...mapGetters(['provider', 'client']),
+
     // esto se usa para calcular el precio al aplicar el primer descuento
     // el precio al que se le aplica % de descuento de costo es el gross. Y el resultado es para el cliente
     // netPrice: {

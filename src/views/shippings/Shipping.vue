@@ -1,6 +1,9 @@
 <template>
   <div class="animated fadeIn">
     <b-form @submit.prevent="saveShipping" enctype="multipart/form-data">
+      <b-card no-body>
+        <b-tabs card>
+          <b-tab title="Datos de envío" active>
       <!-- <template>
         <b-row class="actions-bar">
           <b-col sm="12">
@@ -13,6 +16,8 @@
           <c-shipping-data :clientList="clientList" :providerList="providerList" ref="shippingDataForm"/>
         </b-col>
       </b-row>
+    </b-tab>
+    <b-tab title="Direcciones">
       <b-row>
         <b-col md="6">
           <b-card>
@@ -29,30 +34,47 @@
           </b-card>
         </b-col>
       </b-row>
+
+    </b-tab>
+    <b-tab title="Paquete">
       <b-row>
         <b-col md="12">
-          <b-card>
-            <div slot="header">Información del paquete</div>
+          <!-- <b-card> -->
+            <!-- <div slot="header">Información del paquete</div> -->
             <c-shipping-package ref="packageForm"></c-shipping-package>
-          </b-card>
-        </b-col>
-        <b-col md="12">
-          <b-card>
-            <div slot="header">Información de seguimiento</div>
-            <c-shipping-tracking ref="trackingForm"></c-shipping-tracking>
-          </b-card>
+          <!-- </b-card> -->
         </b-col>
       </b-row>
-      <template>
-        <b-row class="actions-bar">
-          <b-col sm="12">
-            <!-- <b-button variant="primary" type="submit"><i class="fa fa-save ml-1"></i> Añadir envío</b-button> -->
-            <b-button v-if="isEdit" variant="primary" type="submit">Guardar cambios</b-button><b-button v-else variant="primary" type="submit">Añadir envío</b-button> o <b-link :to="{ path: '/envios' }">Cancelar</b-link>
-            <!-- <b-button variant="outline-danger">Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
-            <!-- <b-button variant="outline-primary">Volver <i class="fa fa-arrow-left ml-1"></i></b-button> -->
-          </b-col>
-        </b-row>
-      </template>
+    </b-tab>
+    <b-tab title="Seguimiento">
+      <b-row>
+        <b-col md="12">
+          <!-- <b-card> -->
+            <!-- <div slot="header">Información de seguimiento</div> -->
+            <c-shipping-tracking ref="trackingForm"></c-shipping-tracking>
+          <!-- </b-card> -->
+        </b-col>
+      </b-row>
+    </b-tab>
+    <b-tab title="Costos y facturación">
+      <c-shipping-cost-table :pricing="pricing"></c-shipping-cost-table>
+
+    </b-tab>
+      </b-tabs>
+    </b-card>
+    <b-card bg-variant="light">
+      <p class="card-text">Total: <b v-if="pricing === null">-</b><b v-else>${{ shipping.pricing.cost }}</b> <i v-if="pricing === null" class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="No existen precios cargados para la combinación de opciones seleccionadas"></i></p>
+    </b-card>
+    <template>
+      <b-row class="actions-bar">
+        <b-col sm="12">
+          <!-- <b-button variant="primary" type="submit"><i class="fa fa-save ml-1"></i> Añadir envío</b-button> -->
+          <b-button v-if="isEdit" variant="primary" type="submit">Guardar cambios</b-button><b-button v-else variant="primary" type="submit">Añadir envío</b-button> o <b-link :to="{ path: '/envios' }">Cancelar</b-link>
+          <!-- <b-button variant="outline-danger">Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
+          <!-- <b-button variant="outline-primary">Volver <i class="fa fa-arrow-left ml-1"></i></b-button> -->
+        </b-col>
+      </b-row>
+    </template>
     </b-form>
   </div>
 </template>
@@ -73,6 +95,7 @@ import CAddresses from '@/components/Addresses'
 import CAddressForm from '@/components/AddressForm'
 import CShippingPackage from '@/components/ShippingPackage'
 import CShippingTracking from '@/components/ShippingTracking'
+import CShippingCostTable from '@/components/ShippingCostTable'
 
 export default {
   name: 'v-shipping',
@@ -81,7 +104,8 @@ export default {
     CAddresses,
     CAddressForm,
     CShippingPackage,
-    CShippingTracking
+    CShippingTracking,
+    CShippingCostTable
   },
   computed: {
     ...mapGetters([ 'shippingLoading', 'clients', 'providers', 'shipping' ]),
@@ -90,6 +114,82 @@ export default {
     },
     singleDestinationAddress () {
       return { address: this.shipping.destination }
+    },
+    volumetricWeight () {
+      if (this.shipping.package.type !== 1 || !this.shipping.package.length || !this.shipping.package.width || !this.shipping.package.height) {
+        return 0
+      }
+      let roundFactor = 0.5
+      let weightDivisor = 5000
+      let originalVolume = this.shipping.package.length * this.shipping.package.width * this.shipping.package.height
+      return roundFactor * Math.ceil((originalVolume / weightDivisor) / roundFactor)
+    },
+    weight () {
+      return this.volumetricWeight > this.shipping.package.weight ? this.volumetricWeight : this.shipping.package.weight
+    },
+    declaredValueInsurance () {
+      let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
+      return (provider !== undefined) ? this.shipping.package.declaredValue * (provider.insurance / 100) : 0
+    },
+    pricing () {
+      // let cost = 0
+      let costDiscount = 0
+      let saleDiscount = 0
+      let grossPrice = 0
+      let netPrice = 0
+
+      // Obtengo los precios vinculados al proveedor de acuerdo a las opciones seleccionadas
+      // Si no hay precios devuelve null
+      let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
+      if (!provider) return null
+
+      let costs = provider.costsTable.find(el => {
+        return el.shippingType === this.shipping.shippingType &&
+        el.serviceType === this.shipping.serviceType &&
+        el.packageType === this.shipping.package.type &&
+        el.shippingZone === this.shipping.shippingZone
+      })
+      if (!costs) return null
+
+      // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
+      let price = costs.costs.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && costs.costs.length === 1) })
+      if (!price) return null
+
+      grossPrice = price.grossPrice
+      costDiscount = price.costDiscount
+
+      // Obtengo los descuentos vinculados al cliente de acuerdo a las opciones seleccionadas
+      // Puede no haber descuentos
+      let client = this.clients.find(el => { return el.objectId === this.shipping.clientId })
+      if (client !== undefined) {
+        let clientCosts = client.costsTable.find(el => {
+          return el.providerId === provider.objectId &&
+          el.shippingType === this.shipping.shippingType &&
+          el.serviceType === this.shipping.serviceType &&
+          el.packageType === this.shipping.package.type &&
+          el.shippingZone === this.shipping.shippingZone
+        })
+        if (clientCosts !== undefined) {
+          // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
+          let discounts = clientCosts.costs.find(el => { return el.weight === price.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
+          if (discounts !== undefined) {
+            saleDiscount = discounts.saleDiscount
+          }
+        }
+      }
+
+      // Calculo el costo final
+
+      return {
+        // cost,
+        costDiscount,
+        saleDiscount,
+        grossPrice,
+        netPrice
+      }
+    },
+    destinationCountry () {
+      return this.shipping.destination.country
     }
   },
   props: {
@@ -103,8 +203,8 @@ export default {
     // si estoy editando, el envío ya existe
     // busco al cliente y al proveedor asociados
     if (this.isEdit) {
-      this.fetchProvider(this.shipping.provider)
-      this.fetchClient(this.shipping.client)
+      this.fetchProvider(this.shipping.providerId)
+      this.fetchClient(this.shipping.clientId)
     }
     if (this.clientId) {
       this.fetchClient(this.clientId)
@@ -210,6 +310,43 @@ export default {
     },
     destinationAddressUpdated (addressData) {
       this.shipping.destination = addressData
+    },
+    updateShippingCost () {
+      this.shipping.pricing.cost = this.shipping.pricing.grossPrice * (1 - this.shipping.pricing.costDiscount / 100) * (1 - this.shipping.pricing.saleDiscount / 100) + this.shipping.pricing.insurance
+      this.shipping.pricing.cost = parseFloat(this.shipping.pricing.cost).toFixed(2)
+    }
+  },
+  watch: {
+    destinationCountry (val) {
+      this.shipping.shippingZone = -1
+      let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
+      let country
+      let type
+      if (provider) {
+        type = provider.shippingZones.find(el => { return el.shippingType === this.shipping.shippingType })
+        if (type) country = type.countries.find(el => { return el.numericCode === val })
+      }
+      if (country) this.shipping.shippingZone = country.zone
+    },
+    pricing (val) {
+      if (val !== null) {
+        // this.shipping.pricing.cost = this.pricing.cost
+        this.shipping.pricing.costDiscount = this.pricing.costDiscount
+        this.shipping.pricing.saleDiscount = this.pricing.saleDiscount
+        this.shipping.pricing.grossPrice = this.pricing.grossPrice
+        this.shipping.pricing.netPrice = this.pricing.netPrice
+      } else {
+        // this.shipping.pricing.cost = 0
+        this.shipping.pricing.costDiscount = 0
+        this.shipping.pricing.saleDiscount = 0
+        this.shipping.pricing.grossPrice = 0
+        this.shipping.pricing.netPrice = 0
+      }
+      this.updateShippingCost()
+    },
+    declaredValueInsurance (val) {
+      this.shipping.pricing.insurance = val
+      this.updateShippingCost()
     }
   }
 }

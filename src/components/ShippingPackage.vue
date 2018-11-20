@@ -41,7 +41,7 @@
               <!-- <label for="length">Largo</label> -->
               <b-input-group>
                 <b-input-group-prepend><b-input-group-text>Largo:</b-input-group-text></b-input-group-prepend>
-                <b-form-input horizontal type="number" id="length" placeholder="Largo en centímetros" v-model="shipping.package.length"></b-form-input>
+                <b-form-input :disabled="shipping.package.type !== 1" horizontal type="number" id="length" placeholder="Largo en centímetros" v-model="shipping.package.length"></b-form-input>
                 <!-- <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append> -->
               </b-input-group>
             </b-col>
@@ -49,7 +49,7 @@
               <!-- <label for="width">Ancho</label> -->
               <b-input-group>
                 <b-input-group-prepend><b-input-group-text>Ancho:</b-input-group-text></b-input-group-prepend>
-                <b-form-input horizontal type="number" id="width" placeholder="Ancho en centímetros" v-model="shipping.package.width"></b-form-input>
+                <b-form-input :disabled="shipping.package.type !== 1" horizontal type="number" id="width" placeholder="Ancho en centímetros" v-model="shipping.package.width"></b-form-input>
                 <!-- <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append> -->
               </b-input-group>
             </b-col>
@@ -57,7 +57,7 @@
               <!-- <label for="width">Alto</label> -->
               <b-input-group>
                 <b-input-group-prepend><b-input-group-text>Alto:</b-input-group-text></b-input-group-prepend>
-                <b-form-input horizontal type="number" id="height" placeholder="Alto en centímetros" v-model="shipping.package.height"></b-form-input>
+                <b-form-input :disabled="shipping.package.type !== 1" horizontal type="number" id="height" placeholder="Alto en centímetros" v-model="shipping.package.height"></b-form-input>
                 <!-- <b-input-group-append><b-input-group-text>cm</b-input-group-text></b-input-group-append> -->
               </b-input-group>
             </b-col>
