@@ -106,8 +106,14 @@ table.table td a.btn-link{
   padding-top: 0;
   padding-bottom: 0;
 }
+table .btn,
+table.table .btn {
+  margin:2px auto;
+}
 table td,
-table.table td{
+table.table td,
+table th,
+table.table th {
   vertical-align: middle;
 }
 table .selection,

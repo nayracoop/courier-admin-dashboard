@@ -57,8 +57,8 @@
       </b-row>
     </b-tab>
     <b-tab title="Costos y facturación">
-      <c-shipping-cost-table :pricing="pricing"></c-shipping-cost-table>
-
+      <!-- <c-shipping-cost-table :pricing="pricing"></c-shipping-cost-table> -->
+      <c-shipping-cost-table></c-shipping-cost-table>
     </b-tab>
       </b-tabs>
     </b-card>
@@ -76,6 +76,18 @@
       </b-row>
     </template>
     </b-form>
+    <c-confirmation-modal
+      classModal="return-modal"
+      ref="returnModal"
+      modalTitle="¿Desea descartar los cambios?"
+      promptMessage="Hay cambios sin guardar en este registro. Si sale de esta pantalla se perderán. Esta acción no se puede deshacer."
+      variantConfirmation="warning"
+      confirmationMessage="Sí, descartar cambios"
+      cancellationMessage="No, seguir editando"
+      confirmationMethod="confirmReturn"
+      cancellationMethod="cancelReturn"
+      @confirmReturn="confirmReturn(returnTo, client)"
+      @cancelReturn="hideReturnModal()" />
   </div>
 </template>
 
@@ -96,6 +108,7 @@ import CAddressForm from '@/components/AddressForm'
 import CShippingPackage from '@/components/ShippingPackage'
 import CShippingTracking from '@/components/ShippingTracking'
 import CShippingCostTable from '@/components/ShippingCostTable'
+import CConfirmationModal from '@/components/ConfirmationModal'
 
 export default {
   name: 'v-shipping',
@@ -105,7 +118,8 @@ export default {
     CAddressForm,
     CShippingPackage,
     CShippingTracking,
-    CShippingCostTable
+    CShippingCostTable,
+    CConfirmationModal
   },
   computed: {
     ...mapGetters([ 'shippingLoading', 'clients', 'providers', 'shipping' ]),
@@ -142,6 +156,13 @@ export default {
       // Si no hay precios devuelve null
       let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
       if (!provider) return null
+
+      // Obtengo el precio de combustible correspondiente a la fecha del envios
+      let fuelPercent = provider.fuelTable.find(el => {
+        return this.shipping.initialDate >= el.fromDate && this.shipping.initialDate <= el.toDate;
+      })
+      if(!fuelPercent) return null
+      fuelPercent = fuelPercent.fuelPercent
 
       let costs = provider.costsTable.find(el => {
         return el.shippingType === this.shipping.shippingType &&
@@ -182,10 +203,12 @@ export default {
 
       return {
         // cost,
+        fuelPercent,
         costDiscount,
         saleDiscount,
         grossPrice,
-        netPrice
+        netPrice,
+        insurance: this.declaredValueInsurance
       }
     },
     destinationCountry () {
