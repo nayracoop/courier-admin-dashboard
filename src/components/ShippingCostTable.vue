@@ -91,9 +91,11 @@
   </section>
 </template>
 <script>
-import { shippingTypes, serviceTypes, packageTypes, shippingZones } from '@/store/const'
+import { shippingTypes, serviceTypes, packageTypes } from '@/store/const'
+// shippingZones } from '@/store/const'
 import { mapGetters } from 'vuex'
-import { FETCH_PROVIDER, FETCH_SHIPPING } from '@/store/types/actions'
+import { FETCH_PROVIDER } from '@/store/types/actions'
+// FETCH_SHIPPING } from '@/store/types/actions'
 
 export default {
   name: 'c-cost-table',
@@ -115,10 +117,9 @@ export default {
         { key: 'actions', label: 'Acciones', class: 'cost-actions' },
         { key: 'subtotal', label: 'Subtotal', class: 'cost-actions' }
       ],
-      customPricing: { saleDiscount:null },
+      customPricing: { saleDiscount: null },
       cost: 0,
       items: [ ],
-
 
       // el cliente también va a necesitar la lista de proveedores
       shippingTypes: shippingTypes,
@@ -166,26 +167,25 @@ export default {
       return this.volumetricWeight > this.shipping.package.weight ? this.volumetricWeight : this.shipping.package.weight
     },
     pricing () {
-
       // let cost = 0
       let costDiscount = 0
       let saleDiscount = 0
       let grossPrice = 0
-      let netPrice = 0
+      // let netPrice = 0
       let insurance = this.declaredValueInsurance
 
-      console.log("--->")
+      console.log('--->')
 
       // if(this.provider.externalId === null) return null
 
       // Obtengo el precio de combustible correspondiente a la fecha del envios
       let fuelPercent = this.provider.fuelTable.find(el => {
-        return this.shipping.initialDate >= el.fromDate && this.shipping.initialDate <= el.toDate;
+        return this.shipping.initialDate >= el.fromDate && this.shipping.initialDate <= el.toDate
       })
-      if(!fuelPercent) return null
+      if (!fuelPercent) return null
       fuelPercent = fuelPercent.fuelPercent
 
-      console.log("---> 2")
+      console.log('---> 2')
       // Obtengo el precio del flete correspondiente a la zona y tipos de envío, servicio y paquete
       let costs = this.provider.costsTable.find(el => {
         return el.shippingType === this.shipping.shippingType &&
@@ -195,7 +195,7 @@ export default {
       })
       if (!costs) return null
 
-      console.log("---> 3")
+      console.log('---> 3')
       // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
       let price = costs.costs.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && costs.costs.length === 1) })
       if (!price) return null
@@ -203,7 +203,7 @@ export default {
       grossPrice = price.grossPrice
       costDiscount = price.costDiscount
 
-      console.log("---> 4")
+      console.log('---> 4')
       // Obtengo los descuentos vinculados al cliente de acuerdo a las opciones seleccionadas
       // Puede no haber descuentos
       if (this.client.externalId !== null) {
@@ -232,7 +232,7 @@ export default {
         // netPrice,
         insurance
       }
-    },
+    }
 
     // esto se usa para calcular el precio al aplicar el primer descuento
     // el precio al que se le aplica % de descuento de costo es el gross. Y el resultado es para el cliente
@@ -244,22 +244,21 @@ export default {
     // },
     // esto se usa para calcular el precio al aplicar el segundo descuento
     // el precio al que se le aplica % de descuento de costo es el gross. Y el resultado es para referencia de costo interno
-    /*cost: {
+    /* cost: {
       get: function () {
         return this.newRow.grossPrice - (this.newRow.grossPrice * this.newRow.costDiscount / 100)
       },
       set: function (val) { }
-    }*/
+    } */
   },
   watch: {
     pricing () {
       this.$root.$emit('bv::refresh::table', 'shipping-costs')
-      //this.setBaseCosts()
+      // this.setBaseCosts()
     }
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
   async created () {
-
     this.items = [ {
       concept: 'Flete: ' + this.provider.businessName,
       key: 'grossPrice'
@@ -286,18 +285,16 @@ export default {
       key: 'saleDiscount'
     } ]
 
-    /*this.items.push({
+    /* this.items.push({
       concept: '% Descuento al cliente',
       taxDetails: '',
       value: 111,
       tax: 0,
       subtotal: 111,
       static: true
-    })*/
+    }) */
 
-
-
-    /*let total = this.pricing.grossPrice
+    /* let total = this.pricing.grossPrice
     this.items.push({
       concept: 'Flete',
       value: this.pricing.grossPrice,
@@ -355,59 +352,55 @@ export default {
       })
     }
 */
-
   },
   methods: {
     itemsProvider (ctx) {
-      if(!this.inEdit) {
-        for(let key in this.pricing) {
+      if (!this.inEdit) {
+        for (let key in this.pricing) {
           let item = this.items.find(el => { return el.key === key })
-          if(item) {
+          if (item) {
             item.value = (this.customPricing[key] !== undefined && this.customPricing[key] !== null) ? this.customPricing[key] : this.pricing[key]
           }
         }
 
-        //let grossPrice = this.customPricing.grossPrice || this.pricing.grossPrice
-        //this.items[0].value = grossPrice
+        // let grossPrice = this.customPricing.grossPrice || this.pricing.grossPrice
+        // this.items[0].value = grossPrice
 
-        /*this.items[0] = {
-          concept: 'Flete: ' + this.provider.businessName,
-          value: grossPrice,
-          key: 'grossPrice'
-        }*/
+        // this.items[0] = {
+        //   concept: 'Flete: ' + this.provider.businessName,
+        //   value: grossPrice,
+        //   key: 'grossPrice'
+        // }
 
-        /*let costDiscount = this.customPricing.costDiscount || this.pricing.costDiscount
-        this.items[1] = {
-          concept: '% Descuento',
-          value: (costDiscount > 0) ? -costDiscount : 0,
-          percentage: true,
-          key: 'costDiscount'
-        }
+        // let costDiscount = this.customPricing.costDiscount || this.pricing.costDiscount
+        // this.items[1] = {
+        //   concept: '% Descuento',
+        //   value: (costDiscount > 0) ? -costDiscount : 0,
+        //   percentage: true,
+        //   key: 'costDiscount'
+        // }
 
-        let fuelPercent = this.customPricing.fuelPercent || this.pricing.fuelPercent
-        this.items[2] = {
-          concept: '% Combustible',
-          value: (fuelPercent > 0) ? fuelPercent : 0,
-          percentage: true,
-          key: 'fuelPercent'
-        }
+        // let fuelPercent = this.customPricing.fuelPercent || this.pricing.fuelPercent
+        // this.items[2] = {
+        //   concept: '% Combustible',
+        //   value: (fuelPercent > 0) ? fuelPercent : 0,
+        //   percentage: true,
+        //   key: 'fuelPercent'
+        // }
 
-        let insurance = this.customPricing.insurance || this.pricing.insurance
-        this.items[3] = {
-          concept: 'Seguro',
-          value: (insurance > 0) ? insurance : 0,
-          key: 'insurance'
-        }
-
-        let saleDiscount = this.customPricing.saleDiscount || this.pricing.saleDiscount
-        this.items[4] = {
-          concept: '% Descuento al cliente',
-          value: (saleDiscount > 0) ? -saleDiscount : 0,
-          percentage: true,
-          key: 'saleDiscount'
-        }*/
-
-
+        // let insurance = this.customPricing.insurance || this.pricing.insurance
+        // this.items[3] = {
+        //   concept: 'Seguro',
+        //   value: (insurance > 0) ? insurance : 0,
+        //   key: 'insurance'
+        // }
+        // let saleDiscount = this.customPricing.saleDiscount || this.pricing.saleDiscount
+        // this.items[4] = {
+        //   concept: '% Descuento al cliente',
+        //   value: (saleDiscount > 0) ? -saleDiscount : 0,
+        //   percentage: true,
+        //   key: 'saleDiscount'
+        // }
       }
 
       this.updateSubtotals()
@@ -417,7 +410,7 @@ export default {
     updateSubtotals () {
       this.cost = 0
       this.items.forEach(el => {
-        if(el.percentage) {
+        if (el.percentage) {
           this.cost += this.cost * (el.value / 100) * (el.discount ? -1 : 1)
         } else {
           this.cost += el.value
@@ -591,19 +584,18 @@ export default {
       }
     },
     applyEdit (selectedItem, event) {
-
       if (selectedItem !== undefined && selectedItem !== null) {
         // if (!this.validateNumericValues(selectedItem)) return
         let selRow = this.items.find(el => el.key === selectedItem.key)
         let newPricing = Object.assign({ }, this.customPricing)
 
-        if(selectedItem.value === "" || selectedItem.value === undefined || selectedItem.value === null) {
+        if (selectedItem.value === '' || selectedItem.value === undefined || selectedItem.value === null) {
           event.target.parentNode.parentNode.querySelector('input').value = selectedItem.value = Math.abs(this.pricing[selectedItem.key])
           selectedItem.customized = false
           delete newPricing[selectedItem.key]
         } else {
           selectedItem.value = Math.abs(selectedItem.value)
-          if(selectedItem.value !== this.pricing[selectedItem.key]) {
+          if (selectedItem.value !== this.pricing[selectedItem.key]) {
             selectedItem.customized = true
             newPricing[selectedItem.key] = selectedItem.value
           }
@@ -621,10 +613,10 @@ export default {
         let selRow = this.items.find(el => el.key === selectedItem.key)
         event.target.parentNode.parentNode.querySelector('input').value = selectedItem.value = (this.customPricing[selectedItem.key] !== undefined && this.customPricing[selectedItem.key] !== null) ? this.customPricing[selectedItem.key] : this.pricing[selectedItem.key]
         // revierte la asignación seteando la fila a los valores que tenía antes
-        /*Object.assign(selRow, this.oldRow)
-        delete selRow.edit
-        this.oldRow = {}
-        this.resetFilter()*/
+        // Object.assign(selRow, this.oldRow)
+        // delete selRow.edit
+        // this.oldRow = {}
+        // this.resetFilter()
         delete selRow.edit
       }
       this.inEdit = false
@@ -639,10 +631,10 @@ export default {
         selectedItem.customized = false
         delete newPricing[selectedItem.key]
         // revierte la asignación seteando la fila a los valores que tenía antes
-        /*Object.assign(selRow, this.oldRow)
-        delete selRow.edit
-        this.oldRow = {}
-        this.resetFilter()*/
+        // Object.assign(selRow, this.oldRow)
+        // delete selRow.edit
+        // this.oldRow = {}
+        // this.resetFilter()
         this.customPricing = newPricing
         delete selRow.edit
       }
