@@ -28,3 +28,6 @@ export const UPDATE_SHIPPING_IN_LIST = 'updateShippingInList'
 export const FETCH_USERS_END = 'setUsers'
 export const SET_USER = 'setUser'
 export const UPDATE_USER_IN_LIST = 'updateUserInList'
+
+/* Roles mutations */
+export const FETCH_ROLES_END = 'setRoles'
