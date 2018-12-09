@@ -78,9 +78,12 @@ export default {
     SidebarNav,
     SidebarMinimizer
   },
+  async created () {
+    this.nav = await nav()
+  },
   data () {
     return {
-      nav: nav.items
+      nav: []
     }
   },
   computed: {
