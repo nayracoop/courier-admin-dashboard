@@ -145,7 +145,7 @@ export default {
       let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
       return (provider !== undefined) ? this.shipping.package.declaredValue * (provider.insurance / 100) : 0
     },
-    pricing () {
+    /* pricing () {
       // let cost = 0
       let costDiscount = 0
       let saleDiscount = 0
@@ -210,7 +210,7 @@ export default {
         netPrice,
         insurance: this.declaredValueInsurance
       }
-    },
+    },*/
     destinationCountry () {
       return this.shipping.destination.country
     }
@@ -333,11 +333,11 @@ export default {
     },
     destinationAddressUpdated (addressData) {
       this.shipping.destination = addressData
-    },
+    }/*,
     updateShippingCost () {
       this.shipping.pricing.cost = this.shipping.pricing.grossPrice * (1 - this.shipping.pricing.costDiscount / 100) * (1 - this.shipping.pricing.saleDiscount / 100) + this.shipping.pricing.insurance
       this.shipping.pricing.cost = parseFloat(this.shipping.pricing.cost).toFixed(2)
-    }
+    }*/
   },
   watch: {
     destinationCountry (val) {
@@ -351,7 +351,7 @@ export default {
       }
       if (country) this.shipping.shippingZone = country.zone
     },
-    pricing (val) {
+    /*pricing (val) {
       if (val !== null) {
         // this.shipping.pricing.cost = this.pricing.cost
         this.shipping.pricing.costDiscount = this.pricing.costDiscount
@@ -370,7 +370,7 @@ export default {
     declaredValueInsurance (val) {
       this.shipping.pricing.insurance = val
       this.updateShippingCost()
-    }
+    }*/
   }
 }
 </script>

@@ -23,6 +23,7 @@ export const UPDATE_CLIENT_IN_LIST = 'updateClientInList'
 export const FETCH_SHIPPINGS_END = 'setShippings'
 export const SET_SHIPPING = 'setShipping'
 export const UPDATE_SHIPPING_IN_LIST = 'updateShippingInList'
+export const UPDATE_SHIPPING_PRICING = 'updateShippingPricing'
 
 /* Users mutations */
 export const FETCH_USERS_END = 'setUsers'

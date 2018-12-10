@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { ShippingService } from '@/api'
 import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, SHIPPING_RESET_STATE, FETCH_SHIPPING, FETCH_SHIPPINGS } from '@/store/types/actions'
-import { RESET_STATE, SET_SHIPPING, FETCH_START, FETCH_SHIPPINGS_END } from '@/store/types/mutations'
+import { RESET_STATE, SET_SHIPPING, FETCH_START, FETCH_SHIPPINGS_END, UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
 
 const getInitialState = () => {
   return {
@@ -64,14 +64,7 @@ const getInitialState = () => {
         attachment: ''
       },
 
-      pricing: {
-        grossPrice: null,
-        saleDiscount: null,
-        netPrice: null,
-        costDiscount: null,
-        cost: null
-      },
-
+      pricing: { },
       status: '',
       billingStatus: ''
 
@@ -138,6 +131,9 @@ export const mutations = {
   },
   [SET_SHIPPING] (state, shipping) {
     state.shipping = shipping.toJSON()
+  },
+  [UPDATE_SHIPPING_PRICING] (state, pricing) {
+    state.shipping.pricing = pricing
   },
   [RESET_STATE] () {
     const initialState = getInitialState()
