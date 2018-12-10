@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import store from '@/store'
-import { CHECK_AUTH } from '@/store/types/actions'
+import { CHECK_AUTH, CHECK_ROLE } from '@/store/types/actions'
 
 // Containers
 import DefaultContainer from '@/containers/DefaultContainer'
@@ -26,14 +26,12 @@ import User from '@/views/users/User'
 // Views - Pages
 import Page404 from '@/views/pages/Page404'
 import Login from '@/views/pages/Login'
-// import Page500 from '@/views/pages/Page500'
-// import Register from '@/views/pages/Register'
 
 Vue.use(Router)
 
 let router = new Router({
   mode: 'history',
-  base: String(process.env.BASE_URL),
+  base: process.env.BASE_URL,
   linkActiveClass: 'open active',
   scrollBehavior: () => ({ y: 0 }),
   routes: [
@@ -101,19 +99,22 @@ let router = new Router({
         {
           path: 'usuarios',
           name: 'Usuarios',
-          component: Users
+          component: Users,
+          meta: { requiresAdmin: true }
         },
         {
           path: 'usuarios/nuevo',
           name: 'Nuevo Usuario',
           props: true,
-          component: User
+          component: User,
+          meta: { requiresAdmin: true }
         },
         {
           path: 'usuarios/editar/:id',
           name: 'Editar Usuario',
           props: true,
-          component: User
+          component: User,
+          meta: { requiresAdmin: true }
         }
       ]
     },
@@ -127,19 +128,31 @@ let router = new Router({
 })
 
 router.beforeEach(
-  (to, from, next) => {
+  async (to, from, next) => {
     if (to.name !== 'Login') {
-      return store.dispatch(CHECK_AUTH)
-        .then(isAuthenticated => {
-          if (isAuthenticated) {
-            next()
+      try {
+        const isAuthenticated = await store.dispatch(CHECK_AUTH)
+        if (isAuthenticated) {
+          if (to.matched.some(record => record.meta.requiresAdmin)) {
+            const isAdmin = await store.dispatch(CHECK_ROLE, 'Administrador')
+            if (isAdmin) {
+              next()
+            } else {
+              next({ path: '404' })
+            }
           } else {
-            next({ name: 'Login' })
+            next()
           }
-        }, error => {
-          console.log(error)
-          next({ name: 'Login' })
-        })
+        } else {
+          next({
+            name: 'Login',
+            query: { redirect: to.fullPath }
+          })
+        }
+      } catch (e) {
+        console.error(e)
+        next({ name: 'Login' })
+      }
     } else {
       next()
     }

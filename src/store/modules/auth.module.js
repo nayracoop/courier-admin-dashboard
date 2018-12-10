@@ -1,5 +1,5 @@
 import { UsersService } from '@/api'
-import { LOGIN, LOGOUT, CHECK_AUTH } from '@/store/types/actions'
+import { LOGIN, LOGOUT, CHECK_AUTH, CHECK_ROLE } from '@/store/types/actions'
 import { SET_ERROR } from '@/store/types/mutations'
 import Parse from 'parse'
 
@@ -30,7 +30,7 @@ const actions = {
         return data
       })
   },
-  [CHECK_AUTH] (context) {
+  [CHECK_AUTH] () {
     let currentUser = Parse.User.current() // <- Object
     let currentSession = Parse.Session.current() // <- Promise
 
@@ -40,6 +40,14 @@ const actions = {
       }, error => {
         throw new Error(error)
       })
+  },
+  async [CHECK_ROLE] (context, roleName) {
+    const rolesQuery = new Parse.Query(Parse.Role)
+    rolesQuery.equalTo('name', roleName)
+    const role = await rolesQuery.first()
+    const roleUsers = await role.getUsers().query().find()
+    const currentUser = Parse.User.current()
+    return roleUsers.some(user => user.id === currentUser.id)
   }
 }
 
@@ -55,39 +63,3 @@ export default {
   mutations,
   getters
 }
-
-//   [LOGOUT] (context) {
-//     context.commit(PURGE_AUTH)
-//   },
-//   [REGISTER] (context, credentials) {
-//     return new Promise((resolve, reject) => {
-//       ApiService
-//         .post('users', {user: credentials})
-//         .then(({data}) => {
-//           context.commit(SET_AUTH, data.user)
-//           resolve(data)
-//         })
-//         .catch(({response}) => {
-//           context.commit(SET_ERROR, response.data.errors)
-//         })
-//     })
-//   },
-//   [UPDATE_USER] (context, payload) {
-//     const {email, username, password, image, bio} = payload
-//     const user = {
-//       email,
-//       username,
-//       bio,
-//       image
-//     }
-//     if (password) {
-//       user.password = password
-//     }
-
-//     return ApiService
-//       .put('user', user)
-//       .then(({data}) => {
-//         context.commit(SET_AUTH, data.user)
-//         return data
-//       })
-//   }

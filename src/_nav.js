@@ -1,5 +1,9 @@
-export default {
-  items: [
+import store from '@/store'
+import { CHECK_ROLE } from '@/store/types/actions'
+
+const getMenu = async () => {
+  const isAdmin = await store.dispatch(CHECK_ROLE, 'Administrador')
+  const items = [
     {
       title: true,
       name: 'Courier'
@@ -18,11 +22,17 @@ export default {
       name: 'Envios',
       url: '/envios',
       icon: 'fa fa-plane'
-    },
-    {
-      name: 'Usuarios',
-      url: '/usuarios',
-      icon: 'fa fa-users'
     }
   ]
+  if (isAdmin) {
+    items.push(
+      {
+        name: 'Usuarios',
+        url: '/usuarios',
+        icon: 'fa fa-users'
+      })
+  }
+  return items
 }
+
+export default getMenu

@@ -178,7 +178,7 @@ export default {
       let costDiscount = 0
       let saleDiscount = 0
       let grossPrice = 0
-      let netPrice = 0
+      // let netPrice = 0
       let insurance = this.declaredValueInsurance
 
       // if (this.provider.externalId === null) return null

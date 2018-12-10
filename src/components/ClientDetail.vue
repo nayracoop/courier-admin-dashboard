@@ -44,9 +44,9 @@
       </b-col>
       <b-col sm="3">
         <b-form-group>
-          <label for="ivaCond">Condición IVA</label>
+          <label for="taxCategory">Condición IVA</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Condición frente al Impuesto al Valor Agregado del cliente"></i>
-          <b-form-select id="ivaCond" :plain="true" :options="taxCategories" v-model="client.taxCategory">
+          <b-form-select id="taxCategory" :plain="true" :options="taxCategories" v-model="client.taxCategory">
           </b-form-select>
         </b-form-group>
       </b-col>

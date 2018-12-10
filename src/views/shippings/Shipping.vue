@@ -159,9 +159,9 @@ export default {
 
       // Obtengo el precio de combustible correspondiente a la fecha del envios
       let fuelPercent = provider.fuelTable.find(el => {
-        return this.shipping.initialDate >= el.fromDate && this.shipping.initialDate <= el.toDate;
+        return this.shipping.initialDate >= el.fromDate && this.shipping.initialDate <= el.toDate
       })
-      if(!fuelPercent) return null
+      if (!fuelPercent) return null
       fuelPercent = fuelPercent.fuelPercent
 
       let costs = provider.costsTable.find(el => {

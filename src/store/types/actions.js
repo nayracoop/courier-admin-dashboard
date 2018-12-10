@@ -1,9 +1,9 @@
-/* Users */
+/* Auth */
 export const CHECK_AUTH = 'checkAuth'
 export const LOGIN = 'login'
 export const LOGOUT = 'logout'
 export const REGISTER = 'register'
-export const UPDATE_USER = 'updateUser'
+export const CHECK_ROLE = 'checkRole'
 
 /* Providers CRUD */
 export const FETCH_PROVIDER = 'fetchProvider'
@@ -34,10 +34,13 @@ export const SHIPPING_DELETE = 'deleteShipping'
 export const SHIPPING_EDIT = 'editShipping'
 export const SHIPPING_RESET_STATE = 'resetShippingState'
 
-/* Shippings CRUD */
+/* Users CRUD */
 export const FETCH_USER = 'fetchUser'
 export const FETCH_USERS = 'fetchUsers'
 export const USER_SAVE = 'saveUser'
 export const USER_DELETE = 'deleteUser'
 export const USER_EDIT = 'editUser'
 export const USER_RESET_STATE = 'resetUserState'
+
+/* Roles */
+export const FETCH_ROLES = 'fetchRoles'

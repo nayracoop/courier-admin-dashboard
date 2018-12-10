@@ -1,14 +1,16 @@
 import Vue from 'vue'
-import { UsersService } from '@/api'
-import { USER_SAVE, USER_EDIT, USER_DELETE, USER_RESET_STATE, FETCH_USER, FETCH_USERS } from '@/store/types/actions'
-import { RESET_STATE, SET_USER, FETCH_START, FETCH_USERS_END } from '@/store/types/mutations'
+import { UsersService, RolesService } from '@/api'
+import { USER_SAVE, USER_EDIT, USER_DELETE, USER_RESET_STATE, FETCH_USER, FETCH_USERS, FETCH_ROLES } from '@/store/types/actions'
+import { RESET_STATE, SET_USER, FETCH_START, FETCH_USERS_END, FETCH_ROLES_END } from '@/store/types/mutations'
 
 const getInitialState = () => {
   return {
     user: {
-      username: ''
+      username: '',
+      role: ''
     },
     users: [],
+    roles: [],
     userLoading: false,
     usersCount: 0
   }
@@ -53,6 +55,15 @@ export const actions = {
   },
   [USER_RESET_STATE] ({ commit }) {
     commit(RESET_STATE)
+  },
+  [FETCH_ROLES] ({ commit }) {
+    return RolesService.getAll()
+      .then(data => {
+        commit(FETCH_ROLES_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
   }
 }
 
@@ -76,6 +87,11 @@ export const mutations = {
     for (let f in state) {
       Vue.set(state, f, initialState[f])
     }
+  },
+  [FETCH_ROLES_END] (state, roles) {
+    state.roles = roles.map(function (e) {
+      return e.toJSON()
+    })
   }
 }
 
@@ -91,6 +107,9 @@ const getters = {
   },
   userLoading (state) {
     return state.userLoading
+  },
+  roles (state) {
+    return state.roles
   }
 }
 
