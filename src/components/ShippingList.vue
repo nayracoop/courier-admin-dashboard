@@ -5,8 +5,8 @@
         <b-button variant="primary" :to="{ name: 'Nuevo Envío' }"><i class="fa fa-plus-circle ml-1"></i> Nuevo envío</b-button>
       </b-col>
     </b-row>
-    <b-card :header="caption" v-if="shippingsList.length === 0">
-      No hay envíos cargados. Crear un <b-link :to="{ name: 'Nuevo Envío' }">nuevo envío</b-link>.
+    <b-card :header="caption" v-if="shippings.length === 0">
+      No hay envíos para mostrar. Crear un <b-link :to="{ name: 'Nuevo Envío' }">nuevo envío</b-link>.
     </b-card>
     <b-card :header="caption" v-else>
       <template>
@@ -117,19 +117,22 @@ export default {
   mounted () {
     Promise.all([ this.fetchShippings(), this.fetchClients(), this.fetchProviders() ]).then(values => {
       this.shippingsList = this.shippings.map(shipping => {
+        let provider = this.providers.find(element => element.objectId === shipping.providerId)
+        let clients = this.clients.find(element => element.objectId === shipping.clientId)
+
         return {
           objectId: shipping.objectId,
           initialDate: shipping.initialDate,
           // finalDate: shipping.finalDate,
-          client: this.clients.find(element => element.objectId === shipping.clientId).name,
-          provider: this.providers.find(element => element.objectId === shipping.providerId).name,
-          clientDocValue: this.clients.find(element => element.objectId === shipping.clientId).docValue,
+          client: (clients !== undefined) ? clients.name : '',
+          provider: (provider !== undefined) ? provider.name : '',
+          clientDocValue: (clients !== undefined) ? clients.docValue : '',
           origin: this.countryList.find(element => element.code === shipping.origin.country).name,
           destination: this.countryList.find(element => element.code === shipping.destination.country).name,
           // route: this.countryList.find(element => element.code === shipping.origin.country).name + ' -> ' + this.countryList.find(element => element.code === shipping.destination.country).name,
           shippingType: shippingTypes.find(element => element.value === shipping.shippingType).text,
           serviceType: serviceTypes.find(element => element.value === shipping.serviceType).text,
-          cost: shipping.cost,
+          cost: (shipping.pricing.cost !== undefined) ? '$' + shipping.pricing.cost : 'Sin precio',
           selection: false
         }
       })

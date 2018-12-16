@@ -66,6 +66,12 @@ main {
   content: "Elegir archivo";
 }
 
+.required-label::after {
+  content:"*";
+  opacity: 0.75;
+  margin-left: 1px;
+}
+
 .tab-content{
   border: 0;
 }
@@ -260,10 +266,10 @@ input:read-only {
   // width: 100%;
   text-align: right;
 }
-input[aria-invalid=true],
+/*input[aria-invalid=true],
 select[aria-invalid=true]{
   border-color: #f86c6b;
-}
+}*/
 /*.required-i::after{
   content: "(*)";
   color: #f86c6b;

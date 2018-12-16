@@ -11,7 +11,6 @@
           <b-form-select :id="id + '_myAddresses'" :plain="true" :options="addressList" v-model="selAddressId" @input="changeAddress" />
         </b-form-group>
         <div class="address-card" v-show="!isNew && !editMode">
-
             <p>
               <b v-if="currentAddress.address.contactName">{{ currentAddress.address.contactName }}</b>
               <span v-if="currentAddress.address.name"> - <i>{{ currentAddress.address.name }}</i></span>
@@ -32,13 +31,13 @@
             <b-button size="sm" variant="outline-primary" @click.prevent="convertToDefault" v-if="!editMode && !currentAddress.isDefault"><i class="fa fa-map-marker"></i> Convertir en principal</b-button>
         </div>
       </b-col>
-      <b-col sm="12" v-else>
+      <b-col sm="12" v-else-if="this.client.objectId !== undefined && this.client.objectId !== ''">
         <b-alert show variant="info">Este cliente no posee direcciones de envío guardadas</b-alert>
       </b-col>
     </b-row>
-    <b-form-group v-show="isNew || editMode">
+    <b-form-group v-if="isNew || editMode">
       <b-alert show variant="warning" v-if="editMode" dismissible>Para guardar los cambios en esta dirección haga click en <b><a href="#" @click.prevent="updateClientAddress">Aplicar</a></b></b-alert>
-      <c-address-form v-model="currentAddress" :id="id" :savable="saveAddress"></c-address-form>
+      <c-address-form ref="addressForm" v-model="currentAddress" :id="id" :savable="saveAddress"></c-address-form>
       <div v-if="editMode">
         <b-button size="sm" variant="primary" @click.prevent="updateClientAddress" v-if="editMode"><i class="fa fa-dot-circle-o"></i> Aplicar</b-button>
         <b-button size="sm" variant="danger" @click.prevent="toggleEditMode" v-if="editMode"><i class="fa fa-ban"></i> Cancelar</b-button>
@@ -252,7 +251,6 @@ export default {
       this.deletedAddress = this.client.addresses.splice(this.selAddressId, 1)
       this.$toasted.global.success_toast({ message: 'La dirección ' + this.deletedAddress[0].alias + ' se eliminará cuando guarde los cambios.' })
       this.setAddressList()
-      console.log(this.selAddressId)
     },
     restoreAddress () {
       this.$toasted.global.success_toast({ message: 'La dirección se ha restaurado' })
@@ -265,6 +263,9 @@ export default {
         address.isDefault = false
       })
       this.client.addresses[this.selAddressId].isDefault = true
+    },
+    validate () {
+      return (this.isNew) ? this.$refs.addressForm.validate() : this.$validator.validateAll()
     }
   },
   watch: {

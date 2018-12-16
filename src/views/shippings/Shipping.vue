@@ -56,14 +56,17 @@
         </b-col>
       </b-row>
     </b-tab>
-    <b-tab title="Costos y facturación">
+    <b-tab title="Costos">
       <!-- <c-shipping-cost-table :pricing="pricing"></c-shipping-cost-table> -->
       <c-shipping-cost-table></c-shipping-cost-table>
     </b-tab>
+    <b-tab title="Cierre y facturación" v-if="isEdit">
+
+    </b-tab>
       </b-tabs>
     </b-card>
-    <b-card bg-variant="light">
-      <p class="card-text">Total: <b v-if="pricing === null">-</b><b v-else>${{ shipping.pricing.cost }}</b> <i v-if="pricing === null" class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="No existen precios cargados para la combinación de opciones seleccionadas"></i></p>
+    <b-card bg-variant="light" v-if="shipping.pricing.cost !== '' && shipping.pricing.cost !== undefined && shipping.pricing.cost !== null">
+      <p class="card-text">Total: <b>${{ shipping.pricing.cost }}</b></p>
     </b-card>
     <template>
       <b-row class="actions-bar">
@@ -145,6 +148,21 @@ export default {
       let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
       return (provider !== undefined) ? this.shipping.package.declaredValue * (provider.insurance / 100) : 0
     },
+    shippingZone () {
+      let zone = null
+      let country
+      let type
+      let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
+
+      if (provider) type = provider.shippingZones.find(el => { return el.shippingType === this.shipping.shippingType })
+      if (type) country = type.countries.find(el => { return el.numericCode === this.shipping.destination.country })
+      if (country) zone = country.zone
+
+      return zone
+    },
+    isEdit () {
+      return !!this.shipping.objectId
+    }
     /* pricing () {
       // let cost = 0
       let costDiscount = 0
@@ -211,9 +229,6 @@ export default {
         insurance: this.declaredValueInsurance
       }
     },*/
-    destinationCountry () {
-      return this.shipping.destination.country
-    }
   },
   props: {
     clientId: { type: String, default: null },
@@ -221,7 +236,7 @@ export default {
   },
   mixins: [ modalMixin, navigationMixin, crudMixin ],
   mounted () {
-    this.isEdit = !!this.shipping.objectId
+    // this.isEdit = !!this.shipping.objectId
     this.cleanObject = this._.cloneDeep(this.shipping)
     // si estoy editando, el envío ya existe
     // busco al cliente y al proveedor asociados
@@ -291,7 +306,7 @@ export default {
       clientList: [],
       providerList: [],
       addressUpdated: false,
-      isEdit: false
+      // isEdit: false
     }
   },
   methods: {
@@ -310,17 +325,22 @@ export default {
       })
     },
     saveShipping () {
-      // (this.$validator.validateAll()).then(res => {
-      //   if (!res) {
-      //     this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Corríjalos y vuelva a guardar' })
-      //     return false
-      //   }
-      //   // this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
-      // })
-      // console.log(this.shipping)
-      if (this.addressUpdated) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
-      this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
-      // return false
+      Promise.all([
+        this.$refs.shippingDataForm.validate(),
+        this.$refs.addressOriginForm.validate(),
+        this.$refs.addressDestinationForm.validate()
+      ]).then(values => {
+        let errors = values.find(el => el === false)
+        if(errors === undefined) {
+          if (this.addressUpdated) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
+          this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
+        }
+      })
+      // this.$refs.shippingDataForm.validate()
+      // this.$refs.addressOriginForm.validate()
+      // this.$refs.addressDestinationForm.validate()
+      // this.$refs.packageForm.validate()
+      // this.$refs.trackingForm.validate()
     },
     deleteShipping () {
       this.deleteEl(SHIPPING_DELETE, '/envios')
@@ -340,16 +360,8 @@ export default {
     }*/
   },
   watch: {
-    destinationCountry (val) {
-      this.shipping.shippingZone = -1
-      let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
-      let country
-      let type
-      if (provider) {
-        type = provider.shippingZones.find(el => { return el.shippingType === this.shipping.shippingType })
-        if (type) country = type.countries.find(el => { return el.numericCode === val })
-      }
-      if (country) this.shipping.shippingZone = country.zone
+    shippingZone (val) {
+      this.shipping.shippingZone = val
     },
     /*pricing (val) {
       if (val !== null) {
@@ -371,6 +383,9 @@ export default {
       this.shipping.pricing.insurance = val
       this.updateShippingCost()
     }*/
+  },
+  created () {
+    this.shipping.shippingZone = this.shippingZone
   }
 }
 </script>

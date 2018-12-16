@@ -19,24 +19,13 @@
             <template slot="name" slot-scope="data">
               <b v-if="data.item.key !== null && data.item.key !== undefined && data.item.key !== ''">{{ data.item.name }}</b>
               <span v-else>{{ data.item.name }}</span>
-              <!-- <b-form-input readonly type="text" placeholder="Producto / servicio" v-model="data.item.name"></b-form-input> -->
             </template>
-            <!-- <template slot="taxDetails" slot-scope="data">
-              <b-form-input readonly type="text" placeholder="0%" :value="data.item.taxDetails"></b-form-input>
-            </template> -->
             <template slot="value" slot-scope="data">
               <b-input-group>
                 <b-form-input :readonly="Boolean(inProgress | !data.item.edit)" type="number" placeholder="0" :value="data.item.value" v-model="data.item.value"></b-form-input>
-                <!-- <b-form-input horizontal type="number" id="weight" placeholder="Peso en kilogramos" v-model="shipping.package.weight"></b-form-input> -->
                 <b-input-group-append v-if="data.item.percentage"><b-input-group-text>%</b-input-group-text></b-input-group-append>
               </b-input-group>
             </template>
-            <!-- <template slot="tax" slot-scope="data">
-              <b-form-input type="number" placeholder="0" v-model="data.item.tax"></b-form-input>
-            </template> -->
-            <!-- <template slot="total" slot-scope="data">
-              <b-form-input type="number" placeholder="0" v-model="data.item.total"></b-form-input>
-            </template> -->
             <template slot="actions" slot-scope="data">
               <template v-if="data.item.edit">
                 <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item, $event)">
@@ -62,27 +51,13 @@
             </template>
             <template slot="subtotal" slot-scope="data">
               ${{ data.item.subtotal }}
-              <!-- <b-form-input type="number" placeholder="0" v-model="data.item.subtotal"></b-form-input> -->
             </template>
-
-            <!-- NEW ROW FOOTER -->
             <template slot="FOOT_name" slot-scope="data">
-              <!-- <b-form-input v-model="newRow.weight" readonly></b-form-input> -->
               <b-form-select id="product" v-model="newRow.productId" :plain="true" :options="productList"></b-form-select>
             </template>
-            <!-- <template slot="FOOT_taxDetails" slot-scope="data">
-              <b-form-input type="number" placeholder="Precio bruto" v-model="newRow.grossPrice" ref="inputPrice" :disabled="inProgress"></b-form-input>
-            </template> -->
             <template slot="FOOT_value" slot-scope="data">
-              <!-- <b-form-input type="number" placeholder="Precio neto" v-model="newRow.grossPrice" ref="inputPrice" :disabled="inProgress"></b-form-input> -->
               <b-form-input type="number" v-model="newRow.value"></b-form-input>
             </template>
-            <!-- <template slot="FOOT_tax" slot-scope="data">
-              <b-form-input type="number" placeholder="% Descuento Costo" v-model="newRow.costDiscount" :disabled="inProgress"></b-form-input>
-            </template> -->
-            <!-- <template slot="FOOT_total" slot-scope="data">
-              <b-form-input type="number" v-model="cost" readonly></b-form-input>
-            </template> -->
             <template slot="FOOT_actions" slot-scope="data">
               <b-button size="sm" variant="success" @click.prevent="add">
                 <i class="fa fa-plus"></i> Agregar
@@ -115,7 +90,6 @@ export default {
         { key: 'actions', label: 'Acciones', class: 'cost-actions' },
         { key: 'subtotal', label: 'Subtotal', class: 'cost-actions' }
       ],
-      // customPricing: {  },
       cost: 0,
       additional: [ ],
       items: [ ],
@@ -142,12 +116,8 @@ export default {
         value: null
       },
       inEdit: false,
-      /* No está claro si esto sirve */
+
       inProgress: false,
-      // inEdit tiene que compartirse con el parent
-      // para el botón guardar
-      // oldRow: {},
-      // hasWeight: false,
       perPage: 10,
       currentPage: 1
       // totalRows: 1
@@ -174,11 +144,9 @@ export default {
       return this.volumetricWeight > this.shipping.package.weight ? this.volumetricWeight : this.shipping.package.weight
     },
     pricing () {
-      // let cost = 0
       let costDiscount = 0
       let saleDiscount = 0
       let grossPrice = 0
-      // let netPrice = 0
       let insurance = this.declaredValueInsurance
 
       // if (this.provider.externalId === null) return null
@@ -238,7 +206,6 @@ export default {
   },
   watch: {
     pricing (val) {
-      // this.shipping.pricing.calculated = val
       let newPricing = Object.assign({ }, this.shipping.pricing)
       let isUpdate = false
       for (let key in val) {
@@ -249,15 +216,8 @@ export default {
         let item = this.items.find(el => { return el.customized })
         if (item !== null && item !== undefined) this.updated = true
       }
-      // this.shipping.pricing = newPricing
       this.updateShippingPricing(newPricing)
       this.$refs.shippingCosts.refresh()
-      // if (isNaN(this.cost)) {
-      // console.log('Is NAN')
-      // this.updateShippingPricing(newPricing)
-      // this.$refs.shippingCosts.refresh()
-      // }
-      // this.setBaseCosts()
     }
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
@@ -322,12 +282,6 @@ export default {
       return this.items || []
     },
     updateShippingPricing (newPricing) {
-      /*
-      if (isNaN(this.cost)) {
-        this.$refs.shippingCosts.refresh()
-        this.updateSubtotals()
-      }
-      newPricing.cost = this.cost */
       return this.$store.commit(UPDATE_SHIPPING_PRICING, newPricing)
     },
     updateSubtotals () {

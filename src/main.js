@@ -23,7 +23,9 @@ import _ from 'lodash'
 Validator.localize('es', es)
 // Vue.use(VueLocalStorage)
 Vue.use(BootstrapVue)
-Vue.use(VeeValidate, { fieldsBagName: 'veeFields' })
+Vue.use(VeeValidate, {
+  // fieldsBagName: 'veeFields'
+})
 
 Vue.set(Vue.prototype, '_', _)
 // esto es una superposición con Vuex
