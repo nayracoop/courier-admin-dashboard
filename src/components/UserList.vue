@@ -66,6 +66,7 @@
   cancellationMethod="cancelDelete"
   @confirmDelete="confirmDelete"
   @cancelDelete="hideDeleteModal"></c-confirmation-modal>
+  <!-- <pre>{{ JSON.stringify(users, null, 2) }}</pre> -->
   </div>
 </template>
 
@@ -82,7 +83,8 @@ export default {
     return {
       fields: [ { key: 'selection', class: 'selection' },
         { key: 'username', label: 'Nombre', sortable: true, editable: true },
-        // { key: 'userCode', label: 'Código', sortable: true },
+        { key: 'email', label: 'Email', sortable: true },
+        { key: 'role.name', label: 'Rol', sortable: true },
         // { key: 'docValue', label: 'CUIT / Nº doc.', sortable: true },
         // { key: 'taxCategory', label: 'CondiciónIVA' },
         // { key: 'phone', label: 'Teléfono' },

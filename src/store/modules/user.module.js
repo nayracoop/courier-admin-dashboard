@@ -2,6 +2,7 @@ import Vue from 'vue'
 import { UsersService, RolesService } from '@/api'
 import { USER_SAVE, USER_EDIT, USER_DELETE, USER_RESET_STATE, FETCH_USER, FETCH_USERS, FETCH_ROLES } from '@/store/types/actions'
 import { RESET_STATE, SET_USER, FETCH_START, FETCH_USERS_END, FETCH_ROLES_END } from '@/store/types/mutations'
+import Parse from 'parse'
 
 const getInitialState = () => {
   return {
@@ -18,19 +19,29 @@ const getInitialState = () => {
 
 const state = getInitialState()
 
+// Only one role admited
+const assignRole = async (user) => {
+  const query = new Parse.Query(Parse.Role)
+  query.equalTo('users', user)
+  const roles = await query.find()
+  user.set('role', roles ? roles[0].toJSON() : null)
+}
+
 export const actions = {
   [USER_SAVE] ({ state }) {
     return UsersService.create(state.user)
   },
-  [FETCH_USERS] ({ commit }) {
+  async [FETCH_USERS] ({ commit }) {
     commit(FETCH_START)
-    return UsersService.getAll()
-      .then(data => {
-        commit(FETCH_USERS_END, data)
-      })
-      .catch((error) => {
-        throw new Error(error)
-      })
+    try {
+      const users = await UsersService.getAll()
+      for (const user of users) {
+        await assignRole(user)
+      }
+      commit(FETCH_USERS_END, users)
+    } catch (error) {
+      throw new Error(error)
+    }
   },
   [FETCH_USER] (context, userId, prevUser) {
     // avoid extronuous network call if object exists
@@ -39,6 +50,7 @@ export const actions = {
     }
     return UsersService.get(userId)
       .then(data => {
+        assignRole(data)
         context.commit(SET_USER, data)
         return data
       })
