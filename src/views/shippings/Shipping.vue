@@ -163,7 +163,8 @@ export default {
     isEdit () {
       return !!this.shipping.objectId
     }
-    /* pricing () {
+    /*
+      pricing () {
       // let cost = 0
       let costDiscount = 0
       let saleDiscount = 0
@@ -228,7 +229,8 @@ export default {
         netPrice,
         insurance: this.declaredValueInsurance
       }
-    },*/
+    },
+    */
   },
   props: {
     clientId: { type: String, default: null },
@@ -305,7 +307,7 @@ export default {
       cleanObject: null,
       clientList: [],
       providerList: [],
-      addressUpdated: false,
+      addressUpdated: false
       // isEdit: false
     }
   },
@@ -331,7 +333,7 @@ export default {
         this.$refs.addressDestinationForm.validate()
       ]).then(values => {
         let errors = values.find(el => el === false)
-        if(errors === undefined) {
+        if (errors === undefined) {
           if (this.addressUpdated) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
           this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
         }
@@ -353,17 +355,20 @@ export default {
     },
     destinationAddressUpdated (addressData) {
       this.shipping.destination = addressData
-    }/*,
+    }
+    /*,
     updateShippingCost () {
       this.shipping.pricing.cost = this.shipping.pricing.grossPrice * (1 - this.shipping.pricing.costDiscount / 100) * (1 - this.shipping.pricing.saleDiscount / 100) + this.shipping.pricing.insurance
       this.shipping.pricing.cost = parseFloat(this.shipping.pricing.cost).toFixed(2)
-    }*/
+    }
+    */
   },
   watch: {
     shippingZone (val) {
       this.shipping.shippingZone = val
-    },
-    /*pricing (val) {
+    }
+    /*
+    pricing (val) {
       if (val !== null) {
         // this.shipping.pricing.cost = this.pricing.cost
         this.shipping.pricing.costDiscount = this.pricing.costDiscount
@@ -382,7 +387,8 @@ export default {
     declaredValueInsurance (val) {
       this.shipping.pricing.insurance = val
       this.updateShippingCost()
-    }*/
+    }
+    */
   },
   created () {
     this.shipping.shippingZone = this.shippingZone
