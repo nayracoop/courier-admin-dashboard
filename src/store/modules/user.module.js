@@ -2,6 +2,7 @@ import Vue from 'vue'
 import { UsersService, RolesService } from '@/api'
 import { USER_SAVE, USER_EDIT, USER_DELETE, USER_RESET_STATE, FETCH_USER, FETCH_USERS, FETCH_ROLES } from '@/store/types/actions'
 import { RESET_STATE, SET_USER, FETCH_START, FETCH_USERS_END, FETCH_ROLES_END } from '@/store/types/mutations'
+import Parse from 'parse'
 
 const getInitialState = () => {
   return {
@@ -17,6 +18,13 @@ const getInitialState = () => {
 }
 
 const state = getInitialState()
+
+const assignRoles = async (user) => {
+  const query = new Parse.Query(Parse.Role)
+  query.equalTo('users', user)
+  const roles = await query.find()
+  user.roles = roles
+}
 
 export const actions = {
   [USER_SAVE] ({ state }) {
@@ -39,6 +47,7 @@ export const actions = {
     }
     return UsersService.get(userId)
       .then(data => {
+        assignRoles(data)
         context.commit(SET_USER, data)
         return data
       })
