@@ -30,7 +30,7 @@
             <b-form-select :class="{ 'is-invalid': errors.has('providerName') }" v-validate="'required'" name="providerName" id="providerName" :plain="true" :options="providerList" v-model="shipping.providerId" @input="fetchProvider" />
           </b-form-group>
           <b-form-row>
-            <b-col sm="6">
+            <b-col sm="12">
               <b-form-group>
                 <label for="initialDate" class="required-label">Fecha</label>
                 <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i> -->

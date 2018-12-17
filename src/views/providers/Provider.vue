@@ -19,7 +19,7 @@
               <b-tab title="Zonas" v-if="provider.isShipping">
                 <b-row class="actions-bar">
                   <b-col sm="8">
-                    <b-button variant="outline-primary" v-b-modal.fileDialogZones>Importar <i class="fa fa-file ml-1"></i></b-button>
+                    <b-button variant="outline-primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Importar</b-button>
                     <!-- <b-button variant="outline-primary" disabled>Imprimir zonas por país<i class="fa fa-print ml-1"></i></b-button> -->
                     <b-modal id="fileDialogZones" ref="fileDialogModalZones" hide-footer centered title="Importar zonas por país" class="import-modal">
                       <c-csv-file-dialog

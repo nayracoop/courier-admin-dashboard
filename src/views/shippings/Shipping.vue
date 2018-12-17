@@ -64,9 +64,7 @@
 
     </b-tab>
       </b-tabs>
-    </b-card>
-    <b-card bg-variant="light" v-if="shipping.pricing.cost !== '' && shipping.pricing.cost !== undefined && shipping.pricing.cost !== null">
-      <p class="card-text">Total: <b>${{ shipping.pricing.cost }}</b></p>
+      <div slot="footer"><p class="card-text">Total: <b>USD {{ shipping.pricing.cost }}</b></p></div>
     </b-card>
     <template>
       <b-row class="actions-bar">
@@ -332,7 +330,7 @@ export default {
       ]).then(values => {
         let errors = values.find(el => el === false)
         if(errors === undefined) {
-          if (this.addressUpdated) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
+          if (this.addressUpdated || this.$refs.addressOriginForm.isNew || this.$refs.addressDestinationForm.isNew) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
           this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
         }
       })

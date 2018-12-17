@@ -2,14 +2,11 @@
   <section>
     <b-row>
       <b-col sm="12">
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col sm="12">
         <p v-if="pricing === null">
           No existen costos cargados para la combinación de opciones seleccionadas.
         </p>
         <div v-else>
+          <b-alert show variant="warning" v-if="updated" dismissible>Se realizaron cambios en las opciones del envío. Algunos valores pueden estar desactualizados. Puede actualizarlos utilizando la opción: <b><i class="fa fa-undo"></i> Auto</b> </b-alert>
           <b-table ref="shippingCosts" hover outlined small fixed responsive="sm"
           :items="itemsProvider"
           :fields="fields"
@@ -22,6 +19,7 @@
             </template>
             <template slot="value" slot-scope="data">
               <b-input-group>
+                <b-input-group-prepend v-if="!data.item.percentage"><b-input-group-text>USD</b-input-group-text></b-input-group-prepend>
                 <b-form-input :readonly="Boolean(inProgress | !data.item.edit)" type="number" placeholder="0" :value="data.item.value" v-model="data.item.value"></b-form-input>
                 <b-input-group-append v-if="data.item.percentage"><b-input-group-text>%</b-input-group-text></b-input-group-append>
               </b-input-group>
@@ -50,13 +48,17 @@
               </b-button>
             </template>
             <template slot="subtotal" slot-scope="data">
-              ${{ data.item.subtotal }}
+              USD {{ data.item.subtotal }}
             </template>
             <template slot="FOOT_name" slot-scope="data">
               <b-form-select id="product" v-model="newRow.productId" :plain="true" :options="productList"></b-form-select>
             </template>
             <template slot="FOOT_value" slot-scope="data">
-              <b-form-input type="number" v-model="newRow.value"></b-form-input>
+              <div class="input-group datepicker-group">
+                <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend>
+                <b-form-input type="number" v-model="newRow.value"></b-form-input>
+              </div>
+
             </template>
             <template slot="FOOT_actions" slot-scope="data">
               <b-button size="sm" variant="success" @click.prevent="add">
@@ -64,10 +66,35 @@
               </b-button>
             </template>
             <template slot="FOOT_subtotal" slot-scope="data">
-              <strong>${{ Number(parseFloat(Number(cost) + Number(newRow.value)).toFixed(2)) }}</strong>
+              <strong>USD {{ Number(parseFloat(Number(cost) + Number(newRow.value)).toFixed(2)) }}</strong>
             </template>
           </b-table>
-          <b-alert show variant="warning" v-if="updated" dismissible>Se realizaron cambios en las opciones del envío. Algunos valores pueden estar desactualizados. Puede actualizarlos utilizando la opción: <b><i class="fa fa-undo"></i> Auto</b> </b-alert>
+          <b-row>
+            <b-col sm="6" class="form-inline">
+              <b-form-group>
+                <b-form-checkbox id="closed">Cerrado</b-form-checkbox>
+              </b-form-group>
+              <b-form-group>
+              <label for="finalDate">Fecha de cierre</label>
+              <div class="input-group datepicker-group">
+              <flat-pickr
+              v-validate="'date_format:YYYY-MM-DD|after:'+ shipping.initialDate +',inclusion:true'"
+              v-model="shipping.finalDate"
+              data-vv-as="fecha de cierre"
+              name="finalDate"
+              id="finalDate"
+              :class="'form-control ' + { 'is-invalid': errors.has('finalDate') }"
+              :config="config"
+              placeholder="Seleccionar fecha de cierre"></flat-pickr>
+              <b-input-group-append><b-input-group-text><a class="input-button" title="Seleccionar fecha de cierre" data-toggle><i class="fa fa-calendar"></i></a></b-input-group-text></b-input-group-append>
+            </div>
+            <span><small class="inv-feedback" v-show="errors.has('finalDate')">{{ errors.first('finalDate') }}</small></span>
+          </b-form-group>
+            </b-col>
+            <b-col sm="6" class="text-right">
+              <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
+            </b-col>
+          </b-row>
         </div>
       </b-col>
     </b-row>
@@ -223,7 +250,7 @@ export default {
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
   async created () {
     this.items = [ {
-      name: 'Flete: ' + this.provider.businessName,
+      name: 'Envío', //'Flete: ' + this.provider.businessName,
       key: 'grossPrice'
     },
     {
@@ -238,14 +265,14 @@ export default {
       key: 'fuelPercent'
     },
     {
-      name: 'Seguro',
-      key: 'insurance'
-    },
-    {
       name: '% Descuento al cliente',
       percentage: true,
       discount: true,
       key: 'saleDiscount'
+    },
+    {
+      name: 'Seguro',
+      key: 'insurance'
     } ]
     this.products.map(el => {
       this.productList.push({ value: el.productoid, text: el.nombre })
