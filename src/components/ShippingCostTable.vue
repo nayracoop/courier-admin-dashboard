@@ -74,7 +74,7 @@
   </section>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import { UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
 
 export default {
@@ -260,7 +260,6 @@ export default {
       this.items.push(newRow)
       this.$refs.shippingCosts.refresh()
     })
-
   },
   methods: {
     /* Genera los datos para la tabla, luego actualiza el precio final */
@@ -312,12 +311,12 @@ export default {
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en "Guardar cambios" para registrar los cambios' })
       this.$refs.shippingCosts.refresh()
 
-      this.additional.push( {
+      this.additional.push({
         'productId': product.productoid,
         'name': product.nombre,
         'code': product.codigo,
         'cost': newRow.value
-      } )
+      })
 
       let newPricing = Object.assign({ }, this.shipping.pricing)
       newPricing.additional = this.additional
