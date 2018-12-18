@@ -2,7 +2,7 @@ import Parse from 'parse'
 
 // Only one role admited
 const assignRole = async (user) => {
-  await user.fetch()
+  await user.fetch({useMasterKey: true})
   const query = new Parse.Query(Parse.Role)
   query.equalTo('users', user)
   const roles = await query.find()
@@ -69,7 +69,7 @@ export default {
         const d = new Date()
         const n = d.toISOString()
         user.set('deletedAt', n)
-        return user.save()
+        return user.save({}, { useMasterKey: true })
       },
       error: function (user, error) {
         return error
