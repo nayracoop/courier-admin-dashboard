@@ -30,8 +30,8 @@ const actions = {
         return data
       })
   },
-  [CHECK_AUTH] () {
-    let currentUser = Parse.User.current() // <- Object
+  async [CHECK_AUTH] () {
+    let currentUser = await Parse.User.current() // <- Object
     let currentSession = Parse.Session.current() // <- Promise
 
     return currentSession

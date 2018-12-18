@@ -2,7 +2,7 @@ import Parse from 'parse'
 
 // Only one role admited
 const assignRole = async (user) => {
-  await user.fetch({useMasterKey: true})
+  await user.fetch()
   const query = new Parse.Query(Parse.Role)
   query.equalTo('users', user)
   const roles = await query.find()
@@ -14,7 +14,7 @@ const assignToRole = async (user, roleId) => {
   query.get(roleId)
   const role = await query.first()
   role.getUsers().add(user)
-  role.save({}, { useMasterKey: true })
+  role.save()
 }
 
 export default {
@@ -27,7 +27,7 @@ export default {
   async create (params) {
     const {email, username, password} = params
     const user = new Parse.User()
-    const createdUser = await user.save({email, username, password}, {useMasterKey: true})
+    const createdUser = await user.save({email, username, password})
     await assignToRole(createdUser, params.role.objectId)
     return createdUser
   },
@@ -35,6 +35,7 @@ export default {
     const query = new Parse.Query(Parse.User)
     query.ascending('name')
     query.doesNotExist('deletedAt')
+    query.include('email')
     const users = await query.find()
     for (const user of users) {
       await assignRole(user)
@@ -44,6 +45,7 @@ export default {
   async get (id) {
     const query = new Parse.Query(Parse.User)
     query.doesNotExist('deletedAt')
+    query.include('email')
     const user = await query.get(id)
     await assignRole(user)
     return user
@@ -55,7 +57,7 @@ export default {
     try {
       const user = await query.get(id)
       await assignToRole(user, params.role.objectId)
-      await user.save({email, username, password}, {useMasterKey: true})
+      await user.save({email, username, password})
       return user
     } catch (error) {
       throw new Error(error)
@@ -69,7 +71,7 @@ export default {
         const d = new Date()
         const n = d.toISOString()
         user.set('deletedAt', n)
-        return user.save({}, { useMasterKey: true })
+        return user.save()
       },
       error: function (user, error) {
         throw new Error(error)
