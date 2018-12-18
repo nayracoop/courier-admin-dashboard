@@ -141,8 +141,10 @@ export default {
         }
         this.currentAddress = this.getEmptyAddress()
         this.client.addresses[newIndex] = this.currentAddress
+        this.$emit('saved-address-updated', true)
       } else {
         this.currentAddress = this.client.addresses[this.selAddressId]
+        this.$emit('saved-address-updated', false)
         // this.fillAddress()
       }
     },
@@ -191,7 +193,7 @@ export default {
     },
     setAddressList () {
       this.$emit('saved-address-updated', false)
-      console.log('client list created')
+
       let addressList = []
       this.editMode = false
       if (this.client.addresses.length) {

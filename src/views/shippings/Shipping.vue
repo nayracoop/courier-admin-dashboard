@@ -23,14 +23,14 @@
           <b-card>
             <div slot="header">Origen</div>
             <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="originAddressUpdated" ref="addressOriginForm"></c-addresses>
-            <c-address-form v-else v-model="singleOriginAddress"></c-address-form>
+            <c-address-form v-else v-model="singleOriginAddress" ref="addressOriginForm">></c-address-form>
           </b-card>
         </b-col>
         <b-col md="6">
           <b-card>
             <div slot="header">Destino</div>
             <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="destinationAddressUpdated" ref="addressDestinationForm"></c-addresses>
-            <c-address-form v-else v-model="singleDestinationAddress"></c-address-form>
+            <c-address-form v-else v-model="singleDestinationAddress" ref="addressDestinationForm"></c-address-form>
           </b-card>
         </b-col>
       </b-row>
@@ -56,17 +56,12 @@
         </b-col>
       </b-row>
     </b-tab>
-    <b-tab title="Costos">
+    <b-tab title="Costos y facturación">
       <!-- <c-shipping-cost-table :pricing="pricing"></c-shipping-cost-table> -->
-      <c-shipping-cost-table></c-shipping-cost-table>
+      <c-shipping-cost-table ref="costTable"></c-shipping-cost-table>
     </b-tab>
-    <b-tab title="Cierre y facturación" v-if="isEdit">
-
-    </b-tab>
-      </b-tabs>
-    </b-card>
-    <b-card bg-variant="light" v-if="shipping.pricing.cost !== '' && shipping.pricing.cost !== undefined && shipping.pricing.cost !== null">
-      <p class="card-text">Total: <b>${{ shipping.pricing.cost }}</b></p>
+  </b-tabs>
+  <div slot="footer"><p class="card-text">Total: <b v-if="shipping.pricing.cost !== undefined && shipping.pricing.cost !== null && shipping.pricing.cost !== ''">USD {{ shipping.pricing.cost }}</b><b v-else="">-</b></p></div>
     </b-card>
     <template>
       <b-row class="actions-bar">
@@ -330,11 +325,12 @@ export default {
       Promise.all([
         this.$refs.shippingDataForm.validate(),
         this.$refs.addressOriginForm.validate(),
-        this.$refs.addressDestinationForm.validate()
+        this.$refs.addressDestinationForm.validate(),
+        this.$refs.costTable.validate()
       ]).then(values => {
         let errors = values.find(el => el === false)
-        if (errors === undefined) {
-          if (this.addressUpdated) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
+        if(errors === undefined) {
+          if (this.addressUpdated || this.$refs.addressOriginForm.isNew || this.$refs.addressDestinationForm.isNew) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
           this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
         }
       })

@@ -65,8 +65,8 @@ const getInitialState = () => {
       },
 
       pricing: { },
-      status: '',
-      billingStatus: ''
+      status: 0,
+      billingStatus: false
 
     },
     shippings: [],

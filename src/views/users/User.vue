@@ -1,14 +1,14 @@
 <template>
   <div class="animated fadeIn">
     <b-form @submit.prevent="saveUser(user)">
+      <b-card>
+        <div slot="header">
+          <strong>{{ isEdit ? user.username : 'Datos personales' }}</strong>
+        </div>
+        <c-user-detail ref="userDetail" :isEdit="isEdit"></c-user-detail>
+      </b-card>
       <b-row>
         <b-col sm="12">
-          <b-card no-body>
-            <div slot="header">
-              <strong>{{ isEdit ? user.username : 'Datos personales' }}</strong>
-            </div>
-            <c-user-detail ref="userDetail" :isEdit="isEdit"></c-user-detail>
-          </b-card>
         </b-col>
         <b-col class="actions-bar" sm="12">
           <b-button v-if="isEdit" variant="primary" :disabled="inProgress" type="submit">Guardar cambios</b-button>

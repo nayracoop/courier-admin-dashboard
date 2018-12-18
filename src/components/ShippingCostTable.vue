@@ -1,7 +1,36 @@
 <template>
   <section>
-    <b-row>
-      <b-col sm="12">
+    <b-row v-if="pricing !== null">
+      <b-col sm="5">
+        <b-form-group>
+          <b-form-checkbox v-model="closed">Cerrado</b-form-checkbox>
+        </b-form-group>
+      </b-col>
+    </b-row>
+    <b-row v-if="pricing !== null && this.shipping.status !== 0">
+      <b-col sm="5" class="---form-inline">
+        <b-form-group>
+          <div class="input-group datepicker-group">
+            <b-input-group-prepend><b-input-group-text>Fecha de cierre</b-input-group-text></b-input-group-prepend>
+            <flat-pickr
+            v-validate="'required|date_format:YYYY-MM-DD|after:'+ shipping.initialDate +',inclusion:true'"
+            v-model="shipping.finalDate"
+            data-vv-as="fecha de cierre"
+            name="finalDate"
+            id="finalDate"
+            class="form-control"
+            :class="{ 'is-invalid': errors.has('finalDate') }"
+            :config="config"
+            placeholder="Seleccionar fecha de cierre"></flat-pickr>
+            <b-input-group-append><b-input-group-text><a class="input-button" title="Seleccionar fecha de cierre" data-toggle><i class="fa fa-calendar"></i></a></b-input-group-text></b-input-group-append>
+            &nbsp;<i class="fa fa-question-circle fa-sm" v-b-tooltip.hover :title="'La fecha de cierre no puede ser anterior a la fecha de ĺa operación ('+shipping.initialDate+')'"></i>
+          </div>
+          <!-- <span><small class="inv-feedback" v-show="errors.has('finalDate')">{{ errors.first('finalDate') }}</small></span> -->
+        </b-form-group>
+      </b-col>
+      <b-col sm="7" class="text-right">
+        <!-- Pendiente de facturación<br /> -->
+        <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
       </b-col>
     </b-row>
     <b-row>
@@ -22,6 +51,7 @@
             </template>
             <template slot="value" slot-scope="data">
               <b-input-group>
+                <b-input-group-prepend v-if="!data.item.percentage"><b-input-group-text>USD</b-input-group-text></b-input-group-prepend>
                 <b-form-input :readonly="Boolean(inProgress | !data.item.edit)" type="number" placeholder="0" :value="data.item.value" v-model="data.item.value"></b-form-input>
                 <b-input-group-append v-if="data.item.percentage"><b-input-group-text>%</b-input-group-text></b-input-group-append>
               </b-input-group>
@@ -50,13 +80,16 @@
               </b-button>
             </template>
             <template slot="subtotal" slot-scope="data">
-              ${{ data.item.subtotal }}
+              USD {{ data.item.subtotal }}
             </template>
             <template slot="FOOT_name" slot-scope="data">
               <b-form-select id="product" v-model="newRow.productId" :plain="true" :options="productList"></b-form-select>
             </template>
             <template slot="FOOT_value" slot-scope="data">
-              <b-form-input type="number" v-model="newRow.value"></b-form-input>
+              <div class="input-group datepicker-group">
+                <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend>
+                <b-form-input type="number" v-model="newRow.value"></b-form-input>
+              </div>
             </template>
             <template slot="FOOT_actions" slot-scope="data">
               <b-button size="sm" variant="success" @click.prevent="add">
@@ -64,7 +97,7 @@
               </b-button>
             </template>
             <template slot="FOOT_subtotal" slot-scope="data">
-              <strong>${{ Number(parseFloat(Number(cost) + Number(newRow.value)).toFixed(2)) }}</strong>
+              <strong>USD {{ Number(parseFloat(Number(cost) + Number(newRow.value)).toFixed(2)) }}</strong>
             </template>
           </b-table>
           <b-alert show variant="warning" v-if="updated" dismissible>Se realizaron cambios en las opciones del envío. Algunos valores pueden estar desactualizados. Puede actualizarlos utilizando la opción: <b><i class="fa fa-undo"></i> Auto</b> </b-alert>
@@ -74,13 +107,27 @@
   </section>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import { UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
+
+import flatPickr from 'vue-flatpickr-component'
+import { Spanish } from 'flatpickr/dist/l10n/es'
 
 export default {
   name: 'c-cost-table',
+  components: {
+    flatPickr
+  },
   data () {
     return {
+      config: {
+        wrap: true,
+        dateFormat: 'Y-m-d',
+        locale: Spanish,
+        altFormat: 'j \\de F \\de Y',
+        altInput: true
+        // allowInput: true
+      },
       fields: [
         { key: 'name', label: 'Concepto' },
         // { key: 'taxDetails', label: 'Tasa IVA' },
@@ -116,6 +163,7 @@ export default {
         value: null
       },
       inEdit: false,
+      closed: false,
 
       inProgress: false,
       perPage: 10,
@@ -218,12 +266,15 @@ export default {
       }
       this.updateShippingPricing(newPricing)
       this.$refs.shippingCosts.refresh()
+    },
+    closed (val) {
+      this.shipping.status = Number(val)
     }
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
   async created () {
     this.items = [ {
-      name: 'Flete: ' + this.provider.businessName,
+      name: 'Envío', //'Flete: ' + this.provider.businessName,
       key: 'grossPrice'
     },
     {
@@ -238,14 +289,14 @@ export default {
       key: 'fuelPercent'
     },
     {
-      name: 'Seguro',
-      key: 'insurance'
-    },
-    {
       name: '% Descuento al cliente',
       percentage: true,
       discount: true,
       key: 'saleDiscount'
+    },
+    {
+      name: 'Seguro',
+      key: 'insurance'
     } ]
     this.products.map(el => {
       this.productList.push({ value: el.productoid, text: el.nombre })
@@ -260,6 +311,7 @@ export default {
       this.items.push(newRow)
       this.$refs.shippingCosts.refresh()
     })
+    this.closed = (this.shipping.status === 1)
   },
   methods: {
     /* Genera los datos para la tabla, luego actualiza el precio final */
@@ -311,12 +363,12 @@ export default {
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en "Guardar cambios" para registrar los cambios' })
       this.$refs.shippingCosts.refresh()
 
-      this.additional.push({
+      this.additional.push( {
         'productId': product.productoid,
         'name': product.nombre,
         'code': product.codigo,
         'cost': newRow.value
-      })
+      } )
 
       let newPricing = Object.assign({ }, this.shipping.pricing)
       newPricing.additional = this.additional
@@ -408,6 +460,9 @@ export default {
         retVal = false
       }
       return retVal
+    },
+    validate () {
+      return this.$validator.validateAll()
     }
   }
 }

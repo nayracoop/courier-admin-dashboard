@@ -266,6 +266,9 @@ input:read-only {
   // width: 100%;
   text-align: right;
 }
+.is-invalid + .flatpickr-input {
+  border-color: #f86c6b;
+}
 /*input[aria-invalid=true],
 select[aria-invalid=true]{
   border-color: #f86c6b;
