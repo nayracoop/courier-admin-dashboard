@@ -66,7 +66,6 @@
   cancellationMethod="cancelDelete"
   @confirmDelete="confirmDelete"
   @cancelDelete="hideDeleteModal"></c-confirmation-modal>
-  <!-- <pre>{{ JSON.stringify(users, null, 2) }}</pre> -->
   </div>
 </template>
 
