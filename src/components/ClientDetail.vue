@@ -165,8 +165,8 @@ export default {
   data () {
     return {
       inProgress: false,
-      taxCategories: taxCategories,
-      docTypes: docTypes,
+      taxCategories,
+      docTypes,
       countryList: [],
       argProvinceList: []
     }

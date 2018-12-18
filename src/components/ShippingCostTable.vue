@@ -1,29 +1,31 @@
 <template>
   <section>
-    <b-row>
+    <b-row v-if="pricing !== null">
       <b-col sm="5">
         <b-form-group>
-          <b-form-checkbox v-model="closed" id="closed">Cerrado</b-form-checkbox>
+          <b-form-checkbox v-model="closed">Cerrado</b-form-checkbox>
         </b-form-group>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row v-if="pricing !== null && this.shipping.status !== 0">
       <b-col sm="5" class="---form-inline">
         <b-form-group>
           <div class="input-group datepicker-group">
             <b-input-group-prepend><b-input-group-text>Fecha de cierre</b-input-group-text></b-input-group-prepend>
             <flat-pickr
-            v-validate="'date_format:YYYY-MM-DD|after:'+ shipping.initialDate +',inclusion:true'"
+            v-validate="'required|date_format:YYYY-MM-DD|after:'+ shipping.initialDate +',inclusion:true'"
             v-model="shipping.finalDate"
             data-vv-as="fecha de cierre"
             name="finalDate"
             id="finalDate"
-            :class="'form-control ' + { 'is-invalid': errors.has('finalDate') }"
+            class="form-control"
+            :class="{ 'is-invalid': errors.has('finalDate') }"
             :config="config"
             placeholder="Seleccionar fecha de cierre"></flat-pickr>
             <b-input-group-append><b-input-group-text><a class="input-button" title="Seleccionar fecha de cierre" data-toggle><i class="fa fa-calendar"></i></a></b-input-group-text></b-input-group-append>
+            &nbsp;<i class="fa fa-question-circle fa-sm" v-b-tooltip.hover :title="'La fecha de cierre no puede ser anterior a la fecha de ĺa operación ('+shipping.initialDate+')'"></i>
           </div>
-          <span><small class="inv-feedback" v-show="errors.has('finalDate')">{{ errors.first('finalDate') }}</small></span>
+          <!-- <span><small class="inv-feedback" v-show="errors.has('finalDate')">{{ errors.first('finalDate') }}</small></span> -->
         </b-form-group>
       </b-col>
       <b-col sm="7" class="text-right">
@@ -37,7 +39,6 @@
           No existen costos cargados para la combinación de opciones seleccionadas.
         </p>
         <div v-else>
-
           <b-table ref="shippingCosts" hover outlined small fixed responsive="sm"
           :items="itemsProvider"
           :fields="fields"
@@ -89,7 +90,6 @@
                 <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend>
                 <b-form-input type="number" v-model="newRow.value"></b-form-input>
               </div>
-
             </template>
             <template slot="FOOT_actions" slot-scope="data">
               <b-button size="sm" variant="success" @click.prevent="add">
@@ -120,6 +120,14 @@ export default {
   },
   data () {
     return {
+      config: {
+        wrap: true,
+        dateFormat: 'Y-m-d',
+        locale: Spanish,
+        altFormat: 'j \\de F \\de Y',
+        altInput: true
+        // allowInput: true
+      },
       fields: [
         { key: 'name', label: 'Concepto' },
         // { key: 'taxDetails', label: 'Tasa IVA' },
@@ -260,7 +268,7 @@ export default {
       this.$refs.shippingCosts.refresh()
     },
     closed (val) {
-
+      this.shipping.status = Number(val)
     }
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
@@ -303,7 +311,7 @@ export default {
       this.items.push(newRow)
       this.$refs.shippingCosts.refresh()
     })
-
+    this.closed = (this.shipping.status === 1)
   },
   methods: {
     /* Genera los datos para la tabla, luego actualiza el precio final */
@@ -452,6 +460,9 @@ export default {
         retVal = false
       }
       return retVal
+    },
+    validate () {
+      return this.$validator.validateAll()
     }
   }
 }

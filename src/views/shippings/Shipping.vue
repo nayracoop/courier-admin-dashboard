@@ -23,14 +23,14 @@
           <b-card>
             <div slot="header">Origen</div>
             <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="originAddressUpdated" ref="addressOriginForm"></c-addresses>
-            <c-address-form v-else v-model="singleOriginAddress"></c-address-form>
+            <c-address-form v-else v-model="singleOriginAddress" ref="addressOriginForm">></c-address-form>
           </b-card>
         </b-col>
         <b-col md="6">
           <b-card>
             <div slot="header">Destino</div>
             <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="destinationAddressUpdated" ref="addressDestinationForm"></c-addresses>
-            <c-address-form v-else v-model="singleDestinationAddress"></c-address-form>
+            <c-address-form v-else v-model="singleDestinationAddress" ref="addressDestinationForm"></c-address-form>
           </b-card>
         </b-col>
       </b-row>
@@ -58,10 +58,10 @@
     </b-tab>
     <b-tab title="Costos y facturación">
       <!-- <c-shipping-cost-table :pricing="pricing"></c-shipping-cost-table> -->
-      <c-shipping-cost-table></c-shipping-cost-table>
+      <c-shipping-cost-table ref="costTable"></c-shipping-cost-table>
     </b-tab>
   </b-tabs>
-  <div slot="footer"><p class="card-text">Total: <b>USD {{ shipping.pricing.cost }}</b></p></div>
+  <div slot="footer"><p class="card-text">Total: <b v-if="shipping.pricing.cost !== undefined && shipping.pricing.cost !== null && shipping.pricing.cost !== ''">USD {{ shipping.pricing.cost }}</b><b v-else="">-</b></p></div>
     </b-card>
     <template>
       <b-row class="actions-bar">
@@ -158,7 +158,8 @@ export default {
     isEdit () {
       return !!this.shipping.objectId
     }
-    /* pricing () {
+    /*
+      pricing () {
       // let cost = 0
       let costDiscount = 0
       let saleDiscount = 0
@@ -223,7 +224,8 @@ export default {
         netPrice,
         insurance: this.declaredValueInsurance
       }
-    },*/
+    },
+    */
   },
   props: {
     clientId: { type: String, default: null },
@@ -300,7 +302,7 @@ export default {
       cleanObject: null,
       clientList: [],
       providerList: [],
-      addressUpdated: false,
+      addressUpdated: false
       // isEdit: false
     }
   },
@@ -323,7 +325,8 @@ export default {
       Promise.all([
         this.$refs.shippingDataForm.validate(),
         this.$refs.addressOriginForm.validate(),
-        this.$refs.addressDestinationForm.validate()
+        this.$refs.addressDestinationForm.validate(),
+        this.$refs.costTable.validate()
       ]).then(values => {
         let errors = values.find(el => el === false)
         if(errors === undefined) {
@@ -348,17 +351,20 @@ export default {
     },
     destinationAddressUpdated (addressData) {
       this.shipping.destination = addressData
-    }/*,
+    }
+    /*,
     updateShippingCost () {
       this.shipping.pricing.cost = this.shipping.pricing.grossPrice * (1 - this.shipping.pricing.costDiscount / 100) * (1 - this.shipping.pricing.saleDiscount / 100) + this.shipping.pricing.insurance
       this.shipping.pricing.cost = parseFloat(this.shipping.pricing.cost).toFixed(2)
-    }*/
+    }
+    */
   },
   watch: {
     shippingZone (val) {
       this.shipping.shippingZone = val
-    },
-    /*pricing (val) {
+    }
+    /*
+    pricing (val) {
       if (val !== null) {
         // this.shipping.pricing.cost = this.pricing.cost
         this.shipping.pricing.costDiscount = this.pricing.costDiscount
@@ -377,7 +383,8 @@ export default {
     declaredValueInsurance (val) {
       this.shipping.pricing.insurance = val
       this.updateShippingCost()
-    }*/
+    }
+    */
   },
   created () {
     this.shipping.shippingZone = this.shippingZone
