@@ -7,7 +7,9 @@ const getInitialState = () => {
   return {
     user: {
       username: '',
-      role: ''
+      email: '',
+      password: '',
+      role: {}
     },
     users: [],
     roles: [],
@@ -28,6 +30,7 @@ export const actions = {
       const users = await UsersService.getAll()
       commit(FETCH_USERS_END, users)
     } catch (error) {
+      console.error(error)
       throw new Error(error)
     }
   },
@@ -79,6 +82,7 @@ export const mutations = {
     state.userLoading = false
   },
   [SET_USER] (state, user) {
+    console.log(user)
     state.user = user.toJSON()
   },
   [RESET_STATE] () {

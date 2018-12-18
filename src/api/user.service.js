@@ -2,6 +2,7 @@ import Parse from 'parse'
 
 // Only one role admited
 const assignRole = async (user) => {
+  await user.fetch()
   const query = new Parse.Query(Parse.Role)
   query.equalTo('users', user)
   const roles = await query.find()
@@ -24,10 +25,10 @@ export default {
     return Parse.User.logOut()
   },
   async create (params) {
-    const User = Parse.User()
-    const user = new User()
-    const createdUser = await user.save(params)
-    await assignToRole(createdUser, params.role.id)
+    const {email, username, password} = params
+    const user = new Parse.User()
+    const createdUser = await user.save({email, username, password}, {useMasterKey: true})
+    await assignToRole(createdUser, params.role.objectId)
     return createdUser
   },
   async getAll () {
@@ -48,23 +49,25 @@ export default {
     return user
   },
   async update (id, params) {
-    let query = new Parse.Query(Parse.User)
+    const {email, username, password} = params
+    const query = new Parse.Query(Parse.User)
 
     try {
       const user = await query.get(id)
-      await assignToRole(user, params.role.id)
-      return user.save(params)
+      await assignToRole(user, params.role.objectId)
+      await user.save({email, username, password}, {useMasterKey: true})
+      return user
     } catch (error) {
       return error
     }
   },
   delete (id) {
-    let query = new Parse.Query(Parse.User)
+    const query = new Parse.Query(Parse.User)
 
     return query.get(id, {
       success: function (user) {
-        let d = new Date()
-        let n = d.toISOString()
+        const d = new Date()
+        const n = d.toISOString()
         user.set('deletedAt', n)
         return user.save()
       },

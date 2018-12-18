@@ -26,6 +26,13 @@
           <b-form-select id="role" :plain="true" :options="rolesList" v-model="user.role.objectId"></b-form-select>
         </b-form-group>
       </b-col>
+      <b-col sm="6">
+        <b-form-group>
+          <label for="name">Password</label>
+          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Password para el usuario"></i>
+          <b-form-input :class="{ danger: errors.has('password') }" v-validate="'required'" name="password" data-vv-as="nombre" type="password" id="password" v-model="user.password" placeholder="Ej: password123"></b-form-input>
+        </b-form-group>
+      </b-col>
     </b-form-row>
   </b-form>
 </template>
