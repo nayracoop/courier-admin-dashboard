@@ -8,7 +8,8 @@ const getInitialState = () => {
   return {
     user: {
       username: '',
-      role: ''
+      email: '',
+      password: ''
     },
     users: [],
     roles: [],

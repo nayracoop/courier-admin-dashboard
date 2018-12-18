@@ -1,12 +1,43 @@
 <template>
   <section>
     <b-row>
+      <b-col sm="5">
+        <b-form-group>
+          <b-form-checkbox v-model="closed" id="closed">Cerrado</b-form-checkbox>
+        </b-form-group>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col sm="5" class="---form-inline">
+        <b-form-group>
+          <div class="input-group datepicker-group">
+            <b-input-group-prepend><b-input-group-text>Fecha de cierre</b-input-group-text></b-input-group-prepend>
+            <flat-pickr
+            v-validate="'date_format:YYYY-MM-DD|after:'+ shipping.initialDate +',inclusion:true'"
+            v-model="shipping.finalDate"
+            data-vv-as="fecha de cierre"
+            name="finalDate"
+            id="finalDate"
+            :class="'form-control ' + { 'is-invalid': errors.has('finalDate') }"
+            :config="config"
+            placeholder="Seleccionar fecha de cierre"></flat-pickr>
+            <b-input-group-append><b-input-group-text><a class="input-button" title="Seleccionar fecha de cierre" data-toggle><i class="fa fa-calendar"></i></a></b-input-group-text></b-input-group-append>
+          </div>
+          <span><small class="inv-feedback" v-show="errors.has('finalDate')">{{ errors.first('finalDate') }}</small></span>
+        </b-form-group>
+      </b-col>
+      <b-col sm="7" class="text-right">
+        <!-- Pendiente de facturación<br /> -->
+        <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
+      </b-col>
+    </b-row>
+    <b-row>
       <b-col sm="12">
         <p v-if="pricing === null">
           No existen costos cargados para la combinación de opciones seleccionadas.
         </p>
         <div v-else>
-          <b-alert show variant="warning" v-if="updated" dismissible>Se realizaron cambios en las opciones del envío. Algunos valores pueden estar desactualizados. Puede actualizarlos utilizando la opción: <b><i class="fa fa-undo"></i> Auto</b> </b-alert>
+
           <b-table ref="shippingCosts" hover outlined small fixed responsive="sm"
           :items="itemsProvider"
           :fields="fields"
@@ -69,32 +100,7 @@
               <strong>USD {{ Number(parseFloat(Number(cost) + Number(newRow.value)).toFixed(2)) }}</strong>
             </template>
           </b-table>
-          <b-row>
-            <b-col sm="6" class="form-inline">
-              <b-form-group>
-                <b-form-checkbox id="closed">Cerrado</b-form-checkbox>
-              </b-form-group>
-              <b-form-group>
-              <label for="finalDate">Fecha de cierre</label>
-              <div class="input-group datepicker-group">
-              <flat-pickr
-              v-validate="'date_format:YYYY-MM-DD|after:'+ shipping.initialDate +',inclusion:true'"
-              v-model="shipping.finalDate"
-              data-vv-as="fecha de cierre"
-              name="finalDate"
-              id="finalDate"
-              :class="'form-control ' + { 'is-invalid': errors.has('finalDate') }"
-              :config="config"
-              placeholder="Seleccionar fecha de cierre"></flat-pickr>
-              <b-input-group-append><b-input-group-text><a class="input-button" title="Seleccionar fecha de cierre" data-toggle><i class="fa fa-calendar"></i></a></b-input-group-text></b-input-group-append>
-            </div>
-            <span><small class="inv-feedback" v-show="errors.has('finalDate')">{{ errors.first('finalDate') }}</small></span>
-          </b-form-group>
-            </b-col>
-            <b-col sm="6" class="text-right">
-              <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
-            </b-col>
-          </b-row>
+          <b-alert show variant="warning" v-if="updated" dismissible>Se realizaron cambios en las opciones del envío. Algunos valores pueden estar desactualizados. Puede actualizarlos utilizando la opción: <b><i class="fa fa-undo"></i> Auto</b> </b-alert>
         </div>
       </b-col>
     </b-row>
@@ -104,8 +110,14 @@
 import { mapGetters, mapMutations } from 'vuex'
 import { UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
 
+import flatPickr from 'vue-flatpickr-component'
+import { Spanish } from 'flatpickr/dist/l10n/es'
+
 export default {
   name: 'c-cost-table',
+  components: {
+    flatPickr
+  },
   data () {
     return {
       fields: [
@@ -143,6 +155,7 @@ export default {
         value: null
       },
       inEdit: false,
+      closed: false,
 
       inProgress: false,
       perPage: 10,
@@ -245,6 +258,9 @@ export default {
       }
       this.updateShippingPricing(newPricing)
       this.$refs.shippingCosts.refresh()
+    },
+    closed (val) {
+
     }
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde

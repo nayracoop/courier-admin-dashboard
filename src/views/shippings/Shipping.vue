@@ -56,15 +56,12 @@
         </b-col>
       </b-row>
     </b-tab>
-    <b-tab title="Costos">
+    <b-tab title="Costos y facturación">
       <!-- <c-shipping-cost-table :pricing="pricing"></c-shipping-cost-table> -->
       <c-shipping-cost-table></c-shipping-cost-table>
     </b-tab>
-    <b-tab title="Cierre y facturación" v-if="isEdit">
-
-    </b-tab>
-      </b-tabs>
-      <div slot="footer"><p class="card-text">Total: <b>USD {{ shipping.pricing.cost }}</b></p></div>
+  </b-tabs>
+  <div slot="footer"><p class="card-text">Total: <b>USD {{ shipping.pricing.cost }}</b></p></div>
     </b-card>
     <template>
       <b-row class="actions-bar">
