@@ -23,9 +23,7 @@
         <b-form-group>
           <label for="name">Rol</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Rol del usuario"></i>
-          <b-form-select id="role" :plain="true" :options="rolesList" v-model="user.role.id"></b-form-select>
-          <!-- <b-form-input :class="{ danger: errors.has('role') }" v-validate="'required'" name="role" data-vv-as="nombre" type="text" id="role" v-model="user.role.name" placeholder="Ej: Administrador"></b-form-input>
-          <span><small class="inv-feedback" v-show="errors.has('role')">{{ errors.first('role') }}</small></span> -->
+          <b-form-select id="role" :plain="true" :options="rolesList" v-model="user.role.objectId"></b-form-select>
         </b-form-group>
       </b-col>
     </b-form-row>
@@ -59,7 +57,7 @@ export default {
     fetchRoles () {
       this.$store.dispatch(FETCH_ROLES).then(() => {
         this.rolesList = this.roles.map(role => {
-          return {value: role.id, text: role.name}
+          return {value: role.objectId, text: role.name}
         })
       })
     }

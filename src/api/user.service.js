@@ -1,5 +1,21 @@
 import Parse from 'parse'
 
+// Only one role admited
+const assignRole = async (user) => {
+  const query = new Parse.Query(Parse.Role)
+  query.equalTo('users', user)
+  const roles = await query.find()
+  user.set('role', roles ? roles[0].toJSON() : null)
+}
+
+const assignToRole = async (user, roleId) => {
+  const query = new Parse.Query(Parse.Role)
+  query.get(roleId)
+  const role = await query.first()
+  role.getUsers().add(user)
+  role.save({}, { useMasterKey: true })
+}
+
 export default {
   login (credentials) {
     return Parse.User.logIn(credentials.username, credentials.password)
@@ -7,36 +23,40 @@ export default {
   logout () {
     return Parse.User.logOut()
   },
-  create (params) {
-    let User = Parse.User()
-    let user = new User()
-
-    return user.save(params)
+  async create (params) {
+    const User = Parse.User()
+    const user = new User()
+    const createdUser = await user.save(params)
+    await assignToRole(createdUser, params.role.id)
+    return createdUser
   },
-  getAll () {
-    let query = new Parse.Query(Parse.User)
+  async getAll () {
+    const query = new Parse.Query(Parse.User)
     query.ascending('name')
     query.doesNotExist('deletedAt')
-
-    return query.find()
+    const users = await query.find()
+    for (const user of users) {
+      await assignRole(user)
+    }
+    return users
   },
-  get (id) {
-    let query = new Parse.Query(Parse.User)
+  async get (id) {
+    const query = new Parse.Query(Parse.User)
     query.doesNotExist('deletedAt')
-
-    return query.get(id)
+    const user = await query.get(id)
+    await assignRole(user)
+    return user
   },
-  update (id, params) {
+  async update (id, params) {
     let query = new Parse.Query(Parse.User)
 
-    return query.get(id, {
-      success: function (user) {
-        return user.save(params)
-      },
-      error: function (user, error) {
-        return error
-      }
-    })
+    try {
+      const user = await query.get(id)
+      await assignToRole(user, params.role.id)
+      return user.save(params)
+    } catch (error) {
+      return error
+    }
   },
   delete (id) {
     let query = new Parse.Query(Parse.User)
