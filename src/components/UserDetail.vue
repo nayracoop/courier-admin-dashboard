@@ -1,35 +1,40 @@
 <template>
-  <b-form v-on:submit.prevent>
-    <b-form-row>
+  <div>
+    <b-row>
       <b-col sm="6">
         <b-form-group>
-          <label for="name">Nombre</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre del usuario"></i>
+          <label for="name">Nombre de usuario</label>
+          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Nombre del usuario"></i> -->
           <b-form-input :class="{ danger: errors.has('username') }" v-validate="'required'" name="username" data-vv-as="nombre" type="text" id="username" v-model="user.username" placeholder="Ej: juan"></b-form-input>
           <span><small class="inv-feedback" v-show="errors.has('username')">{{ errors.first('username') }}</small></span>
         </b-form-group>
       </b-col>
       <b-col sm="6">
         <b-form-group>
+          <label for="name">Rol</label>
+          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Rol del usuario"></i> -->
+          <b-form-select id="role" :plain="true" :options="rolesList" v-model="user.role.objectId"></b-form-select>
+        </b-form-group>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col sm="6">
+        <b-form-group>
           <label for="name">Email</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Email del usuario"></i>
-          <b-form-input :class="{ danger: errors.has('email') }" v-validate="'required'" name="email" data-vv-as="nombre" type="text" id="email" v-model="user.email" placeholder="Ej: juan@email.com"></b-form-input>
+          <!-- <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Email del usuario"></i> -->
+          <b-form-input :class="{ danger: errors.has('email') }" v-validate="'required'" name="email" data-vv-as="email" type="text" id="email" v-model="user.email" placeholder="Ej: juan@email.com"></b-form-input>
           <span><small class="inv-feedback" v-show="errors.has('email')">{{ errors.first('email') }}</small></span>
         </b-form-group>
       </b-col>
-    </b-form-row>
-    <b-form-row>
       <b-col sm="6">
         <b-form-group>
-          <label for="name">Rol</label>
-          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Rol del usuario"></i>
-          <b-form-select id="role" :plain="true" :options="rolesList" v-model="user.role.id"></b-form-select>
-          <!-- <b-form-input :class="{ danger: errors.has('role') }" v-validate="'required'" name="role" data-vv-as="nombre" type="text" id="role" v-model="user.role.name" placeholder="Ej: Administrador"></b-form-input>
-          <span><small class="inv-feedback" v-show="errors.has('role')">{{ errors.first('role') }}</small></span> -->
+          <label for="name">Contraseña</label>
+          <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Password para el usuario"></i>
+          <b-form-input :class="{ danger: errors.has('password') }" v-validate="'required'" name="password" data-vv-as="password" type="password" id="password" v-model="user.password" placeholder="Ej: password123"></b-form-input>
         </b-form-group>
       </b-col>
-    </b-form-row>
-  </b-form>
+    </b-row>
+  </div>
 </template>
 <script>
 import { FETCH_ROLES } from '@/store/types/actions'
@@ -59,7 +64,7 @@ export default {
     fetchRoles () {
       this.$store.dispatch(FETCH_ROLES).then(() => {
         this.rolesList = this.roles.map(role => {
-          return {value: role.id, text: role.name}
+          return {value: role.objectId, text: role.name}
         })
       })
     }
