@@ -20,7 +20,7 @@ export const crudMixin = {
           $this.$toasted.global.success_toast({ message: $this.isEdit ? 'Registro editado con éxito' : 'Registro creado con éxito' })
           $this.inProgress = false
         }, error => {
-          console.error(error)
+          console.error('crudMixin', error)
           $this.$toasted.global.error_toast({ message: error })
           $this.inProgress = false
         })

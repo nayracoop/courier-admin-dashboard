@@ -58,7 +58,7 @@ export default {
       await user.save({email, username, password}, {useMasterKey: true})
       return user
     } catch (error) {
-      return error
+      throw new Error(error)
     }
   },
   delete (id) {
@@ -72,7 +72,7 @@ export default {
         return user.save({}, { useMasterKey: true })
       },
       error: function (user, error) {
-        return error
+        throw new Error(error)
       }
     })
   }

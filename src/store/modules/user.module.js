@@ -51,6 +51,10 @@ export const actions = {
         commit(SET_USER, data)
         return data
       })
+      .catch((error) => {
+        console.error('user.module', error)
+        throw new Error(error)
+      })
   },
   [USER_DELETE] (context, id) {
     return UsersService.delete(id)
@@ -82,7 +86,6 @@ export const mutations = {
     state.userLoading = false
   },
   [SET_USER] (state, user) {
-    console.log(user)
     state.user = user.toJSON()
   },
   [RESET_STATE] () {
