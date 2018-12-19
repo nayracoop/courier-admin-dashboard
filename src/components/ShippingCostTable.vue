@@ -107,7 +107,7 @@
   </section>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import { UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
 
 import flatPickr from 'vue-flatpickr-component'
@@ -274,7 +274,8 @@ export default {
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
   async created () {
     this.items = [ {
-      name: 'Envío', //'Flete: ' + this.provider.businessName,
+      // 'Flete: ' + this.provider.businessName,
+      name: 'Envío',
       key: 'grossPrice'
     },
     {
@@ -363,12 +364,12 @@ export default {
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en "Guardar cambios" para registrar los cambios' })
       this.$refs.shippingCosts.refresh()
 
-      this.additional.push( {
+      this.additional.push({
         'productId': product.productoid,
         'name': product.nombre,
         'code': product.codigo,
         'cost': newRow.value
-      } )
+      })
 
       let newPricing = Object.assign({ }, this.shipping.pricing)
       newPricing.additional = this.additional
