@@ -1,22 +1,5 @@
 import Parse from 'parse'
 
-// Only one role admited
-const assignRole = async (user) => {
-  await user.fetch()
-  const query = new Parse.Query(Parse.Role)
-  query.equalTo('users', user)
-  const roles = await query.find()
-  user.set('role', roles ? roles[0].toJSON() : null)
-}
-
-const assignToRole = async (user, roleId) => {
-  const query = new Parse.Query(Parse.Role)
-  query.get(roleId)
-  const role = await query.first()
-  role.getUsers().add(user)
-  role.save()
-}
-
 export default {
   login (credentials) {
     return Parse.User.logIn(credentials.username, credentials.password)
@@ -24,44 +7,23 @@ export default {
   logout () {
     return Parse.User.logOut()
   },
-  async create (params) {
-    const {email, username, password} = params
-    const user = new Parse.User()
-    const createdUser = await user.save({email, username, password})
-    await assignToRole(createdUser, params.role.objectId)
+  async create (user) {
+    const {email, username, password, role} = user
+    const createdUser = await Parse.Cloud.run('CreateUser', {email, username, password, role})
     return createdUser
   },
   async getAll () {
-    const query = new Parse.Query(Parse.User)
-    query.ascending('name')
-    query.doesNotExist('deletedAt')
-    query.include('email')
-    const users = await query.find()
-    for (const user of users) {
-      await assignRole(user)
-    }
+    const users = await Parse.Cloud.run('GetAllUsers')
     return users
   },
   async get (id) {
-    const query = new Parse.Query(Parse.User)
-    query.doesNotExist('deletedAt')
-    query.include('email')
-    const user = await query.get(id)
-    await assignRole(user)
+    const user = await Parse.Cloud.run('GetUserById', {id})
     return user
   },
-  async update (id, params) {
-    const {email, username, password} = params
-    const query = new Parse.Query(Parse.User)
-
-    try {
-      const user = await query.get(id)
-      await assignToRole(user, params.role.objectId)
-      await user.save({email, username, password})
-      return user
-    } catch (error) {
-      throw new Error(error)
-    }
+  async update (user) {
+    const {objectId: id, email, username, password, role} = user
+    const updatedUser = await Parse.Cloud.run('UpdateUser', {id, email, username, password, role})
+    return updatedUser
   },
   delete (id) {
     const query = new Parse.Query(Parse.User)

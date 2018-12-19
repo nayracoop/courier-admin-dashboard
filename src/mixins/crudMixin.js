@@ -10,11 +10,12 @@ export const crudMixin = {
       $this.$store
         .dispatch(action)
         .then(savedObject => {
-          let jsonObject = savedObject.toJSON()
+          const jsonObject = savedObject.constructor === Object ? savedObject : savedObject.toJSON()
+          const id = jsonObject.id ? jsonObject.id : jsonObject.objectId
           this.cleanObject = this._.cloneDeep(jsonObject, true)
           $this.$router.push({
             name: redirectTo,
-            params: { id: savedObject.id }
+            params: { id }
           })
           $this.$eventHub.$emit('saveSuccess', savedObject)
           $this.$toasted.global.success_toast({ message: $this.isEdit ? 'Registro editado con éxito' : 'Registro creado con éxito' })
