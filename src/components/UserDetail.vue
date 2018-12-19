@@ -30,7 +30,7 @@
         <b-form-group>
           <label for="name">Contraseña</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Password para el usuario"></i>
-          <b-form-input :class="{ danger: errors.has('password') }" v-validate="'required'" name="password" data-vv-as="password" type="password" id="password" v-model="user.password" placeholder="Ej: password123"></b-form-input>
+          <b-form-input :class="{ danger: errors.has('password') }" name="password" data-vv-as="password" type="password" id="password" v-model="user.password" placeholder="Ej: password123"></b-form-input>
         </b-form-group>
       </b-col>
     </b-row>
