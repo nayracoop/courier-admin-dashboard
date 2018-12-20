@@ -32,3 +32,6 @@ export const UPDATE_USER_IN_LIST = 'updateUserInList'
 
 /* Roles mutations */
 export const FETCH_ROLES_END = 'setRoles'
+
+/* Products mutations */
+export const FETCH_PRODUCTS_END = 'setProducts'

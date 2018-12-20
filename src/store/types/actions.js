@@ -44,3 +44,6 @@ export const USER_RESET_STATE = 'resetUserState'
 
 /* Roles */
 export const FETCH_ROLES = 'fetchRoles'
+
+/* Products */
+export const FETCH_PRODUCTS = 'fetchProducts'

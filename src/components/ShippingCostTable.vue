@@ -107,7 +107,8 @@
   </section>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
+import { FETCH_PRODUCTS, FETCH_SHIPPING } from '@/store/types/actions'
 import { UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
 
 import flatPickr from 'vue-flatpickr-component'
@@ -142,7 +143,7 @@ export default {
       items: [ ],
       updated: false,
       /* Esto vendría de Xubio */
-      products: [
+      productsMock: [
         {
           'productoid': 0,
           'nombre': 'Moto',
@@ -174,7 +175,7 @@ export default {
   computed: {
     // agregar a los map getters la lista de proveedores y el cliente
     // para pivotear entre una y otra entidad
-    ...mapGetters(['provider', 'client', 'shipping']),
+    ...mapGetters(['provider', 'client', 'shipping', 'products']),
     declaredValueInsurance () {
       let insurance = (this.provider.externalId !== null) ? this.shipping.package.declaredValue * (this.provider.insurance / 100) : 0
       return insurance
@@ -298,22 +299,30 @@ export default {
       name: 'Seguro',
       key: 'insurance'
     } ]
-    this.products.map(el => {
-      this.productList.push({ value: el.productoid, text: el.nombre })
-    })
 
-    this.additional = this.shipping.pricing.additional.slice()
-    this.additional.forEach(el => {
-      let newRow = {}
-      newRow.name = el.name
-      newRow.value = parseFloat(el.cost)
-      newRow.productId = el.productId
-      this.items.push(newRow)
-      this.$refs.shippingCosts.refresh()
-    })
+    if(this.shipping.pricing.additional !== undefined) {
+      this.additional = this.shipping.pricing.additional.slice()
+      this.additional.forEach(el => {
+        let newRow = {}
+        newRow.name = el.name
+        newRow.value = parseFloat(el.cost)
+        newRow.productId = el.productId
+        this.items.push(newRow)
+        this.$refs.shippingCosts.refresh()
+      })
+    }
     this.closed = (this.shipping.status === 1)
+
+    this.fetchProducts().then(() => {
+      this.products.map(el => {
+        this.productList.push({ value: el.externalId, text: el.name })
+      })
+    })
   },
   methods: {
+    aver () {
+      console.log(this.products)
+    },
     /* Genera los datos para la tabla, luego actualiza el precio final */
     itemsProvider (ctx) {
       if (!this.inEdit) {
@@ -352,9 +361,9 @@ export default {
     },
     add (el) {
       let newRow = Object.assign({ }, this.newRow)
-      let product = this.products.find(el => el.productoid === newRow.productId)
+      let product = this.products.find(el => el.externalId === newRow.productId)
 
-      newRow.name = product.nombre
+      newRow.name = product.name
       newRow.value = parseFloat(newRow.value)
       this.newRow.productId = null
       this.newRow.value = null
@@ -364,9 +373,9 @@ export default {
       this.$refs.shippingCosts.refresh()
 
       this.additional.push( {
-        'productId': product.productoid,
-        'name': product.nombre,
-        'code': product.codigo,
+        'productId': product.externalId,
+        'name': product.name,
+        'code': product.code,
         'cost': newRow.value
       } )
 
@@ -463,6 +472,9 @@ export default {
     },
     validate () {
       return this.$validator.validateAll()
+    },
+    fetchProducts () {
+      return this.$store.dispatch(FETCH_PRODUCTS)
     }
   }
 }
