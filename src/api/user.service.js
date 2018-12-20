@@ -1,22 +1,5 @@
 import Parse from 'parse'
 
-// Only one role admited
-const assignRole = async (user) => {
-  await user.fetch({useMasterKey: true})
-  const query = new Parse.Query(Parse.Role)
-  query.equalTo('users', user)
-  const roles = await query.find()
-  user.set('role', roles ? roles[0].toJSON() : null)
-}
-
-const assignToRole = async (user, roleId) => {
-  const query = new Parse.Query(Parse.Role)
-  query.get(roleId)
-  const role = await query.first()
-  role.getUsers().add(user)
-  role.save({}, { useMasterKey: true })
-}
-
 export default {
   login (credentials) {
     return Parse.User.logIn(credentials.username, credentials.password)
@@ -24,42 +7,23 @@ export default {
   logout () {
     return Parse.User.logOut()
   },
-  async create (params) {
-    const {email, username, password} = params
-    const user = new Parse.User()
-    const createdUser = await user.save({email, username, password}, {useMasterKey: true})
-    await assignToRole(createdUser, params.role.objectId)
+  async create (user) {
+    const {email, username, password, role} = user
+    const createdUser = await Parse.Cloud.run('CreateUser', {email, username, password, role})
     return createdUser
   },
   async getAll () {
-    const query = new Parse.Query(Parse.User)
-    query.ascending('name')
-    query.doesNotExist('deletedAt')
-    const users = await query.find()
-    for (const user of users) {
-      await assignRole(user)
-    }
+    const users = await Parse.Cloud.run('GetAllUsers')
     return users
   },
   async get (id) {
-    const query = new Parse.Query(Parse.User)
-    query.doesNotExist('deletedAt')
-    const user = await query.get(id)
-    await assignRole(user)
+    const user = await Parse.Cloud.run('GetUserById', {id})
     return user
   },
-  async update (id, params) {
-    const {email, username, password} = params
-    const query = new Parse.Query(Parse.User)
-
-    try {
-      const user = await query.get(id)
-      await assignToRole(user, params.role.objectId)
-      await user.save({email, username, password}, {useMasterKey: true})
-      return user
-    } catch (error) {
-      return error
-    }
+  async update (user) {
+    const {objectId: id, email, username, password, role} = user
+    const updatedUser = await Parse.Cloud.run('UpdateUser', {id, email, username, password, role})
+    return updatedUser
   },
   delete (id) {
     const query = new Parse.Query(Parse.User)
@@ -69,10 +33,10 @@ export default {
         const d = new Date()
         const n = d.toISOString()
         user.set('deletedAt', n)
-        return user.save({}, { useMasterKey: true })
+        return user.save()
       },
       error: function (user, error) {
-        return error
+        throw new Error(error)
       }
     })
   }

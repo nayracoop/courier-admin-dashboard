@@ -34,7 +34,6 @@ ToastHelper.init()
 
 Parse.initialize(process.env.PARSE_APP_ID, process.env.PARSE_JAVASCRIPT_KEY)
 Parse.serverURL = process.env.PARSE_URI
-Parse.masterKey = process.env.PARSE_MASTER_KEY
 
 Vue.filter('date', DateFilter)
 Vue.filter('error', ErrorFilter)

@@ -29,28 +29,39 @@ export const actions = {
     try {
       const users = await UsersService.getAll()
       commit(FETCH_USERS_END, users)
+      return users
     } catch (error) {
       console.error(error)
+      commit(FETCH_USERS_END, [{}])
       throw new Error(error)
     }
   },
-  [FETCH_USER] (context, userId, prevUser) {
+  async [FETCH_USER] ({ commit, state }, userId, prevUser) {
+    commit(FETCH_START)
     // avoid extronuous network call if object exists
     if (prevUser !== undefined) {
-      return context.commit(SET_USER, prevUser)
+      return commit(SET_USER, prevUser)
     }
-    return UsersService.get(userId)
-      .then(data => {
-        context.commit(SET_USER, data)
-        return data
-      })
+    try {
+      const user = await UsersService.get(userId)
+      commit(SET_USER, user)
+      return user
+    } catch (error) {
+      console.error(error)
+      commit(SET_USER, {})
+      throw new Error(error)
+    }
   },
-  [USER_EDIT] ({ commit, state }) {
-    return UsersService.update(state.user.objectId, state.user)
-      .then(data => {
-        commit(SET_USER, data)
-        return data
-      })
+  async [USER_EDIT] ({ commit, state }) {
+    try {
+      const user = await UsersService.update(state.user)
+      commit(SET_USER, user)
+      return user
+    } catch (error) {
+      console.error(error)
+      commit(SET_USER, {})
+      throw new Error(error)
+    }
   },
   [USER_DELETE] (context, id) {
     return UsersService.delete(id)
@@ -76,14 +87,17 @@ export const mutations = {
   },
   [FETCH_USERS_END] (state, users) {
     state.users = users.map(function (e) {
+      if (e.constructor === Object) {
+        return e
+      }
       return e.toJSON()
     })
     state.usersCount = users.length
     state.userLoading = false
   },
   [SET_USER] (state, user) {
-    console.log(user)
-    state.user = user.toJSON()
+    state.user = user.constructor === Object ? user : user.toJSON()
+    state.userLoading = true
   },
   [RESET_STATE] () {
     const initialState = getInitialState()
