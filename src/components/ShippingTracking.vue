@@ -25,7 +25,7 @@
     <b-col sm="4">
       <b-form-group>
         <label for="pdfAttachment">Adjuntar PDF</label>
-        <b-form-file v-model="file" :state="Boolean(file)" placeholder="Elija un archivo..." id="pdfAttachment"></b-form-file>
+        <b-form-file v-model="file" placeholder="Elija un archivo..." id="pdfAttachment"></b-form-file>
         <!-- <div class="mt-2">Archivo seleccionado: {{file && file.name}}</div> -->
       </b-form-group>
     </b-col>
