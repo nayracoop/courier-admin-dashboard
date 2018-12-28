@@ -6,5 +6,5 @@ module.exports = {
   PARSE_APP_ID: '"COURIER_ADMIN"',
   PARSE_JAVASCRIPT_KEY: '"***REMOVED***"',
   // BASE_URL: '"/courieradmin//"'
-  BASE_URL: '""'
+  BASE_URL: '"/"'
 }
