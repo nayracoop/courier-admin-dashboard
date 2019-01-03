@@ -43,7 +43,8 @@
                         bodyMessage="Elija un archivo para importar la lista de descuentos. Únicamente se permiten archivos .csv"
                         cancellationMessage="Cancelar"
                         cancellationMethod="cancelImport"
-                        @cancelImport="hideImportModal()" />
+                        @cancelImport="hideImportModal()"
+                        target="client" />
                     </b-modal>
                   </b-col>
                   <b-col sm="4">

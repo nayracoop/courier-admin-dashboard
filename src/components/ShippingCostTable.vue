@@ -108,7 +108,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_PRODUCTS, FETCH_SHIPPING } from '@/store/types/actions'
+import { FETCH_PRODUCTS } from '@/store/types/actions'
 import { UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
 
 import flatPickr from 'vue-flatpickr-component'
@@ -301,7 +301,7 @@ export default {
       key: 'insurance'
     } ]
 
-    if(this.shipping.pricing.additional !== undefined) {
+    if (this.shipping.pricing.additional !== undefined) {
       this.additional = this.shipping.pricing.additional.slice()
       this.additional.forEach(el => {
         let newRow = {}
@@ -373,7 +373,7 @@ export default {
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en "Guardar cambios" para registrar los cambios' })
       this.$refs.shippingCosts.refresh()
 
-      this.additional.push( {
+      this.additional.push({
         'productId': product.externalId,
         'name': product.name,
         'code': product.code,
