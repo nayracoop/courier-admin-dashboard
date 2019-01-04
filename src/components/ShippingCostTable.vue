@@ -37,6 +37,7 @@
       <b-col sm="12">
         <p v-if="pricing === null">
           No existen costos cargados para la combinación de opciones seleccionadas.
+          {{items}}
         </p>
         <div v-else>
           <b-table ref="shippingCosts" hover outlined small fixed responsive="sm"
@@ -266,7 +267,7 @@ export default {
         if (item !== null && item !== undefined) this.updated = true
       }
       this.updateShippingPricing(newPricing)
-      this.$refs.shippingCosts.refresh()
+      if (this.$refs.shippingCosts !== undefined) this.$refs.shippingCosts.refresh()
     },
     closed (val) {
       this.shipping.status = Number(val)
@@ -309,7 +310,7 @@ export default {
         newRow.value = parseFloat(el.cost)
         newRow.productId = el.productId
         this.items.push(newRow)
-        this.$refs.shippingCosts.refresh()
+        if (this.$refs.shippingCosts !== undefined) this.$refs.shippingCosts.refresh()
       })
     }
     this.closed = (this.shipping.status === 1)
@@ -321,9 +322,6 @@ export default {
     })
   },
   methods: {
-    aver () {
-      console.log(this.products)
-    },
     /* Genera los datos para la tabla, luego actualiza el precio final */
     itemsProvider (ctx) {
       if (!this.inEdit) {

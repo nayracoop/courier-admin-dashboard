@@ -91,6 +91,7 @@ export default {
       let costsTableIndex = -1
       let costIndex = -1
       let price = -1
+      let discount = -1
       let newRow = null
       for (let i = 0, len = this.parsedFile.data.length; i < len; i++) {
         data = this.parsedFile.data[i]
@@ -101,13 +102,14 @@ export default {
 
         for (let j = 1; j < 7; j++) {
           price = data['Zona ' + j]
+          discount = data['Descuento Zona ' + j]
           newRow = {
             weight: weight,
             grossPrice: price,
-            saleDiscount: 0,
-            netPrice: price,
-            costDiscount: 0,
-            cost: price
+            costDiscount: discount
+            // saleDiscount: 0,
+            // netPrice: price,
+            // cost: price
           }
           // por el formato del archivo tengo que buscar el índice
           // para cada zona y si no exisite, insertar el registro
