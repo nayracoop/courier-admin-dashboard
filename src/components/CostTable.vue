@@ -38,9 +38,16 @@
         </b-form-group>
       <!-- </b-col> -->
     <!-- </b-form-row> -->
+    <!-- <b-row>
+      <b-col sm="8">
+        <b-form-group>
+          <b-form-checkbox v-model="showProfit">Ocultar descuentos de costo y ganancia</b-form-checkbox>
+        </b-form-group>
+      </b-col>
+    </b-row> -->
     <b-row>
       <b-col sm="12">
-        <b-table hover outlined small fixed responsive="sm"
+        <b-table ref="table" hover outlined small fixed responsive="sm"
         :items="items"
         :fields="fields"
         :foot-clone="(hasWeight || providerCostsTableIndex === -1) && variant === 'provider'"
@@ -68,6 +75,9 @@
           <template slot="netPrice" slot-scope="data">
             <b-form-input readonly type="number" placeholder="Neto" :value="data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)"></b-form-input>
           </template>
+          <!-- <template slot="profit" slot-scope="data">
+            <b-form-input readonly type="number" placeholder="Ganancia" :value="(data.item.grossPrice - (data.item.grossPrice * data.item.saleDiscount / 100)) - (data.item.grossPrice - (data.item.grossPrice * data.item.costDiscount / 100))"></b-form-input>
+          </template> -->
           <template slot="actions" slot-scope="data">
             <template v-if="data.item.edit">
               <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item)">
@@ -140,7 +150,8 @@ export default {
         { key: 'costDiscount', label: '% Descuento Costo', class: 'cost-discount' },
         { key: 'cost', label: 'Costo' },
         { key: 'saleDiscount', label: '% Descuento Venta', class: `cost-discount${this.variant === 'provider' ? ' d-none' : ''}` },
-        { key: 'netPrice', label: 'Neto', class: (this.variant === 'provider' ? ' d-none' : '') },
+        { key: 'netPrice', label: 'Neto', class: (this.variant === 'provider') ? ' d-none' : '' },
+        // { key: 'profit', label: 'Ganancia', class: `cost-discount${this.variant === 'provider' ? ' d-none' : ''}` },
         { key: 'actions', label: 'Acciones', class: 'cost-actions' }
       ],
       // el cliente también va a necesitar la lista de proveedores
@@ -160,6 +171,7 @@ export default {
         saleDiscount: null // cliente
       },
       inProgress: false,
+      // showProfit: true,
       // inEdit tiene que compartirse con el parent
       // para el botón guardar
       inEdit: false,
@@ -231,7 +243,15 @@ export default {
     //
     // })
   },
+  // watch: {
+  //   showProfit () {
+  //     this.$refs.table.refresh()
+  //   }
+  // },
   methods: {
+    refresh () {
+      this.resetFilter()
+    },
     resetFilter () {
       // lo que hace es buscar dentro de las tablas de costos,
       // los registros que corresponden a los valores seleccionados

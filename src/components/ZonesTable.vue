@@ -193,6 +193,9 @@ export default {
     this.resetFilter()
   },
   methods: {
+    refresh () {
+      this.resetFilter()
+    },
     resetFilter () {
       let providerImportZones = []
       let providerExportZones = []

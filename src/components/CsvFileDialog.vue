@@ -13,6 +13,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { countries, zipCodes } from '@/store/const'
 import Papa from 'papaparse'
 
 export default {
@@ -66,6 +67,9 @@ export default {
         case 'client':
           this.parseClientDiscounts()
           break
+        case 'shippingZones':
+          this.parseShippingZones()
+          break
         default:
           this.count = 0
           this.parsedFile = null
@@ -79,6 +83,83 @@ export default {
       this.parsedFile = null
       // this.$refs.fileDialog.reset()
       this.$refs.fileDialog.reset()
+      this.$emit(this.cancellationMethod)
+    },
+    addShippingZone (placeCode, zone, shippingType) {
+      let zonesTableIndex = -1
+      let placeIndex = -1
+      let isDomestic = shippingType === 3
+      let newRow = isDomestic ? {
+        id: placeCode,
+        zone: zone
+      } : {
+        numericCode: placeCode,
+        zone: zone
+      }
+
+      // por el formato del archivo tengo que buscar el índice
+      // para cada tipo de envío y si no exisite, insertar el registro
+      // completo
+      if (this.provider.shippingZones) {
+        this.provider.shippingZones.filter((zone, k) => {
+          if (zone.shippingType === shippingType) {
+            zonesTableIndex = k
+            return true
+          }
+        })
+      }
+
+      if (zonesTableIndex === -1) {
+        this.provider.shippingZones.push(isDomestic ? {
+          shippingType: shippingType,
+          zipCodes: []
+        } : {
+          shippingType: shippingType,
+          countries: []
+        })
+      } else {
+        this.provider.shippingZones[zonesTableIndex][isDomestic ? 'zipCodes' : 'countries'].filter(
+          (place, l) => {
+            if ((!isDomestic && place.numericCode === placeCode) || (isDomestic && place.id === placeCode)) {
+              placeIndex = l
+              return true
+            }
+          })
+
+        if (placeIndex === -1) {
+          this.provider.shippingZones[zonesTableIndex][isDomestic ? 'zipCodes' : 'countries'].push(newRow)
+        } else {
+          this.provider.shippingZones[zonesTableIndex][isDomestic ? 'zipCodes' : 'countries'][placeIndex] = newRow
+        }
+      }
+    },
+    parseShippingZones () {
+      this.inProgress = true
+      let data
+      for (let i = 0, len = this.parsedFile.data.length; i < len; i++) {
+        data = this.parsedFile.data[i]
+        if (data.pais !== undefined) {
+          let importZone = data['zona_importacion']
+          let exportZone = data['zona_exportacion']
+          let country = countries.find(country => country.alpha2Code === data.pais)
+          if (country !== undefined) {
+            this.addShippingZone(country.numericCode, importZone, 1)
+            this.addShippingZone(country.numericCode, exportZone, 2)
+          }
+        }
+        if (data.cp !== undefined) {
+          let zone = data.zona
+          let zipCode = zipCodes.find(zipCode => zipCode['cod_postal'] === String(data.cp))
+          if (zipCode !== undefined) {
+            this.addShippingZone(zipCode.id, zone, 3)
+          }
+        }
+      }
+      this.inProgress = false
+      this.$refs.fileDialog.reset()
+      this.parsedFile = null
+      this.count = 0
+      this.$toasted.global.success_toast({ message: `Importación exitosa.` })
       this.$emit(this.cancellationMethod)
     },
     parseProviderCosts () {

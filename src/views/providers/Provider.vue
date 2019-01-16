@@ -23,6 +23,7 @@
                     <!-- <b-button variant="outline-primary" disabled>Imprimir zonas por país<i class="fa fa-print ml-1"></i></b-button> -->
                     <b-modal id="fileDialogZones" ref="fileDialogModalZones" hide-footer centered title="Importar zonas por país" class="import-modal">
                       <c-csv-file-dialog
+                        target="shippingZones"
                         bodyMessage="Elija un archivo para importar zonas por país. Únicamente se permiten archivos .csv"
                         cancellationMessage="Cancelar"
                         cancellationMethod="cancelImport"
@@ -40,7 +41,7 @@
                     </b-form-group>
                   </b-col>
                 </b-row>
-                <c-zones-table :filter="filter" variant="provider"></c-zones-table>
+                <c-zones-table ref="zonesTable" :filter="filter" variant="provider"></c-zones-table>
               </b-tab>
               <b-tab title="Precios de venta" v-if="provider.isShipping">
                 <b-row class="actions-bar">
@@ -66,7 +67,7 @@
                     </b-form-group>
                   </b-col>
                 </b-row>
-                <c-cost-table :filter="filter" variant="provider"></c-cost-table>
+                <c-cost-table ref="costTable" :filter="filter" variant="provider"></c-cost-table>
               </b-tab>
               <b-tab title="Costo de combustible" v-if="provider.isShipping"><b-row class="actions-bar">
                   <b-form-group class="ml-auto col-4">
@@ -227,8 +228,11 @@ export default {
       this.deleteEl(PROVIDER_DELETE, '/proveedores')
     },
     hideImportModals () {
-      this.$refs.fileDialogModalCosts.hide()
       this.$refs.fileDialogModalZones.hide()
+      this.$refs.fileDialogModalCosts.hide()
+
+      this.$refs.costTable.refresh()
+      this.$refs.zonesTable.refresh()
     }
   }
 }

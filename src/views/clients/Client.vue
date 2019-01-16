@@ -58,7 +58,7 @@
                     </b-form-group>
                   </b-col>
                 </b-row>
-                <c-cost-table :filter="filter" variant="client" :providerList="providerList"></c-cost-table>
+                <c-cost-table ref="costTable" :filter="filter" variant="client" :providerList="providerList"></c-cost-table>
               </b-tab>
             </b-tabs>
           </b-card>
@@ -203,6 +203,10 @@ export default {
     },
     deleteClient () {
       this.deleteEl(CLIENT_DELETE, '/clientes')
+    },
+    hideImportModal () {
+      this.$refs.fileDialogModal.hide()
+      this.$refs.costTable.refresh()
     }
   }
 }
