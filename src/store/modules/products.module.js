@@ -32,8 +32,6 @@ export const mutations = {
     state.productsLoading = true
   },
   [FETCH_PRODUCTS_END] (state, products) {
-    console.log('esto termino')
-    console.log(products)
     state.products = products.map(function (e) {
       if (e.constructor === Object) {
         return e
