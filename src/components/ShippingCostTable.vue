@@ -1,5 +1,126 @@
 <template>
   <section>
+    <b-row>
+      <b-col sm="12">
+        <p v-if="pricing === null">
+          No existen costos cargados para la combinación de opciones seleccionadas.
+        </p>
+        <div v-else>
+          <b-alert show variant="warning" v-if="updated" dismissible>Se realizaron cambios en las opciones del envío. Algunos valores pueden estar desactualizados. Puede actualizarlos utilizando la opción: <b><i class="fa fa-undo"></i> Auto</b> </b-alert>
+          <p><b>Tipo de envío</b>: {{ shippingTypeText }}. <b>Servicio</b>: {{ serviceTypeText }}. <b>Tipo de embalaje</b>: {{ packageTypeText }}. <b>Peso</b>: {{ weight }}kg. <b>Zona</b>: {{ shipping.shippingZone }}</p>
+          <b-table ref="shippingCosts" hover outlined small fixed responsive="sm"
+          :items="itemsProvider"
+          :fields="fields"
+          :current-page="currentPage"
+          :foot-clone="true"
+          :per-page="perPage">
+            <template slot="name" slot-scope="data">
+              <b v-if="data.item.key !== null && data.item.key !== undefined && data.item.key !== ''" :style="data.item.styles">{{ data.item.name }}</b>
+              <span v-else>{{ data.item.name }}</span>
+            </template>
+            <template slot="cost" slot-scope="data">
+              <div v-if="data.item.cost !== null">
+                <div v-if="typeof(data.item.cost) === 'object'">
+                  <del v-if="Object(data.item.cost).discount > 0">${{ Object(data.item.cost).grossPrice }}</del> <b>${{ Object(data.item.cost).netPrice }}</b>
+                  <!-- <br> -->
+                  <!-- Descuento: {{ Object(data.item.cost).discount }}% -->
+                </div>
+                <b v-else-if="!data.item.discount"><span v-if="data.item.discount === true && data.item.value > 0">-</span>${{ data.item.cost }}</b>
+                <span v-else><span v-if="data.item.discount === true && data.item.value > 0">-</span>${{ data.item.cost }}</span>
+              </div>
+            </template>
+            <template slot="price" slot-scope="data">
+              <div v-if="data.item.price !== null">
+                <div v-if="typeof(data.item.price) === 'object'">
+                  <del v-if="Object(data.item.price).discount > 0">${{ Object(data.item.price).grossPrice }}</del> <b>${{ Object(data.item.price).netPrice }}</b>
+                  <!-- <br> -->
+                  <!-- Descuento: {{ Object(data.item.price).discount }}% -->
+                </div>
+                <b v-else-if="!data.item.discount"><span v-if="data.item.discount === true && data.item.value > 0">-</span>${{ data.item.price }}</b>
+                <span v-else><span v-if="data.item.discount === true && data.item.value > 0">-</span>${{ data.item.price }}</span>
+              </div>
+            </template>
+            <template slot="detail" slot-scope="data">
+              <div v-show="!data.item.edit">
+                <ul v-if="typeof(data.item.detail) === 'object'" style="margin: 0;">
+                  <li v-for="(value, key) in Object(data.item.detail)">
+                    {{ key }}: {{ value }}
+                  </li>
+                </ul>
+                <div v-else>
+                  {{ data.item.detail }}
+                </div>
+              </div>
+              <b-input-group v-show="data.item.edit">
+                <b-form-input :readonly="Boolean(inProgress | !data.item.edit)" type="number" placeholder="0" :value="data.item.value" v-model="data.item.value"></b-form-input>
+                <b-input-group-append v-if="data.item.percentage"><b-input-group-text>%</b-input-group-text></b-input-group-append>
+              </b-input-group>
+            </template>
+            <template slot="actions" slot-scope="data">
+              <template v-if="data.item.key !== 'total'">
+                <template v-if="data.item.edit">
+                  <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item, $event)">
+                    <i class="fa fa-check"></i> Aplicar
+                  </b-button>
+                  <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item)">
+                    Cancelar
+                  </b-button>
+                </template>
+                <template v-else-if="data.item.key !== null && data.item.key !== undefined && data.item.key !== ''">
+                  <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item, $event)">
+                    <i class="fa fa-edit"></i> Editar
+                  </b-button>
+                  <b-button v-if="data.item.customized" size="sm" variant="secondary" @click.prevent="resetEdit(data.item, $event)">
+                    <i class="fa fa-undo"></i> Auto
+                  </b-button>
+                </template>
+                <template v-else>
+                  <b-button size="sm" variant="danger" @click.prevent="remove(data.item)">
+                    <i class="fa fa-ban"></i> Eliminar
+                  </b-button>
+                </template>
+              </template>
+            </template>
+            <template slot="FOOT_name" slot-scope="data">
+              <b-form-select id="product" v-model="newRow.productId" :plain="true" :options="productList"></b-form-select>
+            </template>
+            <template slot="FOOT_provider" slot-scope="data">
+              <b-form-select id="provider" v-model="newRow.providerId" :plain="true" :options="providerList"></b-form-select>
+            </template>
+            <template slot="FOOT_cost" slot-scope="data">
+              <div class="input-group datepicker-group">
+                <!-- <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend> -->
+                <b-form-input type="number" v-model="newRow.cost"></b-form-input>
+              </div>
+            </template>
+            <template slot="FOOT_price" slot-scope="data">
+              <div class="input-group datepicker-group">
+                <!-- <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend> -->
+                <b-form-input type="number" v-model="newRow.price"></b-form-input>
+              </div>
+            </template>
+            <template slot="FOOT_detail" slot-scope="data">
+            </template>
+            <template slot="FOOT_actions" slot-scope="data">
+              <b-button size="sm" variant="success" @click.prevent="add">
+                <i class="fa fa-plus"></i> Agregar
+              </b-button>
+            </template>
+          </b-table>
+          items
+          <pre>{{items}}</pre>
+          Guardado
+          <pre>
+            {{ pricing }}
+            {{ savedPricing }}
+          <pre>
+            Precio vigente
+          </pre>
+            {{ shipping.pricing }}
+          </pre>
+        </div>
+      </b-col>
+    </b-row>
     <b-row v-if="pricing !== null">
       <b-col sm="5">
         <b-form-group>
@@ -33,118 +154,12 @@
         <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
       </b-col>
     </b-row>
-    <b-row>
-      <b-col sm="12">
-        <p v-if="pricing === null">
-          No existen costos cargados para la combinación de opciones seleccionadas.
-        </p>
-        <div v-else>
-          <p><b>Tipo de envío</b>: {{ shippingTypeText }}. <b>Servicio</b>: {{ serviceTypeText }}. <b>Tipo de embalaje</b>: {{ packageTypeText }}. <b>Peso</b>: {{ weight }}kg. <b>Zona</b>: {{ shipping.shippingZone }}</p>
-          <b-alert show variant="warning" v-if="updated" dismissible>Se realizaron cambios en las opciones del envío. Algunos valores pueden estar desactualizados. Puede actualizarlos utilizando la opción: <b><i class="fa fa-undo"></i> Auto</b> </b-alert>
-          <b-table ref="shippingCosts" hover outlined small fixed responsive="sm"
-          :items="itemsProvider"
-          :fields="fields"
-          :current-page="currentPage"
-          :foot-clone="true"
-          :per-page="perPage">
-            <template slot="name" slot-scope="data">
-              <b v-if="data.item.key !== null && data.item.key !== undefined && data.item.key !== ''" :style="data.item.styles">{{ data.item.name }}</b>
-              <span v-else>{{ data.item.name }}</span>
-            </template>
-            <template slot="cost" slot-scope="data">
-              <div v-if="data.item.cost !== null">
-                <div v-if="typeof(data.item.cost) === 'object'">
-                  <del v-if="Object(data.item.cost).discount > 0">${{ Object(data.item.cost).grossPrice }}</del> <b>${{ Object(data.item.cost).netPrice }}</b>
-                  <!-- <br> -->
-                  <!-- Descuento: {{ Object(data.item.cost).discount }}% -->
-                </div>
-                <b v-else><span v-if="data.item.discount === true && data.item.value > 0">-</span>${{ data.item.cost }}</b>
-              </div>
-            </template>
-            <template slot="price" slot-scope="data">
-              <div v-if="data.item.price !== null">
-                <div v-if="typeof(data.item.price) === 'object'">
-                  <del v-if="Object(data.item.price).discount > 0">${{ Object(data.item.price).grossPrice }}</del> <b>${{ Object(data.item.price).netPrice }}</b>
-                  <!-- <br> -->
-                  <!-- Descuento: {{ Object(data.item.price).discount }}% -->
-                </div>
-                <b v-else><span v-if="data.item.discount === true && data.item.value > 0">-</span>${{ data.item.price }}</b>
-              </div>
-            </template>
-            <template slot="detail" slot-scope="data">
-              <div v-if="Boolean(inProgress | !data.item.edit)">
-                <ul v-if="typeof(data.item.detail) === 'object'" style="margin: 0;">
-                  <li v-for="(value, key) in Object(data.item.detail)">
-                    {{ key }}: {{ value }}
-                  </li>
-                </ul>
-                <div v-else>
-                  {{ data.item.detail }}
-                </div>
-              </div>
-              <b-input-group v-else>
-                <b-form-input :readonly="Boolean(inProgress | !data.item.edit)" type="number" placeholder="0" :value="data.item.value" v-model="data.item.value"></b-form-input>
-                <b-input-group-append v-if="data.item.percentage"><b-input-group-text>%</b-input-group-text></b-input-group-append>
-              </b-input-group>
-            </template>
-            <template slot="actions" slot-scope="data">
-              <template v-if="data.item.key !== 'total'">
-                <template v-if="data.item.edit">
-                  <b-button size="sm" variant="primary" @click.prevent="applyEdit(data.item, $event)">
-                    <i class="fa fa-check"></i> Aplicar
-                  </b-button>
-                  <b-button size="sm" variant="warning" @click.prevent="revertEdit(data.item)">
-                    Cancelar
-                  </b-button>
-                </template>
-                <template v-else-if="data.item.key !== null && data.item.key !== undefined && data.item.key !== ''">
-                  <b-button size="sm" variant="primary" @click.prevent="enableEdit(data.item, $event)">
-                    <i class="fa fa-edit"></i> Editar
-                  </b-button>
-                  <b-button v-if="data.item.customized" size="sm" variant="secondary" @click.prevent="resetEdit(data.item, $event)">
-                    <i class="fa fa-undo"></i> Auto
-                  </b-button>
-                </template>
-                <template v-else>
-                  <b-button size="sm" variant="danger" @click.prevent="remove(data.item)">
-                    <i class="fa fa-ban"></i> Eliminar
-                  </b-button>
-                </template>
-              </template>
-            </template>
-            <template slot="FOOT_name" slot-scope="data">
-              <b-form-select id="product" v-model="newRow.productId" :plain="true" :options="productList"></b-form-select>
-            </template>
-            <template slot="FOOT_cost" slot-scope="data">
-              <div class="input-group datepicker-group">
-                <!-- <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend> -->
-                <b-form-input type="number" v-model="newRow.cost"></b-form-input>
-              </div>
-            </template>
-            <template slot="FOOT_price" slot-scope="data">
-              <div class="input-group datepicker-group">
-                <!-- <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend> -->
-                <b-form-input type="number" v-model="newRow.price"></b-form-input>
-              </div>
-            </template>
-            <template slot="FOOT_detail" slot-scope="data">
-            </template>
-            <template slot="FOOT_actions" slot-scope="data">
-              <b-button size="sm" variant="success" @click.prevent="add">
-                <i class="fa fa-plus"></i> Agregar
-              </b-button>
-            </template>
-          </b-table>
-          {{ shipping.pricing }}
-        </div>
-      </b-col>
-    </b-row>
   </section>
 </template>
 <script>
 import { shippingTypes, serviceTypes, packageTypes } from '@/store/const'
 import { mapGetters } from 'vuex'
-import { FETCH_PRODUCTS } from '@/store/types/actions'
+import { FETCH_PRODUCTS, FETCH_PROVIDERS } from '@/store/types/actions'
 import { UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
 
 import flatPickr from 'vue-flatpickr-component'
@@ -181,11 +196,14 @@ export default {
         { key: 'actions', label: 'Acciones', class: 'cost-actions' }
       ],
       cost: 0,
+      price: 0,
+      profit: 0,
       additional: [ ],
       items: [ ],
       updated: false,
       savedPricing: {},
       productList: [],
+      providerList: [],
       newRow: {
         productId: null,
         name: null,
@@ -203,7 +221,7 @@ export default {
   computed: {
     // agregar a los map getters la lista de proveedores y el cliente
     // para pivotear entre una y otra entidad
-    ...mapGetters(['provider', 'client', 'shipping', 'products']),
+    ...mapGetters(['provider', 'client', 'shipping', 'products', 'providers']),
     declaredValueInsurance () {
       let insurance = (this.savedPricing !== undefined && this.savedPricing !== null && Object.keys(this.savedPricing).length > 0) ? this.savedPricing.insurance : this.provider.insurance
       let value = (this.provider.externalId !== null) ? this.shipping.package.declaredValue * (insurance / 100) : 0
@@ -225,7 +243,7 @@ export default {
       let costDiscount = 0
       let saleDiscount = 0
       let grossPrice = 0
-      let insurance = this.declaredValueInsurance
+      let insurance = Number(this.provider.insurance)
       let isComplete = true
 
       // if (this.provider.externalId === null) return null
@@ -300,7 +318,7 @@ export default {
   },
   watch: {
     pricing (val) {
-      let newPricing = Object.assign({ }, this.shipping.pricing)
+      let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
       let isUpdate = false
       for (let key in val) {
         if (newPricing[key] === undefined) newPricing[key] = val[key]
@@ -315,7 +333,10 @@ export default {
     },
     closed (val) {
       this.shipping.status = Number(val)
-    }
+    }/*,
+    declaredValueInsurance () {
+      if (this.$refs.shippingCosts !== undefined) this.$refs.shippingCosts.refresh()
+    }*/
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
   async created () {
@@ -354,8 +375,11 @@ export default {
       this.additional.forEach(el => {
         let newRow = {}
         newRow.name = el.name
+        newRow.provider = el.provider
         newRow.cost = parseFloat(el.cost)
+        newRow.price = parseFloat(el.price)
         newRow.productId = el.productId
+        newRow.providerId = el.providerId
         this.items.push(newRow)
         if (this.$refs.shippingCosts !== undefined) this.$refs.shippingCosts.refresh()
       })
@@ -365,6 +389,12 @@ export default {
     this.fetchProducts().then(() => {
       this.products.map(el => {
         this.productList.push({ value: el.externalId, text: el.name })
+      })
+    })
+
+    this.fetchProviders().then(() => {
+      this.providers.map(el => {
+        this.providerList.push({ value: el.externalId, text: el.name })
       })
     })
 
@@ -456,8 +486,11 @@ export default {
       let itemsResult = [...this.items]
       itemsResult.push({
         name: 'Total',
-        key: 'total'
-        // _rowVariant: 'secondary'
+        key: 'total',
+        cost: this.cost,
+        price: this.price,
+        detail: 'Beneficio: $' + this.profit,
+        _rowVariant: 'secondary'
       })
       return itemsResult || []
     },
@@ -466,26 +499,37 @@ export default {
     },
     updateSubtotals () {
       this.cost = 0
+      this.price = 0
       this.items.forEach(el => {
-        if (el.percentage) {
-          this.cost += this.cost * (el.cost / 100) * (el.discount ? -1 : 1)
+        let costValue = Math.abs(Number(el.cost === null ? 0 : (typeof(el.cost) === 'object' ? el.value : el.cost)))
+        let priceValue = Math.abs(Number(el.price === null ? 0 : (typeof(el.price) === 'object' ? el.value : el.price)))
+        if (el.discount) {
+          this.cost -= costValue
+          this.price -= priceValue
         } else {
-          this.cost += el.cost
+          this.cost += costValue
+          this.price += priceValue
         }
-        el.subtotal = Number(parseFloat(this.cost).toFixed(2))
+        // el.subtotal = Number(parseFloat(this.cost).toFixed(2))
       })
+      this.profit = Number(parseFloat(this.price - this.cost).toFixed(2))
       this.cost = Number(parseFloat(this.cost).toFixed(2))
-      let newPricing = Object.assign({ }, this.shipping.pricing)
+      this.price = Number(parseFloat(this.price).toFixed(2))
+      let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
       newPricing.cost = this.cost
+      newPricing.price = this.price
       this.updateShippingPricing(newPricing)
     },
     add (el) {
-      let newRow = Object.assign({ }, this.newRow)
+      let newRow = {...this.newRow} // Object.assign({ }, this.newRow)
       let product = this.products.find(el => el.externalId === newRow.productId)
+      let provider = this.providers.find(el => el.externalId === newRow.providerId)
 
       newRow.name = product.name
+      newRow.provider = provider.name
       newRow.cost = parseFloat(newRow.cost)
       newRow.price = parseFloat(newRow.price)
+      this.newRow.providerId = null
       this.newRow.productId = null
       this.newRow.cost = null
       this.newRow.price = null
@@ -496,13 +540,15 @@ export default {
 
       this.additional.push({
         'productId': product.externalId,
+        'providerId': provider.externalId,
         'name': product.name,
         'code': product.code,
+        'provider': provider.name,
         'cost': newRow.cost,
         'price': newRow.price
       })
 
-      let newPricing = Object.assign({ }, this.shipping.pricing)
+      let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
       newPricing.additional = this.additional
       this.updateShippingPricing(newPricing)
     },
@@ -527,7 +573,6 @@ export default {
       if (selectedItem !== undefined && selectedItem !== null && !this.inEdit) {
         let selRow = this.items.find(el => el.key === selectedItem.key)
         this.inEdit = true
-        console.log(selRow)
         selRow.edit = true
         this.$refs.shippingCosts.refresh()
         event.target.parentNode.parentNode.querySelector('input').focus()
@@ -550,21 +595,21 @@ export default {
           selectedItem.value = Math.abs(selectedItem.value)
           if (selectedItem.value !== this.pricing[selectedItem.key]) {
             selectedItem.customized = true
-            newPricing[selectedItem.key] = selectedItem.value
           }
+          newPricing[selectedItem.key] = selectedItem.value
         }
         // this.shipping.pricing = newPricing
         this.updateShippingPricing(newPricing)
+        this.savedPricing = {...this.shipping.pricing}
         this.$refs.shippingCosts.refresh()
         delete selRow.edit
 
-        this.savedPricing = {...this.shipping.pricing}
       }
     },
     revertEdit (selectedItem) {
       if (selectedItem !== undefined && selectedItem !== null) {
         let selRow = this.items.find(el => el.key === selectedItem.key)
-        event.target.parentNode.parentNode.querySelector('input').cost = selectedItem.cost = (this.shipping.pricing[selectedItem.key] !== undefined && this.shipping.pricing[selectedItem.key] !== null) ? this.shipping.pricing[selectedItem.key] : this.pricing[selectedItem.key]
+        event.target.parentNode.parentNode.querySelector('input').value = selectedItem.value = (this.shipping.pricing[selectedItem.key] !== undefined && this.shipping.pricing[selectedItem.key] !== null) ? this.shipping.pricing[selectedItem.key] : this.pricing[selectedItem.key]
 
         delete selRow.edit
       }
@@ -575,12 +620,13 @@ export default {
       this.inEdit = false
       if (selectedItem !== undefined && selectedItem !== null) {
         let selRow = this.items.find(el => el.key === selectedItem.key)
-        let newPricing = Object.assign({ }, this.shipping.pricing)
+        let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
 
-        newPricing[selectedItem.key] = selectedItem.cost = this.pricing[selectedItem.key]
+        newPricing[selectedItem.key] = selectedItem.value = this.pricing[selectedItem.key]
         this.updateShippingPricing(newPricing)
 
         selectedItem.customized = false
+        this.savedPricing = {...this.shipping.pricing}
         this.$refs.shippingCosts.refresh()
         delete selRow.edit
 
@@ -598,6 +644,9 @@ export default {
     },
     validate () {
       return this.$validator.validateAll()
+    },
+    fetchProviders () {
+      return this.$store.dispatch(FETCH_PROVIDERS)
     },
     fetchProducts () {
       return this.$store.dispatch(FETCH_PRODUCTS)
