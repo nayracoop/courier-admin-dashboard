@@ -145,6 +145,10 @@
       </b-col>
     </b-row>
     {{shipping.pricing}}
+    <pre>
+      ---
+      {{client.costsTable}}
+    </pre>
   </section>
 </template>
 <script>
