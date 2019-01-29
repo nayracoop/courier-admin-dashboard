@@ -218,7 +218,7 @@ export default {
     declaredValueInsurance () {
       let insurance = (this.savedPricing !== undefined && this.savedPricing !== null && Object.keys(this.savedPricing).length > 0) ? this.savedPricing.insurance : this.provider.insurance
       let value = (this.provider.externalId !== null) ? this.shipping.package.declaredValue * (insurance / 100) : 0
-      return value
+      return this.currencyFormat(value)
     },
     volumetricWeight () {
       if (this.shipping.package.type !== 1 || !this.shipping.package.length || !this.shipping.package.width || !this.shipping.package.height) {
@@ -315,7 +315,7 @@ export default {
   watch: {
     pricing (val) {
       let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
-      let isUpdate = false
+      // let isUpdate = false
       for (let key in val) {
         if (newPricing[key] === undefined) newPricing[key] = val[key]
         // else isUpdate = true
@@ -418,30 +418,30 @@ export default {
       this.items[0].cost = {
         grossPrice: this.shipping.pricing.grossPrice,
         discount: this.shipping.pricing.costDiscount,
-        netPrice: this.shipping.pricing.grossPrice - (this.shipping.pricing.grossPrice * this.shipping.pricing.costDiscount / 100)
+        netPrice: this.currencyFormat(this.shipping.pricing.grossPrice - (this.shipping.pricing.grossPrice * this.shipping.pricing.costDiscount / 100))
       }
       this.items[0].price = {
         grossPrice: this.shipping.pricing.grossPrice,
         discount: this.shipping.pricing.saleDiscount,
-        netPrice: this.shipping.pricing.grossPrice - (this.shipping.pricing.grossPrice * this.shipping.pricing.saleDiscount / 100)
+        netPrice: this.currencyFormat(this.shipping.pricing.grossPrice - (this.shipping.pricing.grossPrice * this.shipping.pricing.saleDiscount / 100))
       }
       this.items[0].provider = this.provider.name
       this.items[0].detail = '$' + this.shipping.pricing.grossPrice
 
-      this.items[1].cost = this.shipping.pricing.grossPrice * this.shipping.pricing.costDiscount / 100
+      this.items[1].cost = this.currencyFormat(this.shipping.pricing.grossPrice * this.shipping.pricing.costDiscount / 100)
       this.items[1].price = null
       this.items[1].value = this.shipping.pricing.costDiscount
       this.items[1].detail = this.shipping.pricing.costDiscount + '%'
 
       this.items[2].cost = null
-      this.items[2].price = this.shipping.pricing.grossPrice * this.shipping.pricing.saleDiscount / 100
+      this.items[2].price = this.currencyFormat(this.shipping.pricing.grossPrice * this.shipping.pricing.saleDiscount / 100)
       this.items[2].value = this.shipping.pricing.saleDiscount
       this.items[2].detail = this.shipping.pricing.saleDiscount + '%'
 
-      this.items[3].cost = this.shipping.pricing.grossPrice * this.shipping.pricing.fuelPercent / 100
-      this.items[3].price = this.shipping.pricing.grossPrice * this.shipping.pricing.fuelPercent / 100
+      this.items[3].cost = this.currencyFormat(this.items[0].cost.netPrice * this.shipping.pricing.fuelPercent / 100)
+      this.items[3].price = this.currencyFormat(this.items[0].price.netPrice * this.shipping.pricing.fuelPercent / 100)
       this.items[3].value = this.shipping.pricing.fuelPercent
-      this.items[3].detail = this.shipping.pricing.fuelPercent + '% del precio bruto ($' + this.shipping.pricing.grossPrice + ')'
+      this.items[3].detail = this.shipping.pricing.fuelPercent + '%'
 
       this.items[4].cost = this.declaredValueInsurance
       this.items[4].price = this.declaredValueInsurance
@@ -478,9 +478,9 @@ export default {
         }
         // el.subtotal = Number(parseFloat(this.cost).toFixed(2))
       })
-      this.profit = Number(parseFloat(this.price - this.cost).toFixed(2))
-      this.cost = Number(parseFloat(this.cost).toFixed(2))
-      this.price = Number(parseFloat(this.price).toFixed(2))
+      this.profit = this.currencyFormat(this.price - this.cost)
+      this.cost = this.currencyFormat(this.cost)
+      this.price = this.currencyFormat(this.price)
       let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
       newPricing.cost = this.cost
       newPricing.price = this.price
@@ -621,6 +621,9 @@ export default {
     },
     fetchProducts () {
       return this.$store.dispatch(FETCH_PRODUCTS)
+    },
+    currencyFormat (val) {
+      return Number(parseFloat(val).toFixed(2))
     }
   }
 }
