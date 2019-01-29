@@ -144,6 +144,7 @@
         <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
       </b-col>
     </b-row>
+    {{shipping.pricing}}
   </section>
 </template>
 <script>
@@ -276,7 +277,7 @@ export default {
             })
             if (clientCosts !== undefined) {
               // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
-              let discounts = clientCosts.costs.find(el => { return el.weight === price.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
+              let discounts = clientCosts.costs.find(el => { return Number(el.weight) === Number(price.weight) || (isNaN(el.weight) && clientCosts.costs.length === 1) })
               if (discounts !== undefined) {
                 saleDiscount = discounts.saleDiscount
               }
