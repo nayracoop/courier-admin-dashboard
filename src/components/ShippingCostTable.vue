@@ -144,11 +144,6 @@
         <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
       </b-col>
     </b-row>
-    {{shipping.pricing}}
-    <pre>
-      ---
-      {{client.costsTable}}
-    </pre>
   </section>
 </template>
 <script>
@@ -263,7 +258,8 @@ export default {
       if (!costs) isComplete = false // return null
       else {
         // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
-        let price = costs.costs.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && costs.costs.length === 1) })
+        let sortedTable = [...costs.costs].sort((a, b) => a.weight - b.weight)
+        let price = sortedTable.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && costs.costs.length === 1) })
         if (!price) isComplete = false // return null
         else {
           grossPrice = price.grossPrice
@@ -281,7 +277,8 @@ export default {
             })
             if (clientCosts !== undefined) {
               // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
-              let discounts = clientCosts.costs.find(el => { return Number(el.weight) === Number(price.weight) || (isNaN(el.weight) && clientCosts.costs.length === 1) })
+              let sortedClientTable = [...clientCosts.costs].sort((a, b) => a.weight - b.weight)
+              let discounts = sortedClientTable.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
               if (discounts !== undefined) {
                 saleDiscount = discounts.saleDiscount
               }
