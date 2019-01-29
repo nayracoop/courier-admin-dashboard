@@ -43,7 +43,7 @@
             <template slot="detail" slot-scope="data">
               <div v-show="!data.item.edit">
                 <ul v-if="typeof(data.item.detail) === 'object'" style="margin: 0;">
-                  <li v-for="(value, key) in Object(data.item.detail)">
+                  <li v-for="(value, key) in Object(data.item.detail)" :key="key">
                     {{ key }}: {{ value }}
                   </li>
                 </ul>
@@ -88,18 +88,19 @@
               <b-form-select id="provider" v-model="newRow.providerId" :plain="true" :options="providerList"></b-form-select>
             </template>
             <template slot="FOOT_cost" slot-scope="data">
-              <div class="input-group datepicker-group">
+              <div class="input-group">
                 <!-- <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend> -->
                 <b-form-input type="number" v-model="newRow.cost"></b-form-input>
               </div>
             </template>
             <template slot="FOOT_price" slot-scope="data">
-              <div class="input-group datepicker-group">
+              <div class="input-group">
                 <!-- <b-input-group-prepend><b-input-group-text>USD</b-input-group-text></b-input-group-prepend> -->
                 <b-form-input type="number" v-model="newRow.price"></b-form-input>
               </div>
             </template>
             <template slot="FOOT_detail" slot-scope="data">
+              <!-- <b-form-input type="text" v-model="newRow.detail"></b-form-input> -->
             </template>
             <template slot="FOOT_actions" slot-scope="data">
               <b-button size="sm" variant="success" @click.prevent="add">
@@ -107,17 +108,6 @@
               </b-button>
             </template>
           </b-table>
-          items
-          <pre>{{items}}</pre>
-          Guardado
-          <pre>
-            {{ pricing }}
-            {{ savedPricing }}
-          <pre>
-            Precio vigente
-          </pre>
-            {{ shipping.pricing }}
-          </pre>
         </div>
       </b-col>
     </b-row>
@@ -206,8 +196,11 @@ export default {
       providerList: [],
       newRow: {
         productId: null,
+        providerId: null,
         name: null,
-        value: null
+        cost: null,
+        price: null,
+        detail: null
       },
       inEdit: false,
       closed: false,
@@ -307,13 +300,16 @@ export default {
       } else return null
     },
     shippingTypeText () {
-      return (this.shippingTypes.find(el => el.value === this.shipping.shippingType)).text
+      let shippingType = this.shippingTypes.find(el => el.value === this.shipping.shippingType)
+      return shippingType !== undefined ? shippingType.text : ''
     },
     serviceTypeText () {
-      return (this.serviceTypes.find(el => el.value === this.shipping.serviceType)).text
+      let serviceType = this.serviceTypes.find(el => el.value === this.shipping.serviceType)
+      return serviceType !== undefined ? serviceType.text : ''
     },
     packageTypeText () {
-      return (this.packageTypes.find(el => el.value === this.shipping.package.type)).text
+      let packageType = this.packageTypes.find(el => el.value === this.shipping.package.type)
+      return packageType !== undefined ? packageType.text : ''
     }
   },
   watch: {
@@ -322,21 +318,18 @@ export default {
       let isUpdate = false
       for (let key in val) {
         if (newPricing[key] === undefined) newPricing[key] = val[key]
-        else isUpdate = true
+        // else isUpdate = true
       }
-      if (isUpdate) {
-        let item = this.items.find(el => { return el.customized })
-        if (item !== null && item !== undefined) this.updated = true
-      }
+      // if (isUpdate) {
+      //   let item = this.items.find(el => { return el.customized })
+      //   if (item !== null && item !== undefined) this.updated = true
+      // }
       this.updateShippingPricing(newPricing)
       if (this.$refs.shippingCosts !== undefined) this.$refs.shippingCosts.refresh()
     },
     closed (val) {
       this.shipping.status = Number(val)
-    }/*,
-    declaredValueInsurance () {
-      if (this.$refs.shippingCosts !== undefined) this.$refs.shippingCosts.refresh()
-    }*/
+    }
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
   async created () {
@@ -404,31 +397,23 @@ export default {
     /* Genera los datos para la tabla, luego actualiza el precio final */
     itemsProvider (ctx) {
       if (!this.inEdit) {
+        this.updated = false
         for (let key in this.pricing) {
           let item = this.items.find(el => { return el.key === key })
           if (item) {
             if (this.shipping.pricing[key] !== undefined && this.shipping.pricing[key] !== null) {
-              //item.cost = this.shipping.pricing[key]
-              //item.price = this.shipping.pricing[key]
+              // item.cost = this.shipping.pricing[key]
+              // item.price = this.shipping.pricing[key]
               item.customized = (this.pricing[key] !== this.shipping.pricing[key])
+              this.updated = this.updated || item.customized
             } else {
-              //item.cost = this.pricing[key]
-              //item.price = this.pricing[key]
+              // item.cost = this.pricing[key]
+              // item.price = this.pricing[key]
             }
           }
         }
       }
 
-      // this.items[0] = {
-      //   name: 'Envío',
-      //   key: 'grossPrice',
-      //   cost: {
-      //     grossPrice: this.shipping.pricing.grossPrice,
-      //     discount: this.shipping.pricing.costDiscount,
-      //     netPrice: this.shipping.pricing.grossPrice - (this.shipping.pricing.grossPrice * this.shipping.pricing.costDiscount / 100)
-      //   },
-      //   price: this.shipping.pricing.grossPrice
-      // }
       this.items[0].value = this.shipping.pricing.grossPrice
       this.items[0].cost = {
         grossPrice: this.shipping.pricing.grossPrice,
@@ -442,15 +427,6 @@ export default {
       }
       this.items[0].provider = this.provider.name
       this.items[0].detail = '$' + this.shipping.pricing.grossPrice
-
-      // {
-      //     'Tipo de envío': 'Importación',
-      //     'Servicio': 'Doméstico',
-      //     'Tipo de embalaje': 'Caja',
-      //     'Peso': '1kg',
-      //     'Zona': '1',
-      //     'Precio': '$80'
-      // }
 
       this.items[1].cost = this.shipping.pricing.grossPrice * this.shipping.pricing.costDiscount / 100
       this.items[1].price = null
@@ -472,16 +448,6 @@ export default {
       this.items[4].value = this.shipping.pricing.insurance
       this.items[4].detail = this.shipping.pricing.insurance + '% del valor declarado ($' + this.shipping.package.declaredValue + ')'
 
-      // {
-      //   name: '% Combustible',
-      //   percentage: true,
-      //   key: 'fuelPercent'
-      // },
-      // {
-      //   name: 'Seguro',
-      //   key: 'insurance'
-      // }
-
       this.updateSubtotals()
       let itemsResult = [...this.items]
       itemsResult.push({
@@ -501,8 +467,8 @@ export default {
       this.cost = 0
       this.price = 0
       this.items.forEach(el => {
-        let costValue = Math.abs(Number(el.cost === null ? 0 : (typeof(el.cost) === 'object' ? el.value : el.cost)))
-        let priceValue = Math.abs(Number(el.price === null ? 0 : (typeof(el.price) === 'object' ? el.value : el.price)))
+        let costValue = Math.abs(Number(el.cost === null ? 0 : (typeof el.cost === 'object' ? el.value : el.cost)))
+        let priceValue = Math.abs(Number(el.price === null ? 0 : (typeof el.price === 'object' ? el.value : el.price)))
         if (el.discount) {
           this.cost -= costValue
           this.price -= priceValue
@@ -522,6 +488,11 @@ export default {
     },
     add (el) {
       let newRow = {...this.newRow} // Object.assign({ }, this.newRow)
+      if (newRow.providerId === null || newRow.productId === null || newRow.cost === null || newRow.price === null) {
+        this.$toasted.global.error_toast({ message: 'Debe completar todos los campos para agregar un nuevo elemento.' })
+        return
+      }
+
       let product = this.products.find(el => el.externalId === newRow.productId)
       let provider = this.providers.find(el => el.externalId === newRow.providerId)
 
@@ -533,6 +504,7 @@ export default {
       this.newRow.productId = null
       this.newRow.cost = null
       this.newRow.price = null
+      this.newRow.detail = null
 
       this.items.push(newRow)
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en "Guardar cambios" para registrar los cambios' })
@@ -585,7 +557,7 @@ export default {
       if (selectedItem !== undefined && selectedItem !== null) {
         // if (!this.validateNumericValues(selectedItem)) return
         let selRow = this.items.find(el => el.key === selectedItem.key)
-        let newPricing = {...this.shipping.pricing} //Object.assign({ }, this.shipping.pricing)
+        let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
 
         if (selectedItem.value === '' || selectedItem.value === undefined || selectedItem.value === null) {
           event.target.parentNode.parentNode.querySelector('input').value = selectedItem.value = Math.abs(this.pricing[selectedItem.key])
@@ -603,7 +575,6 @@ export default {
         this.savedPricing = {...this.shipping.pricing}
         this.$refs.shippingCosts.refresh()
         delete selRow.edit
-
       }
     },
     revertEdit (selectedItem) {
@@ -630,8 +601,8 @@ export default {
         this.$refs.shippingCosts.refresh()
         delete selRow.edit
 
-        let item = this.items.find(el => { return el.customized })
-        if (item === null && item === undefined) this.updated = false
+        // let item = this.items.find(el => { return el.customized })
+        // if (item === null && item === undefined) this.updated = false
       }
     },
     validateNumericValues (row) {
