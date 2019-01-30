@@ -144,6 +144,7 @@
         <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
       </b-col>
     </b-row>
+    {{ client.costsTable }}
   </section>
 </template>
 <script>
@@ -234,7 +235,7 @@ export default {
     },
     pricing () {
       let costDiscount = 0
-      let saleDiscount = 0
+      let saleDiscount = -1
       let grossPrice = 0
       let insurance = Number(this.provider.insurance)
       let isComplete = true
@@ -275,15 +276,18 @@ export default {
               el.packageType === this.shipping.package.type &&
               el.shippingZone === this.shipping.shippingZone
             })
+            console.log(clientCosts)
             if (clientCosts !== undefined) {
               // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
-              let sortedClientTable = [...clientCosts.costs].sort((a, b) => a.weight - b.weight)
-              let discounts = sortedClientTable.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
+              // let sortedClientTable = [...clientCosts.costs].sort((a, b) => a.weight - b.weight)
+              // let discounts = sortedClientTable.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
+              let discounts = clientCosts.costs.find(el => { return el.weight >= price.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
+              console.log(discounts)
               if (discounts !== undefined) {
                 saleDiscount = discounts.saleDiscount
-              }
-            }
-          }
+              } else saleDiscount = -4
+            } else saleDiscount = -3
+          } else saleDiscount = -2
         }
       }
 

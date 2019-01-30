@@ -129,7 +129,7 @@ export default {
     }
   },
   created () {
-    this.shipping.initialDate = new Date().toJSON().slice(0, 10)
+    this.shipping.initialDate = this.shipping.initialDate || new Date().toJSON().slice(0, 10)
   }
 }
 </script>
