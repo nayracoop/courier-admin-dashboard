@@ -144,7 +144,6 @@
         <b-button variant="primary" v-b-modal.fileDialogZones><i class="fa fa-file ml-1"></i> Facturar <b>USD {{ shipping.pricing.cost }}</b></b-button>
       </b-col>
     </b-row>
-    {{ client.costsTable }}
   </section>
 </template>
 <script>
@@ -217,8 +216,8 @@ export default {
     // para pivotear entre una y otra entidad
     ...mapGetters(['provider', 'client', 'shipping', 'products', 'providers']),
     declaredValueInsurance () {
-      let insurance = (this.savedPricing !== undefined && this.savedPricing !== null && Object.keys(this.savedPricing).length > 0) ? this.savedPricing.insurance : this.provider.insurance
-      let value = (this.provider.externalId !== null) ? this.shipping.package.declaredValue * (insurance / 100) : 0
+      let insurance = (this.savedPricing !== undefined && this.savedPricing !== null && Object.keys(this.savedPricing).length > 0) ? this.savedPricing.insurance : Number(this.provider.insurance)
+      let value = this.shipping.package.declaredValue * (insurance / 100) // (this.provider.externalId !== null) ? this.shipping.package.declaredValue * (insurance / 100) : 0
       return this.currencyFormat(value)
     },
     volumetricWeight () {
@@ -235,7 +234,7 @@ export default {
     },
     pricing () {
       let costDiscount = 0
-      let saleDiscount = -1
+      let saleDiscount = 0
       let grossPrice = 0
       let insurance = Number(this.provider.insurance)
       let isComplete = true
@@ -268,26 +267,24 @@ export default {
 
           // Obtengo los descuentos vinculados al cliente de acuerdo a las opciones seleccionadas
           // Puede no haber descuentos
-          if (this.client.externalId !== null) {
-            let clientCosts = this.client.costsTable.find(el => {
-              return el.providerId === this.provider.objectId &&
-              el.shippingType === this.shipping.shippingType &&
-              el.serviceType === this.shipping.serviceType &&
-              el.packageType === this.shipping.package.type &&
-              el.shippingZone === this.shipping.shippingZone
-            })
-            console.log(clientCosts)
-            if (clientCosts !== undefined) {
-              // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
-              // let sortedClientTable = [...clientCosts.costs].sort((a, b) => a.weight - b.weight)
-              // let discounts = sortedClientTable.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
-              let discounts = clientCosts.costs.find(el => { return el.weight >= price.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
-              console.log(discounts)
-              if (discounts !== undefined) {
-                saleDiscount = discounts.saleDiscount
-              } else saleDiscount = -4
-            } else saleDiscount = -3
-          } else saleDiscount = -2
+          // if (this.client.externalId !== null) {
+          let clientCosts = this.client.costsTable.find(el => {
+            return el.providerId === this.provider.objectId &&
+            el.shippingType === this.shipping.shippingType &&
+            el.serviceType === this.shipping.serviceType &&
+            el.packageType === this.shipping.package.type &&
+            el.shippingZone === this.shipping.shippingZone
+          })
+          if (clientCosts !== undefined) {
+            // La segunda condición es para los paquetes de tipo 'sobre' que tienen un único precio y el valor asignado al peso es '-'
+            // let sortedClientTable = [...clientCosts.costs].sort((a, b) => a.weight - b.weight)
+            // let discounts = sortedClientTable.find(el => { return el.weight >= this.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
+            let discounts = clientCosts.costs.find(el => { return el.weight >= price.weight || (isNaN(el.weight) && clientCosts.costs.length === 1) })
+            if (discounts !== undefined) {
+              saleDiscount = discounts.saleDiscount
+            }
+          }
+          // }
         }
       }
 
@@ -393,7 +390,10 @@ export default {
 
     this.fetchProviders().then(() => {
       this.providers.map(el => {
-        this.providerList.push({ value: el.externalId, text: el.name })
+        // Solo obtengo los proveedores sincronizados con Xubio
+        if (el.externalId) {
+          this.providerList.push({ value: el.externalId, text: el.name })
+        }
       })
     })
 
