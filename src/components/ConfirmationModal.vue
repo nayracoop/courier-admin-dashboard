@@ -8,7 +8,7 @@
     <!-- ¿Desea eliminar definitivamente {{ count > 1 ? `los ${count} registros seleccionados` : 'el registro seleccionado' }}? -->
     <div slot="modal-footer">
         <b-button variant="secondary" @click="onCancel">{{ cancellationMessage }}</b-button>
-        <b-button :variant="variantConfirmation" @click="onConfirm">{{ confirmationMessage }}</b-button>
+        <b-button :variant="variantConfirmation" @click="onConfirm"><i v-if="waiting" class="fa fa-cog fa-spin ml-1"></i> {{ confirmationMessage }}</b-button>
         <!-- Sí, deseo eliminarlo{{ count > 1 ? 's' : '' }} -->
     </div>
   </b-modal>
@@ -28,12 +28,23 @@ export default {
     cancellationMethod: { type: String, default: 'cancel' },
     defaultStyles: false
   },
+  data () {
+    return {
+      waiting: false
+    }
+  },
   methods: {
     onConfirm () {
       this.$emit(this.confirmationMethod)
     },
     onCancel () {
       this.$emit(this.cancellationMethod)
+    },
+    wait () {
+      this.waiting = true
+    },
+    stopWaiting () {
+      this.waiting = false
     }
   }
 }

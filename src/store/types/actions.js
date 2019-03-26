@@ -33,6 +33,8 @@ export const SHIPPING_SAVE = 'saveShipping'
 export const SHIPPING_DELETE = 'deleteShipping'
 export const SHIPPING_EDIT = 'editShipping'
 export const SHIPPING_RESET_STATE = 'resetShippingState'
+export const CREATE_ORDERS = 'createOrders'
+export const CREATE_BUDGET = 'createBudget'
 
 /* Users CRUD */
 export const FETCH_USER = 'fetchUser'

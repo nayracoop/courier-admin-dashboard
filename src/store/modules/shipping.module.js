@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import { ShippingService } from '@/api'
-import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, SHIPPING_RESET_STATE, FETCH_SHIPPING, FETCH_SHIPPINGS } from '@/store/types/actions'
+import { ShippingService, PurchaseOrderService, BudgetService } from '@/api'
+import { SHIPPING_SAVE, SHIPPING_EDIT, SHIPPING_DELETE, SHIPPING_RESET_STATE, FETCH_SHIPPING, FETCH_SHIPPINGS, CREATE_ORDERS, CREATE_BUDGET } from '@/store/types/actions'
 import { RESET_STATE, SET_SHIPPING, FETCH_START, FETCH_SHIPPINGS_END, UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
 
 const getInitialState = () => {
@@ -114,6 +114,30 @@ export const actions = {
   },
   [SHIPPING_RESET_STATE] ({ commit }) {
     commit(RESET_STATE)
+  },
+  [CREATE_ORDERS] ({ commit, state }, orderList) {
+    return PurchaseOrderService.create(state.shipping.objectId, orderList)
+      .then(data => {
+        // commit(SET_SHIPPING, data)
+        return data
+      })
+    // return ShippingService.update(state.shipping.objectId, state.shipping)
+    //   .then(data => {
+    //     commit(SET_SHIPPING, data)
+    //     return data
+    //   })
+  },
+  [CREATE_BUDGET] ({ commit, state }, budget) {
+    return BudgetService.create(state.shipping.objectId, budget)
+      .then(data => {
+        // commit(SET_SHIPPING, data)
+        return data
+      })
+    // return ShippingService.update(state.shipping.objectId, state.shipping)
+    //   .then(data => {
+    //     commit(SET_SHIPPING, data)
+    //     return data
+    //   })
   }
 }
 

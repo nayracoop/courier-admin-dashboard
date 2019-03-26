@@ -13,25 +13,31 @@
       </template> -->
       <b-row>
         <b-col sm="12">
-          <c-shipping-data :clientList="clientList" :providerList="providerList" ref="shippingDataForm"/>
+          <fieldset :disabled="shipping.status === 1">
+            <c-shipping-data :clientList="clientList" :providerList="providerList" ref="shippingDataForm"/>
+          </fieldset>
         </b-col>
       </b-row>
     </b-tab>
     <b-tab title="Direcciones">
       <b-row>
         <b-col md="6">
-          <b-card>
-            <div slot="header">Origen</div>
-            <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="originAddressUpdated" ref="addressOriginForm"></c-addresses>
-            <c-address-form v-else v-model="singleOriginAddress" ref="addressOriginForm">></c-address-form>
-          </b-card>
+          <fieldset :disabled="shipping.status === 1">
+            <b-card>
+              <div slot="header">Origen</div>
+              <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="originAddressUpdated" ref="addressOriginForm"></c-addresses>
+              <c-address-form v-else v-model="singleOriginAddress" ref="addressOriginForm">></c-address-form>
+            </b-card>
+          </fieldset>
         </b-col>
         <b-col md="6">
-          <b-card>
-            <div slot="header">Destino</div>
-            <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="destinationAddressUpdated" ref="addressDestinationForm"></c-addresses>
-            <c-address-form v-else v-model="singleDestinationAddress" ref="addressDestinationForm"></c-address-form>
-          </b-card>
+          <fieldset :disabled="shipping.status === 1">
+            <b-card>
+              <div slot="header">Destino</div>
+              <c-addresses v-if="!isEdit" isShipping @saved-address-updated="clientAddressUpdated" @address-updated="destinationAddressUpdated" ref="addressDestinationForm"></c-addresses>
+              <c-address-form v-else v-model="singleDestinationAddress" ref="addressDestinationForm"></c-address-form>
+            </b-card>
+          </fieldset>
         </b-col>
       </b-row>
 
@@ -41,7 +47,9 @@
         <b-col md="12">
           <!-- <b-card> -->
             <!-- <div slot="header">Información del paquete</div> -->
-            <c-shipping-package ref="packageForm"></c-shipping-package>
+            <fieldset :disabled="shipping.status === 1">
+              <c-shipping-package ref="packageForm"></c-shipping-package>
+            </fieldset>
           <!-- </b-card> -->
         </b-col>
       </b-row>
@@ -51,21 +59,30 @@
         <b-col md="12">
           <!-- <b-card> -->
             <!-- <div slot="header">Información de seguimiento</div> -->
-            <c-shipping-tracking ref="trackingForm"></c-shipping-tracking>
+            <fieldset :disabled="shipping.status === 1">
+              <c-shipping-tracking ref="trackingForm"></c-shipping-tracking>
+            </fieldset>
           <!-- </b-card> -->
         </b-col>
       </b-row>
     </b-tab>
     <b-tab title="Costos y facturación">
       <!-- <c-shipping-cost-table :pricing="pricing"></c-shipping-cost-table> -->
-      <c-shipping-cost-table ref="costTable"></c-shipping-cost-table>
+      <fieldset :disabled="shipping.billingStatus">
+        <c-shipping-cost-table @close="closeAndSaveShipping" @invoice="invoiceShippig" ref="costTable"></c-shipping-cost-table>
+      </fieldset>
     </b-tab>
   </b-tabs>
-  <div slot="footer"><p class="card-text">Total: <b v-if="shipping.pricing.cost !== undefined && shipping.pricing.cost !== null && shipping.pricing.cost !== ''">USD {{ shipping.pricing.cost }}</b><b v-else="">-</b></p></div>
+  <div slot="footer">
+    <p class="card-text">Total: <b v-if="shipping.pricing.cost !== undefined && shipping.pricing.cost !== null && shipping.pricing.cost !== ''">USD {{ shipping.pricing.price }}</b><b v-else="">-</b></p>
+  </div>
     </b-card>
     <template>
       <b-row class="actions-bar">
-        <b-col sm="12">
+        <b-col v-if="shipping.status === 1" sm="12">
+          <b-link :to="{ path: '/envios' }"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Volver a Envíos</b-link>
+        </b-col>
+        <b-col v-else sm="12">
           <!-- <b-button variant="primary" type="submit"><i class="fa fa-save ml-1"></i> Añadir envío</b-button> -->
           <b-button v-if="isEdit" variant="primary" type="submit">Guardar cambios</b-button><b-button v-else variant="primary" type="submit">Añadir envío</b-button> o <b-link :to="{ path: '/envios' }">Cancelar</b-link>
           <!-- <b-button variant="outline-danger">Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
@@ -251,13 +268,17 @@ export default {
     }
     this.fetchClients().then(() => {
       this.clientList = this.clients.map(client => {
-        return ({ value: client.objectId, text: client.name })
-      })
+        if (client.externalId !== null) {
+          return ({ value: client.objectId, text: client.name })
+        }
+      }).filter(item => { return item !== undefined })
     })
     this.fetchProviders().then(() => {
       this.providerList = this.providers.map(provider => {
-        return ({ value: provider.objectId, text: provider.name })
-      })
+        if (provider.externalId !== null) {
+          return ({ value: provider.objectId, text: provider.name })
+        }
+      }).filter(item => { return item !== undefined })
     })
   },
   async beforeRouteUpdate (to, from, next) {
@@ -339,6 +360,28 @@ export default {
       // this.$refs.addressDestinationForm.validate()
       // this.$refs.packageForm.validate()
       // this.$refs.trackingForm.validate()
+    },
+    closeAndSaveShipping () {
+      this.shipping.status = 1 // cerrado
+      Promise.all([
+        this.$refs.shippingDataForm.validate(),
+        this.$refs.addressOriginForm.validate(),
+        this.$refs.addressDestinationForm.validate(),
+        this.$refs.costTable.validate()
+      ]).then(values => {
+        let errors = values.find(el => el === false)
+        if (errors === undefined) {
+          if (this.addressUpdated || this.$refs.addressOriginForm.isNew || this.$refs.addressDestinationForm.isNew) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
+          this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
+        } else {
+          this.shipping.status = 0 // estado inicial
+          // Acá debería reabrir envío
+        }
+      })
+    },
+    invoiceShippig () {
+      this.shipping.billingStatus = true
+      this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
     },
     deleteShipping () {
       this.deleteEl(SHIPPING_DELETE, '/envios')

@@ -42,6 +42,11 @@
           <input type="checkbox" name="checked" :key="data.index" :value="data.item" @click.stop v-model="checkedItems" />
         </template>
 
+        <template slot="status" slot-scope="data">
+          <b-badge :variant="data.item.status === 'Abierto' ? 'success' : 'danger'" pill>{{ data.item.status }}</b-badge>
+          <b-badge v-if="data.item.status === 'Cerrado'" :variant="data.item.billingStatus === 'Facturado' ? 'success' : 'warning'" pill>{{ data.item.billingStatus }}</b-badge>
+        </template>
+
         <template slot="actions" slot-scope="data">
           <b-button variant="primary" size="sm" :to="{ name: 'Editar Envío', params: { id: data.item.objectId } }">
             <i class="fa fa-pencil"></i> Editar
@@ -79,16 +84,17 @@ export default {
     return {
       fields: [ { key: 'selection', class: 'selection' },
         // { key: 'finalDate', label: 'Fecha de cierre', sortable: true },
-        { key: 'initialDate', label: 'Fecha de inicio', sortable: true },
+        { key: 'provider', label: 'Proveedor', sortable: true },
         { key: 'client', label: 'Cliente', sortable: true },
         // { key: 'clientDocValue', label: 'CUIT / Nº doc.' },
         // { key: 'origin', label: 'País de origen', sortable: true },
         // { key: 'route', label: 'Origen / Destino', sortable: true },
-        { key: 'provider', label: 'Proveedor', sortable: true },
         { key: 'shippingType', label: 'Tipo de envío', sortable: true },
         { key: 'serviceType', label: 'Servicio', sortable: true },
         { key: 'destination', label: 'País de destino', sortable: true },
-        { key: 'cost', label: 'Costo final' },
+        { key: 'initialDate', label: 'Fecha de inicio', sortable: true },
+        { key: 'status', label: 'Estado' },
+        // { key: 'cost', label: 'Costo final' },
         { key: 'actions', label: 'Acciones' }
       ],
       allSelected: false,
@@ -132,7 +138,9 @@ export default {
           // route: this.countryList.find(element => element.code === shipping.origin.country).name + ' -> ' + this.countryList.find(element => element.code === shipping.destination.country).name,
           shippingType: shippingTypes.find(element => element.value === shipping.shippingType).text,
           serviceType: serviceTypes.find(element => element.value === shipping.serviceType).text,
-          cost: (shipping.pricing.cost !== undefined) ? '$' + shipping.pricing.cost : 'Sin precio',
+          status: shipping.status === 0 ? 'Abierto' : 'Cerrado',
+          billingStatus: shipping.billingStatus ? 'Facturado' : 'Pendiente de facturación',
+          // cost: (shipping.pricing.cost !== undefined) ? '$' + shipping.pricing.cost : 'Sin precio',
           selection: false
         }
       })
