@@ -191,7 +191,7 @@
   </section>
 </template>
 <script>
-import { shippingTypes, serviceTypes, packageTypes } from '@/store/const'
+import { shippingTypes, serviceTypes, packageTypes, countries } from '@/store/const'
 import { mapGetters } from 'vuex'
 import { FETCH_PRODUCTS, FETCH_PROVIDERS, CREATE_ORDERS, CREATE_BUDGET } from '@/store/types/actions'
 import { UPDATE_SHIPPING_PRICING } from '@/store/types/mutations'
@@ -240,6 +240,7 @@ export default {
       savedPricing: {},
       productList: [],
       providerList: [],
+      countryList: [],
       newRow: {
         productId: null,
         providerId: null,
@@ -462,6 +463,11 @@ export default {
           this.providerList.push({ value: el.externalId, text: el.name })
         }
       })
+    })
+
+    // cargo las listas de país
+    countries.map(el => {
+      this.countryList.push({ code: el.numericCode, name: el.name })
     })
 
     this.savedPricing = {...this.shipping.pricing}
@@ -744,6 +750,11 @@ export default {
         'value': (this.shipping.pricing.grossPrice * (100 - this.shipping.pricing.costDiscount) / 100) * ((100 + this.shipping.pricing.fuelPercent) / 100) + (this.shipping.package.declaredValue * this.shipping.pricing.insurance / 100),
         'vat': 0
       }]
+      shippingItem.description = 'Envío: ' + this.shipping.objectId + '. ' +
+                                  'Número de guía: ' + this.shipping.tracking.guide + '. ' +
+                                  'Peso: ' + this.shipping.package.weight + '. ' +
+                                  'Número de referencia: ' + this.shipping.package.reference + '. ' +
+                                  'Destino: ' + this.shipping.destination.streetAddress + ', ' + this.shipping.destination.city + ', ' + this.shipping.destination.state + ', ' + this.countryList.find(element => element.code === this.shipping.destination.country).name + '. '
       items.push(shippingItem)
 
       // Esto es para crear ordenes de compra separadas por producto
@@ -760,6 +771,11 @@ export default {
           'value': additionalItem.cost,
           'vat': additionalItem.vat
         }]
+        item.description = 'Envío: ' + this.shipping.objectId + '. ' +
+                            'Número de guía: ' + this.shipping.tracking.guide + '. ' +
+                            'Peso: ' + this.shipping.package.weight + '. ' +
+                            'Número de referencia: ' + this.shipping.package.reference + '. ' +
+                            'Destino: ' + this.shipping.destination.streetAddress + ', ' + this.shipping.destination.city + ', ' + this.shipping.destination.state + ', ' + this.countryList.find(element => element.code === this.shipping.destination.country).name + '. '
         items.push(item)
       }
 
@@ -821,6 +837,13 @@ export default {
         product.vat = additionalItem.vat
         budget.items.push(product)
       }
+
+      budget.description = 'Envío: ' + this.shipping.objectId + '. ' +
+                            'Número de guía: ' + this.shipping.tracking.guide + '. ' +
+                            'Peso: ' + this.shipping.package.weight + '. ' +
+                            'Número de referencia: ' + this.shipping.package.reference + '. ' +
+                            'Destino: ' + this.shipping.destination.streetAddress + ', ' + this.shipping.destination.city + ', ' + this.shipping.destination.state + ', ' + this.countryList.find(element => element.code === this.shipping.destination.country).name + '. '
+
       // console.log(budget.items)
       return this.$store.dispatch(CREATE_BUDGET, budget)
     },
