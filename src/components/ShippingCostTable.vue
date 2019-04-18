@@ -7,6 +7,7 @@
         </p>
         <div v-else>
           <p><b>Tipo de envío</b>: {{ shippingTypeText }}. <b>Servicio</b>: {{ serviceTypeText }}. <b>Tipo de embalaje</b>: {{ packageTypeText }}. <b>Peso</b>: {{ weight }}kg. <b>Zona</b>: {{ shipping.shippingZone }}</p>
+          <b-alert show variant="danger" v-if="pricing !== null && showingSavedPricing">No existen costos cargados para la combinación de opciones seleccionadas. La siguiente tabla muestra los últimos valores guardados.</b-alert>
           <b-alert show variant="warning" v-if="updated && !closed" dismissible>Se realizaron cambios en las opciones del envío. Algunos valores pueden estar desactualizados. Puede actualizarlos utilizando la opción: <b><i class="fa fa-undo"></i> Auto</b> </b-alert>
           <b-table ref="shippingCosts" hover outlined small fixed responsive="sm"
           :items="itemsProvider"
@@ -238,6 +239,7 @@ export default {
       ],
       updated: false,
       savedPricing: {},
+      showingSavedPricing: false,
       productList: [],
       providerList: [],
       countryList: [],
@@ -295,7 +297,7 @@ export default {
       return roundFactor * Math.ceil((originalVolume / weightDivisor) / roundFactor)
     },
     weight () {
-      return Number(this.volumetricWeight > this.shipping.package.weight ? this.volumetricWeight : this.shipping.package.weight)
+      return Number(this.volumetricWeight > this.shipping.package.weight ? this.volumetricWeight : this.shipping.package.weight) || 0.5
     },
     pricing () {
       let costDiscount = 0
@@ -353,7 +355,8 @@ export default {
           // }
         }
       }
-
+      if (Number(this.shipping.package.declaredValue) === 0) isComplete = false // return null
+      this.showingSavedPricing = !isComplete
       if (isComplete) {
         return {
           // cost,
@@ -387,18 +390,22 @@ export default {
   },
   watch: {
     pricing (val) {
-      let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
-      // let isUpdate = false
-      for (let key in val) {
-        if (newPricing[key] === undefined) newPricing[key] = val[key]
-        // else isUpdate = true
+      if (val === null) {
+        this.shipping.pricing.cost = null
+      } else {
+        let newPricing = {...this.shipping.pricing} // Object.assign({ }, this.shipping.pricing)
+        // let isUpdate = false
+        for (let key in val) {
+          if (newPricing[key] === undefined) newPricing[key] = val[key]
+          // else isUpdate = true
+        }
+        // if (isUpdate) {
+        //   let item = this.items.find(el => { return el.customized })
+        //   if (item !== null && item !== undefined) this.updated = true
+        // }
+        this.updateShippingPricing(newPricing)
+        if (this.$refs.shippingCosts !== undefined) this.$refs.shippingCosts.refresh()
       }
-      // if (isUpdate) {
-      //   let item = this.items.find(el => { return el.customized })
-      //   if (item !== null && item !== undefined) this.updated = true
-      // }
-      this.updateShippingPricing(newPricing)
-      if (this.$refs.shippingCosts !== undefined) this.$refs.shippingCosts.refresh()
     }
   },
   // en created lo que hago es setear la serie de valores iniciales para los filtros, y la tabla de costos que corresponde
@@ -528,7 +535,7 @@ export default {
       this.items[4].cost = this.declaredValueInsurance
       this.items[4].price = this.declaredValueInsurance
       this.items[4].value = this.shipping.pricing.insurance
-      this.items[4].detail = this.shipping.pricing.insurance + '% del valor declarado ($' + this.shipping.package.declaredValue + ')'
+      this.items[4].detail = this.shipping.pricing.insurance + '% del valor declarado ($' + Number(this.shipping.package.declaredValue) + ')'
 
       this.updateSubtotals()
       let itemsResult = [...this.items]
@@ -576,12 +583,12 @@ export default {
       }
 
       let product = this.products.find(el => el.externalId === newRow.productId)
-      let provider = this.providers.find(el => el.externalId === newRow.providerId)
-      console.log(newRow.providerId)
+      let provider = this.providerList.find(el => el.externalId === newRow.externalId)
+      console.log(newRow)
       console.log(this.providers)
       console.log(provider)
       newRow.name = product.name
-      newRow.provider = provider.name
+      newRow.provider = provider.text
       newRow.cost = parseFloat(newRow.cost)
       newRow.price = parseFloat(newRow.price)
       newRow.vat = parseFloat(newRow.vat)
@@ -591,6 +598,7 @@ export default {
       this.newRow.price = null
       this.newRow.detail = null
       this.newRow.vat = null
+      console.log(newRow)
 
       this.items.push(newRow)
       this.$toasted.global.success_toast({ message: 'Edición exitosa. Haga click en "Guardar cambios" para registrar los cambios' })
@@ -598,10 +606,10 @@ export default {
 
       this.additional.push({
         'productId': product.externalId,
-        'providerId': provider.externalId,
+        'providerId': provider.value,
         'name': product.name,
         'code': product.code,
-        'provider': provider.name,
+        'provider': provider.text,
         'cost': newRow.cost,
         'price': newRow.price,
         'vat': newRow.vat
@@ -750,63 +758,65 @@ export default {
         'value': (this.shipping.pricing.grossPrice * (100 - this.shipping.pricing.costDiscount) / 100) * ((100 + this.shipping.pricing.fuelPercent) / 100) + (this.shipping.package.declaredValue * this.shipping.pricing.insurance / 100),
         'vat': 0
       }]
-      shippingItem.description = 'Envío: ' + this.shipping.objectId + '. ' +
-                                  'Número de guía: ' + this.shipping.tracking.guide + '. ' +
-                                  'Peso: ' + this.shipping.package.weight + '. ' +
-                                  'Número de referencia: ' + this.shipping.package.reference + '. ' +
+      shippingItem.description = 'Envío: ' + this.shipping.objectId + '; ' +
+                                  'Número de guía: ' + this.shipping.tracking.guide + '; ' +
+                                  'Peso: ' + this.weight + '; ' +
+                                  'Número de referencia: ' + this.shipping.package.reference + '; ' +
                                   'Destino: ' + this.shipping.destination.streetAddress + ', ' + this.shipping.destination.city + ', ' + this.shipping.destination.state + ', ' + this.countryList.find(element => element.code === this.shipping.destination.country).name + '. '
       items.push(shippingItem)
 
-      // Esto es para crear ordenes de compra separadas por producto
-      for (const additionalItem of this.shipping.pricing.additional) {
-        let item = { }
-        item.date = this.shipping.finalDate
-        item.dollarValue = this.shipping.pricing.dollarValue
-        item.providerId = additionalItem.providerId
-        item.provider = additionalItem.provider
-        item.products = [{
-          'id': additionalItem.productId,
-          'name': additionalItem.name,
-          'code': additionalItem.code,
-          'value': additionalItem.cost,
-          'vat': additionalItem.vat
-        }]
-        item.description = 'Envío: ' + this.shipping.objectId + '. ' +
-                            'Número de guía: ' + this.shipping.tracking.guide + '. ' +
-                            'Peso: ' + this.shipping.package.weight + '. ' +
-                            'Número de referencia: ' + this.shipping.package.reference + '. ' +
-                            'Destino: ' + this.shipping.destination.streetAddress + ', ' + this.shipping.destination.city + ', ' + this.shipping.destination.state + ', ' + this.countryList.find(element => element.code === this.shipping.destination.country).name + '. '
-        items.push(item)
-      }
+      if (this.shipping.pricing.additional) {
+        // Esto es para crear ordenes de compra separadas por producto
+        for (const additionalItem of this.shipping.pricing.additional) {
+          let item = { }
+          item.date = this.shipping.finalDate
+          item.dollarValue = this.shipping.pricing.dollarValue
+          item.providerId = additionalItem.providerId
+          item.provider = additionalItem.provider
+          item.products = [{
+            'id': additionalItem.productId,
+            'name': additionalItem.name,
+            'code': additionalItem.code,
+            'value': additionalItem.cost,
+            'vat': additionalItem.vat
+          }]
+          item.description = 'Envío: ' + this.shipping.objectId + '; ' +
+                              'Número de guía: ' + this.shipping.tracking.guide + '; ' +
+                              'Peso: ' + this.weight + '; ' +
+                              'Número de referencia: ' + this.shipping.package.reference + '; ' +
+                              'Destino: ' + this.shipping.destination.streetAddress + ', ' + this.shipping.destination.city + ', ' + this.shipping.destination.state + ', ' + this.countryList.find(element => element.code === this.shipping.destination.country).name + '. '
+          items.push(item)
+        }
 
-      // Esto es para crear ordenes de compra separadas por proveedor
-      // for (const additionalItem of this.shipping.pricing.additional) {
-      //   let itemsListIndex = -1
-      //   let product = { }
-      //   items.filter((item, i) => {
-      //     if (item.providerId === additionalItem.providerId) {
-      //       itemsListIndex = i
-      //       return true
-      //     }
-      //   })
-      //   if (itemsListIndex === -1) {
-      //     let item = { }
-      //     item.date = this.shipping.finalDate
-      //     item.dollarValue = this.shipping.pricing.dollarValue
-      //     item.providerId = additionalItem.providerId
-      //     item.provider = additionalItem.provider
-      //     item.products = [ ]
-      //     items.push(item)
-      //     itemsListIndex = items.length - 1
-      //   }
-      //   product.id = additionalItem.productId
-      //   product.name = additionalItem.name
-      //   product.code = additionalItem.code
-      //   product.value = additionalItem.cost
-      //   product.vat = additionalItem.vat
-      //   items[itemsListIndex].products.push(product)
-      // }
-      // console.log(items)
+        // Esto es para crear ordenes de compra separadas por proveedor
+        // for (const additionalItem of this.shipping.pricing.additional) {
+        //   let itemsListIndex = -1
+        //   let product = { }
+        //   items.filter((item, i) => {
+        //     if (item.providerId === additionalItem.providerId) {
+        //       itemsListIndex = i
+        //       return true
+        //     }
+        //   })
+        //   if (itemsListIndex === -1) {
+        //     let item = { }
+        //     item.date = this.shipping.finalDate
+        //     item.dollarValue = this.shipping.pricing.dollarValue
+        //     item.providerId = additionalItem.providerId
+        //     item.provider = additionalItem.provider
+        //     item.products = [ ]
+        //     items.push(item)
+        //     itemsListIndex = items.length - 1
+        //   }
+        //   product.id = additionalItem.productId
+        //   product.name = additionalItem.name
+        //   product.code = additionalItem.code
+        //   product.value = additionalItem.cost
+        //   product.vat = additionalItem.vat
+        //   items[itemsListIndex].products.push(product)
+        // }
+        // console.log(items)
+      }
       return this.$store.dispatch(CREATE_ORDERS, items)
     },
     budget () {
@@ -828,20 +838,22 @@ export default {
         'vat': 0
       })
 
-      for (const additionalItem of this.shipping.pricing.additional) {
-        let product = { }
-        product.id = additionalItem.productId
-        product.name = additionalItem.name
-        product.code = additionalItem.code
-        product.value = additionalItem.price
-        product.vat = additionalItem.vat
-        budget.items.push(product)
+      if (this.shipping.pricing.additional) {
+        for (const additionalItem of this.shipping.pricing.additional) {
+          let product = { }
+          product.id = additionalItem.productId
+          product.name = additionalItem.name
+          product.code = additionalItem.code
+          product.value = additionalItem.price
+          product.vat = additionalItem.vat
+          budget.items.push(product)
+        }
       }
 
-      budget.description = 'Envío: ' + this.shipping.objectId + '. ' +
-                            'Número de guía: ' + this.shipping.tracking.guide + '. ' +
-                            'Peso: ' + this.shipping.package.weight + '. ' +
-                            'Número de referencia: ' + this.shipping.package.reference + '. ' +
+      budget.description = 'Envío: ' + this.shipping.objectId + '; ' +
+                            'Número de guía: ' + this.shipping.tracking.guide + '; ' +
+                            'Peso: ' + this.weight + '; ' +
+                            'Número de referencia: ' + this.shipping.package.reference + '; ' +
                             'Destino: ' + this.shipping.destination.streetAddress + ', ' + this.shipping.destination.city + ', ' + this.shipping.destination.state + ', ' + this.countryList.find(element => element.code === this.shipping.destination.country).name + '. '
 
       // console.log(budget.items)
