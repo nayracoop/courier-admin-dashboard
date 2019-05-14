@@ -15,7 +15,9 @@
       <b-row class="actions-bar">
         <b-col sm="8">
           <b-dropdown class="mx-1" variant="danger" text="Acciones en lote">
-            <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center>Eliminar seleccionados</b-dropdown-item>
+            <b-dropdown-item @click="downloadSelectedData()" v-b-modal.modal-center><i class="fa fa-file-excel-o" aria-hidden="true"></i>Descargar CSV ({{ checkedItems.length }} items)</b-dropdown-item>
+            <!-- <b-dropdown-item @click="downloadSelectedData()" v-b-modal.modal-center><i class="fa fa-download" aria-hidden="true"></i>Exportar seleccionados ({{ checkedItems.length }})</b-dropdown-item> -->
+            <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center><i class="fa fa-trash" aria-hidden="true"></i>Eliminar seleccionados ({{ checkedItems.length }})</b-dropdown-item>
             <!-- <b-dropdown-item>Item 2</b-dropdown-item> -->
           </b-dropdown>
         </b-col>
@@ -234,6 +236,27 @@ export default {
     clearSelected () {
       this.allSelected = false
       this.checkedItems = []
+    },
+    downloadSelectedData () {
+      let result = ''
+      let fileLink = document.createElement('a')
+      for (const item of this.checkedItems) {
+        if (item) {
+          result += '"' + item.businessName + '",' +
+          item.docValue + ',' +
+          item.phone + ',' +
+          '"' + item.address.address + '",' +
+          item.email + '\n'
+        }
+      }
+
+      fileLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result))
+      fileLink.setAttribute('download', "clientes.csv")
+      fileLink.click()
+
+      // fileLink.style.display = 'none'
+      // document.body.appendChild(fileLink)
+
     }
   }
 }
