@@ -347,12 +347,15 @@ export default {
         this.$refs.shippingDataForm.validate(),
         this.$refs.addressOriginForm.validate(),
         this.$refs.addressDestinationForm.validate(),
+        this.$refs.packageForm.validate(),
         this.$refs.costTable.validate()
       ]).then(values => {
         let errors = values.find(el => el === false)
         if (errors === undefined) {
           if (this.addressUpdated || this.$refs.addressOriginForm.isNew || this.$refs.addressDestinationForm.isNew) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
           this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')
+        } else {
+          this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Por favor, corríjalos y vuelva a guardar' })
         }
       })
       // this.$refs.shippingDataForm.validate()
@@ -367,9 +370,11 @@ export default {
         this.$refs.shippingDataForm.validate(),
         this.$refs.addressOriginForm.validate(),
         this.$refs.addressDestinationForm.validate(),
+        this.$refs.packageForm.validate(),
         this.$refs.costTable.validate()
       ]).then(values => {
         let errors = values.find(el => el === false)
+        console.log(errors)
         if (errors === undefined) {
           if (this.addressUpdated || this.$refs.addressOriginForm.isNew || this.$refs.addressDestinationForm.isNew) this.save(this.client, CLIENT_SAVE, 'Editar Cliente')
           this.save(this.shipping, this.isEdit ? SHIPPING_EDIT : SHIPPING_SAVE, 'Editar Envío')

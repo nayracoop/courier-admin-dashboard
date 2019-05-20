@@ -13,7 +13,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { countries, zipCodes } from '@/store/const'
+import { countries, zipCodes, shippingTypes, serviceTypes, packageTypes, shippingZones } from '@/store/const'
 import Papa from 'papaparse'
 
 export default {
@@ -23,8 +23,11 @@ export default {
       file: null,
       parsedFile: '',
       count: 0,
-      inProgress: false
-
+      inProgress: false,
+      shippingTypes: shippingTypes,
+      serviceTypes: serviceTypes,
+      packageTypes: packageTypes,
+      shippingZones: shippingZones
     }
   },
   props: {
@@ -176,9 +179,12 @@ export default {
       let newRow = null
       for (let i = 0, len = this.parsedFile.data.length; i < len; i++) {
         data = this.parsedFile.data[i]
-        shippingType = data.envio === 'importacion' ? 1 : data.envio === 'exportacion' ? 2 : data.envio === 'domestico' ? 3 : -1
-        serviceType = data.servicio === 'domestico' ? 1 : data.servicio === 'economy' ? 2 : data.servicio === 'priority' ? 3 : -1
-        packageType = data.embalaje === 'caja' ? 1 : data.embalaje === 'pack' ? 2 : data.embalaje === 'sobre' ? 3 : -1
+        shippingType = this.shippingTypes.find(el => el.text === data.envio || el.normalized === data.envio) // data.envio === 'importacion' ? 1 : data.envio === 'exportacion' ? 2 : data.envio === 'domestico' ? 3 : -1
+        serviceType = this.serviceTypes.find(el => el.text === data.servicio || el.normalized === data.servicio) // data.servicio === 'domestico' ? 1 : data.servicio === 'economy' ? 2 : data.servicio === 'priority' ? 3 : -1
+        packageType = this.packageTypes.find(el => el.text === data.embalaje || el.normalized === data.embalaje) // data.embalaje === 'caja' ? 1 : data.embalaje === 'pack' ? 2 : data.embalaje === 'sobre' ? 3 : -1
+        shippingType = shippingType !== undefined ? shippingType.value : -1
+        serviceType = serviceType !== undefined ? serviceType.value : -1
+        packageType = packageType !== undefined ? packageType.value : -1
         weight = data.peso
 
         for (let j = 1; j < 7; j++) {
@@ -261,9 +267,12 @@ export default {
       for (let i = 0, len = this.parsedFile.data.length; i < len; i++) {
         data = this.parsedFile.data[i]
         providerId = data.proveedor || ''
-        shippingType = data.envio === 'importacion' ? 1 : data.envio === 'exportacion' ? 2 : data.envio === 'domestico' ? 3 : -1
-        serviceType = data.servicio === 'domestico' ? 1 : data.servicio === 'economy' ? 2 : data.servicio === 'priority' ? 3 : -1
-        packageType = data.embalaje === 'caja' ? 1 : data.embalaje === 'pack' ? 2 : data.embalaje === 'sobre' ? 3 : -1
+        shippingType = this.shippingTypes.find(el => el.text === data.envio || el.normalized === data.envio) // data.envio === 'importacion' ? 1 : data.envio === 'exportacion' ? 2 : data.envio === 'domestico' ? 3 : -1
+        serviceType = this.serviceTypes.find(el => el.text === data.servicio || el.normalized === data.servicio) // data.servicio === 'domestico' ? 1 : data.servicio === 'economy' ? 2 : data.servicio === 'priority' ? 3 : -1
+        packageType = this.packageTypes.find(el => el.text === data.embalaje || el.normalized === data.embalaje) // data.embalaje === 'caja' ? 1 : data.embalaje === 'pack' ? 2 : data.embalaje === 'sobre' ? 3 : -1
+        shippingType = shippingType !== undefined ? shippingType.value : -1
+        serviceType = serviceType !== undefined ? serviceType.value : -1
+        packageType = packageType !== undefined ? packageType.value : -1
         weight = data.peso
 
         for (let j = 1; j < 7; j++) {

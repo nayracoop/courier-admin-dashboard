@@ -14,7 +14,9 @@
         <b-row class="actions-bar">
           <b-col sm="8">
             <b-dropdown class="mx-1" variant="danger" text="Acciones en lote">
-              <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center>Eliminar seleccionados</b-dropdown-item>
+              <b-dropdown-item @click="downloadSelectedData()" v-b-modal.modal-center><i class="fa fa-file-excel-o" aria-hidden="true"></i>Descargar tabla ({{ checkedItems.length }} items)</b-dropdown-item>
+              <b-dropdown-item @click="clearSelected()" v-b-modal.modal-center><i class="fa fa-times" aria-hidden="true"></i>Deseleccionar todo ({{ checkedItems.length }} items)</b-dropdown-item>
+              <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center><i class="fa fa-trash" aria-hidden="true"></i>Eliminar seleccionados ({{ checkedItems.length }} items)</b-dropdown-item>
             </b-dropdown>
           </b-col>
           <b-col sm="4">
@@ -29,7 +31,7 @@
       </template>
       <!-- tabla -->
       <b-table class="list-table" :hover="true" :striped="true" :bordered="true" :small="false" :fixed="true" :items="providers" :fields="fields"
-        :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
+        :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues">
 
         <template slot="HEAD_selection" slot-scope="head">
           <input type="checkbox" @click.stop="toggleSelected" v-model="allSelected" />
@@ -59,7 +61,7 @@
       <!-- end tabla -->
       <nav>
         <b-pagination :total-rows="providersCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
-          hide-goto-end-buttons @click.native="clearSelected" />
+          hide-goto-end-buttons />
       </nav>
     </b-card>
     <c-confirmation-modal
@@ -127,7 +129,11 @@ export default {
   },
   watch: {
     checkedItems (a, b) {
-      this.allSelected = (this.tableValues.length === a.length)
+      // this.allSelected = (this.tableValues.length === a.length)
+      this.allSelected = this.checkedItems.filter(e => this.tableValues.find(a => e === a)).length === this.tableValues.length
+    },
+    tableValues () {
+      this.allSelected = this.checkedItems.filter(e => this.tableValues.find(a => e === a)).length === this.tableValues.length
     }
   },
   methods: {
@@ -233,11 +239,33 @@ export default {
     },
     toggleSelected () {
       this.allSelected = !this.allSelected
-      this.checkedItems = this.allSelected ? this.tableValues : []
+      if (this.allSelected) {
+        this.checkedItems = [ ...this.checkedItems, ...this.tableValues ]
+      } else {
+        this.checkedItems = this.checkedItems.filter(e => !this.tableValues.find(a => e === a))
+      }
+      this.checkedItems = [ ...new Set(this.checkedItems) ]
     },
     clearSelected () {
       this.allSelected = false
       this.checkedItems = []
+    },
+    downloadSelectedData () {
+      let result = '"Nombre","CUIT / Nº doc.","Teléfono","Dirección","Email"'
+      let fileLink = document.createElement('a')
+      for (const item of this.checkedItems) {
+        if (item) {
+          result += '\n"' + item.name + '","' +
+          item.docValue + '","' +
+          item.phone + '","' +
+          item.address.streetAddress + '","' +
+          item.email + '"'
+        }
+      }
+
+      fileLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result))
+      fileLink.setAttribute('download', 'proveedores.csv')
+      fileLink.click()
     }
   }
 }

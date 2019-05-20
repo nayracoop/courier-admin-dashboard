@@ -37,7 +37,7 @@
                 <b-row class="actions-bar">
                   <b-col sm="8">
                     <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
-                    <b-button variant="outline-primary" disabled>Imprimir lista de descuentos<i class="fa fa-print  ml-1"></i></b-button>
+                    <b-button variant="outline-primary" @click="printPricing">Descargar lista de descuentos<i class="fa fa-print  ml-1"></i></b-button>
                     <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar lista de descuentos" class="import-modal">
                       <c-csv-file-dialog
                         bodyMessage="Elija un archivo para importar la lista de descuentos. Únicamente se permiten archivos .csv"
@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import { shippingTypes, serviceTypes, packageTypes, shippingZones } from '@/store/const'
 import { mapGetters } from 'vuex'
 import store from '@/store'
 
@@ -171,7 +172,11 @@ export default {
       returnConfirmed: false,
       returnTo: null,
       filter: null,
-      providerList: []
+      providerList: [],
+      shippingTypes: shippingTypes,
+      serviceTypes: serviceTypes,
+      packageTypes: packageTypes,
+      shippingZones: shippingZones
     }
   },
   computed: {
@@ -195,7 +200,7 @@ export default {
       // })
       this.$refs.clientDetail.validateBeforeSubmit().then(res => {
         if (!res) {
-          this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Corríjalos y vuelva a guardar' })
+          this.$toasted.global.error_toast({ message: 'Hay campos que no se completaron correctamente. Por favor, corríjalos y vuelva a guardar' })
           return false
         }
         this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
@@ -207,6 +212,51 @@ export default {
     hideImportModal () {
       this.$refs.fileDialogModal.hide()
       this.$refs.costTable.refresh()
+    },
+    printPricing () {
+      let result = '"proveedor","envio","servicio","embalaje","peso","Zona 1","Zona 2","Zona 3","Zona 4","Zona 5","Zona 6","Descuento Zona 1","Descuento Zona 2","Descuento Zona 3","Descuento Zona 4","Descuento Zona 5","Descuento Zona 6"'
+      let registers = {}
+      let fileLink = document.createElement('a')
+      if (this.$refs.costTable.costsFilter.providerId === undefined || this.$refs.costTable.costsFilter.providerId === -1) return
+      let provider = this.providers.find(el => el.objectId === this.$refs.costTable.costsFilter.providerId)
+      for (const item of provider.costsTable) {
+        const shippingType = this.shippingTypes.find(el => el.value === item.shippingType)
+        const serviceType = this.serviceTypes.find(el => el.value === item.serviceType)
+        const packageType = this.packageTypes.find(el => el.value === item.packageType)
+        const shippingZone = this.shippingZones.find(el => el.value === item.shippingZone)
+
+        if (shippingType && serviceType && packageType && shippingZone) {
+          let keyBase = '"' + provider.objectId + '","' + shippingType.text + '","' + serviceType.text + '","' + packageType.text + '","'
+          for (const cost of item.costs) {
+            let key = keyBase + cost.weight + '","'
+            if (registers[key] === undefined) {
+              registers[key] = {}
+            }
+            registers[key]['Zona ' + shippingZone.text] = cost.grossPrice
+            registers[key]['Descuento Zona ' + shippingZone.text] = cost.costDiscount
+          }
+        }
+      }
+
+      for (const key in registers) {
+        result += '\n' + key
+        result += (registers[key]['Zona 1'] !== undefined) ? registers[key]['Zona 1'] + '","' : '","'
+        result += (registers[key]['Zona 2'] !== undefined) ? registers[key]['Zona 2'] + '","' : '","'
+        result += (registers[key]['Zona 3'] !== undefined) ? registers[key]['Zona 3'] + '","' : '","'
+        result += (registers[key]['Zona 4'] !== undefined) ? registers[key]['Zona 4'] + '","' : '","'
+        result += (registers[key]['Zona 5'] !== undefined) ? registers[key]['Zona 5'] + '","' : '","'
+        result += (registers[key]['Zona 6'] !== undefined) ? registers[key]['Zona 6'] + '","' : '","'
+        result += (registers[key]['Descuento Zona 1'] !== undefined) ? registers[key]['Descuento Zona 1'] + '","' : '","'
+        result += (registers[key]['Descuento Zona 2'] !== undefined) ? registers[key]['Descuento Zona 2'] + '","' : '","'
+        result += (registers[key]['Descuento Zona 3'] !== undefined) ? registers[key]['Descuento Zona 3'] + '","' : '","'
+        result += (registers[key]['Descuento Zona 4'] !== undefined) ? registers[key]['Descuento Zona 4'] + '","' : '","'
+        result += (registers[key]['Descuento Zona 5'] !== undefined) ? registers[key]['Descuento Zona 5'] + '","' : '","'
+        result += (registers[key]['Descuento Zona 6'] !== undefined) ? registers[key]['Descuento Zona 6'] + '"' : '"'
+      }
+
+      fileLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result))
+      fileLink.setAttribute('download', this.client.name + '.csv')
+      fileLink.click()
     }
   }
 }

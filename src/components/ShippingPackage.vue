@@ -3,17 +3,17 @@
     <b-row>
       <b-col sm="4">
         <b-form-group>
-          <label for="package">Tipo de embalaje</label>
+          <label for="package" class="required-label">Tipo de embalaje</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Tipo de embalaje del paquete"></i>
-          <b-form-select id="package" :plain="true" :options="packageTypes" value="Tipo de embalaje" v-model="shipping.package.type">
+          <b-form-select :class="{ 'is-invalid': errors.has('package') }" v-validate="'required'" id="package" name="package" :plain="true" :options="packageTypes" value="Tipo de embalaje" v-model="shipping.package.type">
           </b-form-select>
         </b-form-group>
       </b-col>
       <b-col sm="4">
         <b-form-group>
-          <label for="packageValue">Valor declarado</label>
+          <label for="packageValue" class="required-label">Valor declarado</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Valor declarado del paquete"></i>
-          <b-form-input type="text" id="packageValue" placeholder="Ej: $2500" v-model="shipping.package.declaredValue"></b-form-input>
+          <b-form-input :class="{ 'is-invalid': errors.has('packageValue') }" v-validate="'required'" type="text" id="packageValue" name="packageValue" placeholder="Ej: $2500" v-model="shipping.package.declaredValue"></b-form-input>
         </b-form-group>
       </b-col>
       <b-col sm="4">
@@ -81,6 +81,11 @@ export default {
   },
   computed: {
     ...mapGetters([ 'shipping' ])
+  },
+  methods: {
+    validate () {
+      return this.$validator.validateAll()
+    }
   }
 }
 </script>

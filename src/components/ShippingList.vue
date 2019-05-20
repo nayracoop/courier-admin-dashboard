@@ -14,7 +14,9 @@
           <b-col sm="8">
             <!-- <b-button variant="primary" :to="{ name: 'Nuevo Envío' }">Nuevo envío <i class="fa fa-plus-circle ml-1"></i></b-button> -->
             <b-dropdown class="mx-1" variant="danger" text="Acciones en lote">
-              <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center>Eliminar seleccionados</b-dropdown-item>
+              <b-dropdown-item @click="downloadSelectedData()" v-b-modal.modal-center><i class="fa fa-file-excel-o" aria-hidden="true"></i>Descargar tabla ({{ checkedItems.length }} items)</b-dropdown-item>
+              <b-dropdown-item @click="clearSelected()" v-b-modal.modal-center><i class="fa fa-times" aria-hidden="true"></i>Deseleccionar todo ({{ checkedItems.length }} items)</b-dropdown-item>
+              <b-dropdown-item @click="showDeleteModal()" v-b-modal.modal-center><i class="fa fa-trash" aria-hidden="true"></i>Eliminar seleccionados ({{ checkedItems.length }} items)</b-dropdown-item>
             </b-dropdown>
             <!-- <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
           </b-col>
@@ -32,7 +34,7 @@
       </template>
       <!-- tabla -->
       <b-table :hover="true" :striped="true" :bordered="true" :fixed="true" :items="shippingsList" :fields="fields"
-        :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues" @head-clicked="clearSelected">
+        :current-page="currentPage" :per-page="perPage" :filter="filter" responsive="sm" v-model="tableValues">
 
         <template slot="HEAD_selection" slot-scope="head">
           <input type="checkbox" @click.stop="toggleSelected" v-model="allSelected" />
@@ -59,7 +61,7 @@
       <!-- end tabla -->
       <nav>
         <b-pagination :total-rows="shippingsCount" :per-page="perPage" v-model="currentPage" prev-text="Anterior" next-text="Siguiente"
-          hide-goto-end-buttons @click.native="clearSelected" />
+          hide-goto-end-buttons />
       </nav>
       <c-confirmation-modal classModal="delete-modal" :promptMessage="'¿Desea eliminar definitivamente ' + (deleteMultiple && checkedItems.length > 1 ? `los ${checkedItems.length} registros seleccionados` : 'el registro seleccionado') + '?'"
         ref="deleteModal" modalTitle="Eliminar registro"
@@ -148,7 +150,11 @@ export default {
   },
   watch: {
     checkedItems (a, b) {
-      this.allSelected = (this.tableValues.length === a.length)
+      // this.allSelected = (this.tableValues.length === a.length)
+      this.allSelected = this.checkedItems.filter(e => this.tableValues.find(a => e === a)).length === this.tableValues.length
+    },
+    tableValues () {
+      this.allSelected = this.checkedItems.filter(e => this.tableValues.find(a => e === a)).length === this.tableValues.length
     }
   },
   methods: {
@@ -211,11 +217,34 @@ export default {
     },
     toggleSelected () {
       this.allSelected = !this.allSelected
-      this.checkedItems = this.allSelected ? this.tableValues : []
+      if (this.allSelected) {
+        this.checkedItems = [ ...this.checkedItems, ...this.tableValues ]
+      } else {
+        this.checkedItems = this.checkedItems.filter(e => !this.tableValues.find(a => e === a))
+      }
+      this.checkedItems = [ ...new Set(this.checkedItems) ]
     },
     clearSelected () {
       this.allSelected = false
       this.checkedItems = []
+    },
+    downloadSelectedData () {
+      let result = '"Proveedor","Cliente","Tipo de envío","Servicio","País de destino","Estado"'
+      let fileLink = document.createElement('a')
+      for (const item of this.checkedItems) {
+        if (item) {
+          result += '\n"' + item.provider + '","' +
+          item.client + '","' +
+          item.shippingType + '","' +
+          item.serviceType + '","' +
+          item.destination + '","' +
+          item.status + '"'
+        }
+      }
+
+      fileLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result))
+      fileLink.setAttribute('download', 'envios.csv')
+      fileLink.click()
     }
   }
 }

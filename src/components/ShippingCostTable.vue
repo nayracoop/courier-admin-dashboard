@@ -141,7 +141,7 @@
                   <label for="providerName" class="required-label">Cotización del dólar</label>
                   <b-input-group>
                     <b-input-group-prepend><b-input-group-text>$</b-input-group-text></b-input-group-prepend>
-                    <b-form-input v-validate="'required'" v-model="shipping.pricing.dollarValue" type="number"></b-form-input>
+                    <b-form-input :class="{ 'is-invalid': errors.has('dollarValue') }" v-validate="'required|min_value:0.1'" id="dollarValue" name="dollarValue" v-model="shipping.pricing.dollarValue" type="number"></b-form-input>
                   </b-input-group>
                 </b-form-group>
               </b-col>

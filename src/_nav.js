@@ -9,9 +9,9 @@ const getMenu = async () => {
       name: 'Courier'
     },
     {
-      name: 'Proveedores',
-      url: '/proveedores',
-      icon: 'fa fa-truck'
+      name: 'Envios',
+      url: '/envios',
+      icon: 'fa fa-plane'
     },
     {
       name: 'Clientes',
@@ -19,9 +19,9 @@ const getMenu = async () => {
       icon: 'icon-people'
     },
     {
-      name: 'Envios',
-      url: '/envios',
-      icon: 'fa fa-plane'
+      name: 'Proveedores',
+      url: '/proveedores',
+      icon: 'fa fa-truck'
     }
   ]
   if (isAdmin) {

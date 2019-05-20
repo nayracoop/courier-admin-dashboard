@@ -37,7 +37,7 @@ let router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard',
+      redirect: '/envios',
       name: 'Home',
       component: DefaultContainer,
       children: [
