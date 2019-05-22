@@ -2,9 +2,9 @@
   <AppHeaderDropdown right no-caret>
     <template slot="header">
       <img
-        src="/courieradmin/static/img/avatars/avatar.png"
+        src="/static/img/avatars/avatar.png"
         class="img-avatar"
-        alt="admin@bootstrapmaster.com" />
+        :alt="username + ' (' + email + ')'" />
     </template>\
     <template slot="dropdown">
       <!--b-dropdown-header tag="div" class="text-center"><strong>Account</strong></b-dropdown-header>
@@ -41,12 +41,22 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { HeaderDropdown as AppHeaderDropdown } from '@coreui/vue'
 import { LOGOUT } from '@/store/types/actions'
 export default {
   name: 'DefaultHeaderDropdownAccnt',
   components: {
     AppHeaderDropdown
+  },
+  computed: {
+    ...mapGetters([ 'currentUser' ]),
+    username () {
+      return this.currentUser.attributes.username
+    },
+    email () {
+      return this.currentUser.attributes.email
+    }
   },
   methods: {
     logout () {
