@@ -11,6 +11,22 @@ export default {
     let query = new Parse.Query('Client')
     query.ascending('name')
     query.doesNotExist('deletedAt')
+    query.select(['name',
+      'userCode',
+      'docType',
+      'docValue',
+      'taxCategory',
+      'cbu',
+      'email',
+      'notifications',
+      'phone',
+      'hasPerception',
+      'observation',
+      'externalId',
+      'businessName',
+      'purchaseAccount',
+      'saleAccount',
+      'addresses'])
 
     return query.find()
   },
