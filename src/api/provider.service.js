@@ -11,6 +11,21 @@ export default {
     let query = new Parse.Query('Provider')
     query.ascending('name')
     query.doesNotExist('deletedAt')
+    query.select(['taxCategory',
+      'docType',
+      'docValue',
+      'externalId',
+      'userCode',
+      'name',
+      'businessName',
+      'address',
+      'email',
+      'phone',
+      'observation',
+      'purchaseAccount',
+      'saleAccount',
+      'isShipping',
+      'insurance'])
 
     return query.find()
   },
@@ -19,6 +34,21 @@ export default {
     query.ascending('name')
     query.doesNotExist('deletedAt')
     query.equalTo('isShipping', true)
+    query.select(['taxCategory',
+      'docType',
+      'docValue',
+      'externalId',
+      'userCode',
+      'name',
+      'businessName',
+      'address',
+      'email',
+      'phone',
+      'observation',
+      'purchaseAccount',
+      'saleAccount',
+      'isShipping',
+      'insurance'])
 
     return query.find()
   },
