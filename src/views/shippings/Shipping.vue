@@ -410,7 +410,7 @@ export default {
   watch: {
     shippingZone (val) {
       this.shipping.shippingZone = val
-    }
+    },
     /*
     pricing (val) {
       if (val !== null) {
@@ -428,11 +428,14 @@ export default {
       }
       this.updateShippingCost()
     },
-    declaredValueInsurance (val) {
-      this.shipping.pricing.insurance = val
-      this.updateShippingCost()
-    }
     */
+    declaredValueInsurance (val) {
+      if(this.shipping.pricing.cost !== undefined && this.shipping.pricing.cost !== null && this.shipping.pricing.cost !== '') {
+        this.$toasted.global.info_toast({ message: 'Se modificó el precio del envío.' })
+      }
+      // this.shipping.pricing.insurance = val
+      // this.updateShippingCost()
+    }
   },
   created () {
     this.shipping.shippingZone = this.shippingZone

@@ -13,7 +13,7 @@
         <b-form-group>
           <label for="packageValue" class="required-label">Valor declarado</label>
           <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Valor declarado del paquete"></i>
-          <b-form-input :class="{ 'is-invalid': errors.has('packageValue') }" v-validate="'required'" type="text" id="packageValue" name="packageValue" placeholder="Ej: $2500" v-model="shipping.package.declaredValue"></b-form-input>
+          <input class="form-control" :class="{ 'is-invalid': errors.has('packageValue') }" v-validate="'required|min_value:0.1'" type="text" id="packageValue" name="packageValue" placeholder="Ej: $2500" v-model.lazy="shipping.package.declaredValue">
         </b-form-group>
       </b-col>
       <b-col sm="4">
