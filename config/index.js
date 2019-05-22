@@ -8,8 +8,8 @@ module.exports = {
   dev: {
 
     // Paths
-    assetsSubDirectory: 'static',
     assetsPublicPath: '/courieradmin/',
+    assetsSubDirectory: 'static',
     proxyTable: {},
 
     // Various Dev Server settings
@@ -50,9 +50,9 @@ module.exports = {
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
     // assetsPublicPath: '/courieradmin/',
     assetsPublicPath: '/',
+    assetsSubDirectory: 'static',
 
     /**
      * Source Maps
