@@ -165,9 +165,10 @@ export default {
       let country
       let type
       let provider = this.providers.find(el => { return el.objectId === this.shipping.providerId })
+      let countryCode = (this.shipping.shippingType === 1) ? this.shipping.origin.country : this.shipping.destination.country
 
       if (provider) type = provider.shippingZones.find(el => { return el.shippingType === this.shipping.shippingType })
-      if (type) country = type.countries.find(el => { return el.numericCode === this.shipping.destination.country })
+      if (type) country = type.countries.find(el => { return el.numericCode === countryCode })
       if (country) zone = country.zone
 
       return zone
@@ -430,7 +431,7 @@ export default {
     },
     */
     declaredValueInsurance (val) {
-      if(this.shipping.pricing.cost !== undefined && this.shipping.pricing.cost !== null && this.shipping.pricing.cost !== '') {
+      if (this.shipping.pricing.cost !== undefined && this.shipping.pricing.cost !== null && this.shipping.pricing.cost !== '') {
         this.$toasted.global.info_toast({ message: 'Se modificó el precio del envío.' })
       }
       // this.shipping.pricing.insurance = val
