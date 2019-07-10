@@ -36,8 +36,9 @@
               <b-tab title="Descuentos">
                 <b-row class="actions-bar">
                   <b-col sm="8">
-                    <b-button variant="outline-primary" v-b-modal.fileDialog>Importar <i class="fa fa-file ml-1"></i></b-button>
-                    <b-button variant="outline-primary" @click="printPricing">Descargar lista de descuentos<i class="fa fa-print  ml-1"></i></b-button>
+                    <b-button variant="outline-primary" v-b-modal.fileDialog><i class="fa fa-file ml-1"></i> Importar</b-button>
+                    <b-button variant="outline-primary" @click="exportPricing" :disabled="exportButtonsDisabled"><i class="fa fa-print ml-1"></i> Exportar</b-button>
+                    <b-button variant="outline-primary" @click="download" :disabled="exportButtonsDisabled"><i class="fa fa-print ml-1"></i> Descargar presupuesto</b-button>
                     <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar lista de descuentos" class="import-modal">
                       <c-csv-file-dialog
                         bodyMessage="Elija un archivo para importar la lista de descuentos. Únicamente se permiten archivos .csv"
@@ -58,7 +59,7 @@
                     </b-form-group>
                   </b-col>
                 </b-row>
-                <c-cost-table ref="costTable" :filter="filter" variant="client" :providerList="providerList"></c-cost-table>
+                <c-cost-table ref="costTable" :filter="filter" variant="client" :providerList="providerList" @filtersUpdated="filtersUpdated"></c-cost-table>
               </b-tab>
             </b-tabs>
           </b-card>
@@ -176,7 +177,8 @@ export default {
       shippingTypes: shippingTypes,
       serviceTypes: serviceTypes,
       packageTypes: packageTypes,
-      shippingZones: shippingZones
+      shippingZones: shippingZones,
+      exportButtonsDisabled: true
     }
   },
   computed: {
@@ -206,6 +208,9 @@ export default {
         this.save(client, this.isEdit ? CLIENT_EDIT : CLIENT_SAVE, 'Editar Cliente')
       })
     },
+    filtersUpdated () {
+      this.exportButtonsDisabled = this.$refs.costTable === undefined || this.$refs.costTable.costsFilter.providerId === undefined || this.$refs.costTable.costsFilter.providerId === -1
+    },
     deleteClient () {
       this.deleteEl(CLIENT_DELETE, '/clientes')
     },
@@ -213,50 +218,130 @@ export default {
       this.$refs.fileDialogModal.hide()
       this.$refs.costTable.refresh()
     },
-    printPricing () {
+    exportPricing () {
       let result = '"proveedor","envio","servicio","embalaje","peso","Zona 1","Zona 2","Zona 3","Zona 4","Zona 5","Zona 6","Descuento Zona 1","Descuento Zona 2","Descuento Zona 3","Descuento Zona 4","Descuento Zona 5","Descuento Zona 6"'
       let registers = {}
       let fileLink = document.createElement('a')
+      
+      // this.$refs.costTable.$el.focus()
+      // this.$refs.costTable.$el.print()
       if (this.$refs.costTable.costsFilter.providerId === undefined || this.$refs.costTable.costsFilter.providerId === -1) return
       let provider = this.providers.find(el => el.objectId === this.$refs.costTable.costsFilter.providerId)
-      for (const item of provider.costsTable) {
-        const shippingType = this.shippingTypes.find(el => el.value === item.shippingType)
-        const serviceType = this.serviceTypes.find(el => el.value === item.serviceType)
-        const packageType = this.packageTypes.find(el => el.value === item.packageType)
-        const shippingZone = this.shippingZones.find(el => el.value === item.shippingZone)
+      if (provider !== undefined  && provider.costsTable !== undefined) {
+        for (const item of provider.costsTable) {
+          const shippingType = this.shippingTypes.find(el => el.value === item.shippingType)
+          const serviceType = this.serviceTypes.find(el => el.value === item.serviceType)
+          const packageType = this.packageTypes.find(el => el.value === item.packageType)
+          const shippingZone = this.shippingZones.find(el => el.value === item.shippingZone)
 
-        if (shippingType && serviceType && packageType && shippingZone) {
-          let keyBase = '"' + provider.objectId + '","' + shippingType.text + '","' + serviceType.text + '","' + packageType.text + '","'
-          for (const cost of item.costs) {
-            let key = keyBase + cost.weight + '","'
-            if (registers[key] === undefined) {
-              registers[key] = {}
+          if (shippingType && serviceType && packageType && shippingZone) {
+            let keyBase = '"' + provider.objectId + '","' + shippingType.text + '","' + serviceType.text + '","' + packageType.text + '","'
+            for (const cost of item.costs) {
+              let key = keyBase + cost.weight + '","'
+              if (registers[key] === undefined) {
+                registers[key] = {}
+              }
+              registers[key]['Zona ' + shippingZone.text] = cost.grossPrice
+              registers[key]['Descuento Zona ' + shippingZone.text] = cost.costDiscount
             }
-            registers[key]['Zona ' + shippingZone.text] = cost.grossPrice
-            registers[key]['Descuento Zona ' + shippingZone.text] = cost.costDiscount
           }
         }
-      }
 
-      for (const key in registers) {
-        result += '\n' + key
-        result += (registers[key]['Zona 1'] !== undefined) ? registers[key]['Zona 1'] + '","' : '","'
-        result += (registers[key]['Zona 2'] !== undefined) ? registers[key]['Zona 2'] + '","' : '","'
-        result += (registers[key]['Zona 3'] !== undefined) ? registers[key]['Zona 3'] + '","' : '","'
-        result += (registers[key]['Zona 4'] !== undefined) ? registers[key]['Zona 4'] + '","' : '","'
-        result += (registers[key]['Zona 5'] !== undefined) ? registers[key]['Zona 5'] + '","' : '","'
-        result += (registers[key]['Zona 6'] !== undefined) ? registers[key]['Zona 6'] + '","' : '","'
-        result += (registers[key]['Descuento Zona 1'] !== undefined) ? registers[key]['Descuento Zona 1'] + '","' : '","'
-        result += (registers[key]['Descuento Zona 2'] !== undefined) ? registers[key]['Descuento Zona 2'] + '","' : '","'
-        result += (registers[key]['Descuento Zona 3'] !== undefined) ? registers[key]['Descuento Zona 3'] + '","' : '","'
-        result += (registers[key]['Descuento Zona 4'] !== undefined) ? registers[key]['Descuento Zona 4'] + '","' : '","'
-        result += (registers[key]['Descuento Zona 5'] !== undefined) ? registers[key]['Descuento Zona 5'] + '","' : '","'
-        result += (registers[key]['Descuento Zona 6'] !== undefined) ? registers[key]['Descuento Zona 6'] + '"' : '"'
-      }
+        for (const key in registers) {
+          result += '\n' + key
+          result += (registers[key]['Zona 1'] !== undefined) ? registers[key]['Zona 1'] + '","' : '","'
+          result += (registers[key]['Zona 2'] !== undefined) ? registers[key]['Zona 2'] + '","' : '","'
+          result += (registers[key]['Zona 3'] !== undefined) ? registers[key]['Zona 3'] + '","' : '","'
+          result += (registers[key]['Zona 4'] !== undefined) ? registers[key]['Zona 4'] + '","' : '","'
+          result += (registers[key]['Zona 5'] !== undefined) ? registers[key]['Zona 5'] + '","' : '","'
+          result += (registers[key]['Zona 6'] !== undefined) ? registers[key]['Zona 6'] + '","' : '","'
+          result += (registers[key]['Descuento Zona 1'] !== undefined) ? registers[key]['Descuento Zona 1'] + '","' : '","'
+          result += (registers[key]['Descuento Zona 2'] !== undefined) ? registers[key]['Descuento Zona 2'] + '","' : '","'
+          result += (registers[key]['Descuento Zona 3'] !== undefined) ? registers[key]['Descuento Zona 3'] + '","' : '","'
+          result += (registers[key]['Descuento Zona 4'] !== undefined) ? registers[key]['Descuento Zona 4'] + '","' : '","'
+          result += (registers[key]['Descuento Zona 5'] !== undefined) ? registers[key]['Descuento Zona 5'] + '","' : '","'
+          result += (registers[key]['Descuento Zona 6'] !== undefined) ? registers[key]['Descuento Zona 6'] + '"' : '"'
+        }
 
-      fileLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result))
-      fileLink.setAttribute('download', this.client.name + '.csv')
-      fileLink.click()
+        fileLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(result))
+        fileLink.setAttribute('download', this.client.name + '.csv')
+        fileLink.click()
+      }
+    },
+    download () {
+      const months = ["enero", "febrero", "marzo","abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+      const provider = this.providers.find(el => el.objectId === this.$refs.costTable.costsFilter.providerId)
+      const shippingType = this.shippingTypes.find(el => el.value === this.$refs.costTable.costsFilter.shippingType)
+      const serviceType = this.serviceTypes.find(el => el.value === this.$refs.costTable.costsFilter.serviceType)
+      const packageType = this.packageTypes.find(el => el.value === this.$refs.costTable.costsFilter.packageType)
+      const shippingZone = this.shippingZones.find(el => el.value === this.$refs.costTable.costsFilter.shippingZone)
+
+      let currentDate = new Date()
+      let formattedDate = currentDate.getDate() + " de " + months[currentDate.getMonth()] + " de " + currentDate.getFullYear()
+      let fileLink = document.createElement('a')
+
+      
+
+      if (provider !== undefined  && provider.costsTable !== undefined) {
+
+        let rows = {}
+        let rowsHTML = ''
+        for (const item of provider.costsTable) {
+          if (shippingType.value === item.shippingType && serviceType.value === item.serviceType && packageType.value === item.packageType && shippingZone.value === item.shippingZone) {
+            for (const cost of item.costs) {
+              rows[cost.weight] = { 'grossPrice': cost.grossPrice, 'discount': 0 }
+            }
+          }
+        }
+
+        for (const item of this.client.costsTable) {
+          if (provider.objectId === item.providerId && shippingType.value === item.shippingType && serviceType.value === item.serviceType && packageType.value === item.packageType && shippingZone.value === item.shippingZone) {
+            for (const cost of item.costs) {
+              if(rows[cost.weight] !== undefined) {
+                rows[cost.weight].discount = cost.saleDiscount
+              }
+            }
+          }
+        }
+
+        for (const key in rows) {
+          
+          rowsHTML += `<tr>
+            <td>${key} kg</td>
+            <td>$${rows[key].grossPrice}</td>
+            <td>${rows[key].discount}%</td>
+            <td>$${rows[key].grossPrice*(1-rows[key].discount/100)}</td>
+          </tr>`
+        }
+
+        let result = `<h1>American Courier</h1>
+        <p>
+          <b>Para</b>: ${this.client.name}<br />
+          ${formattedDate}
+        </p>
+        <p>
+          <b>Proveedor</b>: ${provider.businessName || provider.name}<br />
+          <b>Tipo de envío</b>: ${shippingType.text}<br />
+          <b>Servicio</b>: ${serviceType.text}<br />
+          <b>Tipo de embalaje</b>: ${packageType.text}<br />
+          <b>Zona</b>: ${shippingZone.text}<br />
+        </p>
+        <table width="100%">
+          <thead>
+            <tr>
+              <th>Peso</th>
+              <th>Precio bruto</th>
+              <th>Descuento</th>
+              <th>Neto</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHTML}</tbody>
+        </table>`
+
+        fileLink.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(result))
+        fileLink.setAttribute('download', this.client.name + '.docx')
+        fileLink.click()
+      }
     }
   }
 }

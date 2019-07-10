@@ -46,8 +46,8 @@
               <b-tab title="Precios de venta" v-if="provider.isShipping">
                 <b-row class="actions-bar">
                   <b-col sm="8">
-                    <b-button variant="outline-primary" v-b-modal.fileDialogCosts>Importar <i class="fa fa-file ml-1"></i></b-button>
-                    <b-button variant="outline-primary" @click="printPricing">Descargar lista de precios<i class="fa fa-print ml-1"></i></b-button>
+                    <b-button variant="outline-primary" v-b-modal.fileDialogCosts><i class="fa fa-file ml-1"></i> Importar</b-button>
+                    <b-button variant="outline-primary" @click="exportPricing"><i class="fa fa-print ml-1"></i> Exportar</b-button>
                     <b-modal id="fileDialogCosts" ref="fileDialogModalCosts" hide-footer centered title="Importar precios de venta" class="import-modal">
                       <c-csv-file-dialog
                         bodyMessage="Elija un archivo para importar los precios de venta. Únicamente se permiten archivos .csv"
@@ -239,7 +239,7 @@ export default {
       this.$refs.costTable.refresh()
       this.$refs.zonesTable.refresh()
     },
-    printPricing () {
+    exportPricing () {
       let result = '"envio","servicio","embalaje","peso","Zona 1","Zona 2","Zona 3","Zona 4","Zona 5","Zona 6","Descuento Zona 1","Descuento Zona 2","Descuento Zona 3","Descuento Zona 4","Descuento Zona 5","Descuento Zona 6"'
       let registers = {}
       let fileLink = document.createElement('a')
