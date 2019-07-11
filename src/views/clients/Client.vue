@@ -112,7 +112,7 @@ import CConfirmationModal from '@/components/ConfirmationModal'
 import CAddresses from '@/components/Addresses'
 import CClientDetail from '@/components/ClientDetail'
 import CCsvFileDialog from '@/components/CsvFileDialog'
-import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, FETCH_CLIENT, CLIENT_RESET_STATE, PROVIDER_RESET_STATE, FETCH_SHIPPING_PROVIDERS } from '@/store/types/actions'
+import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, FETCH_CLIENT, FETCH_PROVIDER, CLIENT_RESET_STATE, PROVIDER_RESET_STATE, FETCH_SHIPPING_PROVIDERS } from '@/store/types/actions'
 
 export default {
   name: 'v-client',
@@ -182,7 +182,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['client', 'providers']),
+    ...mapGetters(['client', 'providers', 'provider']),
     isEdit () {
       return !!this.client.objectId
     }
@@ -269,8 +269,15 @@ export default {
       }
     },
     download () {
+      if (this.provider && this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.objectId === this.$refs.costTable.costsFilter.providerId) {
+        this.createAndDownloadFile()
+      } else {
+        this.$store.dispatch(FETCH_PROVIDER, this.$refs.costTable.costsFilter.providerId, null).then(this.createAndDownloadFile)
+      }
+    },
+    createAndDownloadFile () {
       const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
-      const provider = this.providers.find(el => el.objectId === this.$refs.costTable.costsFilter.providerId)
+      // const provider = this.providers.find(el => el.objectId === this.$refs.costTable.costsFilter.providerId)
       const shippingType = this.shippingTypes.find(el => el.value === this.$refs.costTable.costsFilter.shippingType)
       const serviceType = this.serviceTypes.find(el => el.value === this.$refs.costTable.costsFilter.serviceType)
       const packageType = this.packageTypes.find(el => el.value === this.$refs.costTable.costsFilter.packageType)
@@ -280,10 +287,10 @@ export default {
       let formattedDate = currentDate.getDate() + ' de ' + months[currentDate.getMonth()] + ' de ' + currentDate.getFullYear()
       let fileLink = document.createElement('a')
 
-      if (provider !== undefined && provider.costsTable !== undefined) {
+      if (this.provider && this.provider.costsTable && this.provider.costsTable.length > 0) {
         let rows = []
         let rowsHTML = ''
-        for (const item of provider.costsTable) {
+        for (const item of this.provider.costsTable) {
           if (shippingType.value === item.shippingType && serviceType.value === item.serviceType && packageType.value === item.packageType && shippingZone.value === item.shippingZone) {
             for (const cost of item.costs) {
               rows.push({ 'grossPrice': cost.grossPrice, 'discount': 0, 'weight': cost.weight })
@@ -292,7 +299,7 @@ export default {
         }
 
         for (const item of this.client.costsTable) {
-          if (provider.objectId === item.providerId && shippingType.value === item.shippingType && serviceType.value === item.serviceType && packageType.value === item.packageType && shippingZone.value === item.shippingZone) {
+          if (this.provider.objectId === item.providerId && shippingType.value === item.shippingType && serviceType.value === item.serviceType && packageType.value === item.packageType && shippingZone.value === item.shippingZone) {
             for (const cost of item.costs) {
               let row = rows.find(el => el.weight === cost.weight)
               if (row !== undefined) {
@@ -318,7 +325,7 @@ export default {
           ${formattedDate}
         </p>
         <p>
-          <b>Proveedor</b>: ${provider.businessName || provider.name}<br />
+          <b>Proveedor</b>: ${this.provider.businessName || this.provider.name}<br />
           <b>Tipo de envío</b>: ${shippingType.text}<br />
           <b>Servicio</b>: ${serviceType.text}<br />
           <b>Tipo de embalaje</b>: ${packageType.text}<br />
