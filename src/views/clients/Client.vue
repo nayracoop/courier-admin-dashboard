@@ -38,7 +38,7 @@
                   <b-col sm="8">
                     <b-button variant="outline-primary" v-b-modal.fileDialog><i class="fa fa-file ml-1"></i> Importar</b-button>
                     <b-button variant="outline-primary" @click="exportPricing" :disabled="exportButtonsDisabled"><i class="fa fa-print ml-1"></i> Exportar</b-button>
-                    <b-button variant="outline-primary" @click="download" :disabled="exportButtonsDisabled"><i class="fa fa-print ml-1"></i> Descargar presupuesto</b-button>
+                    <b-button variant="success" @click="download" :disabled="exportButtonsDisabled"><i class="fa fa-file-word-o ml-1"></i> Descargar documento</b-button>
                     <b-modal id="fileDialog" ref="fileDialogModal" hide-footer centered title="Importar lista de descuentos" class="import-modal">
                       <c-csv-file-dialog
                         bodyMessage="Elija un archivo para importar la lista de descuentos. Únicamente se permiten archivos .csv"
@@ -222,12 +222,12 @@ export default {
       let result = '"proveedor","envio","servicio","embalaje","peso","Zona 1","Zona 2","Zona 3","Zona 4","Zona 5","Zona 6","Descuento Zona 1","Descuento Zona 2","Descuento Zona 3","Descuento Zona 4","Descuento Zona 5","Descuento Zona 6"'
       let registers = {}
       let fileLink = document.createElement('a')
-      
+
       // this.$refs.costTable.$el.focus()
       // this.$refs.costTable.$el.print()
       if (this.$refs.costTable.costsFilter.providerId === undefined || this.$refs.costTable.costsFilter.providerId === -1) return
       let provider = this.providers.find(el => el.objectId === this.$refs.costTable.costsFilter.providerId)
-      if (provider !== undefined  && provider.costsTable !== undefined) {
+      if (provider !== undefined && provider.costsTable !== undefined) {
         for (const item of provider.costsTable) {
           const shippingType = this.shippingTypes.find(el => el.value === item.shippingType)
           const serviceType = this.serviceTypes.find(el => el.value === item.serviceType)
@@ -269,7 +269,7 @@ export default {
       }
     },
     download () {
-      const months = ["enero", "febrero", "marzo","abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+      const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
       const provider = this.providers.find(el => el.objectId === this.$refs.costTable.costsFilter.providerId)
       const shippingType = this.shippingTypes.find(el => el.value === this.$refs.costTable.costsFilter.shippingType)
       const serviceType = this.serviceTypes.find(el => el.value === this.$refs.costTable.costsFilter.serviceType)
@@ -277,19 +277,16 @@ export default {
       const shippingZone = this.shippingZones.find(el => el.value === this.$refs.costTable.costsFilter.shippingZone)
 
       let currentDate = new Date()
-      let formattedDate = currentDate.getDate() + " de " + months[currentDate.getMonth()] + " de " + currentDate.getFullYear()
+      let formattedDate = currentDate.getDate() + ' de ' + months[currentDate.getMonth()] + ' de ' + currentDate.getFullYear()
       let fileLink = document.createElement('a')
 
-      
-
-      if (provider !== undefined  && provider.costsTable !== undefined) {
-
-        let rows = {}
+      if (provider !== undefined && provider.costsTable !== undefined) {
+        let rows = []
         let rowsHTML = ''
         for (const item of provider.costsTable) {
           if (shippingType.value === item.shippingType && serviceType.value === item.serviceType && packageType.value === item.packageType && shippingZone.value === item.shippingZone) {
             for (const cost of item.costs) {
-              rows[cost.weight] = { 'grossPrice': cost.grossPrice, 'discount': 0 }
+              rows.push({ 'grossPrice': cost.grossPrice, 'discount': 0, 'weight': cost.weight })
             }
           }
         }
@@ -297,20 +294,21 @@ export default {
         for (const item of this.client.costsTable) {
           if (provider.objectId === item.providerId && shippingType.value === item.shippingType && serviceType.value === item.serviceType && packageType.value === item.packageType && shippingZone.value === item.shippingZone) {
             for (const cost of item.costs) {
-              if(rows[cost.weight] !== undefined) {
-                rows[cost.weight].discount = cost.saleDiscount
+              let row = rows.find(el => el.weight === cost.weight)
+              if (row !== undefined) {
+                row.discount = cost.saleDiscount
               }
             }
           }
         }
 
-        for (const key in rows) {
-          
+        rows.sort((a, b) => a.weight - b.weight)
+        for (const row of rows) {
           rowsHTML += `<tr>
-            <td>${key} kg</td>
-            <td>$${rows[key].grossPrice}</td>
-            <td>${rows[key].discount}%</td>
-            <td>$${rows[key].grossPrice*(1-rows[key].discount/100)}</td>
+            <td>${row.weight} kg</td>
+            <td>$${row.grossPrice}</td>
+            <td>${row.discount}%</td>
+            <td>$${row.grossPrice * (1 - row.discount / 100)}</td>
           </tr>`
         }
 

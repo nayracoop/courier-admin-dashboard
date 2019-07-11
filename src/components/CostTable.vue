@@ -194,10 +194,10 @@ export default {
     // si el proveedor en cuestión no tiene costos asociados, tampoco le voy a poder asociar descuentos
     // entonces, si costsTableIndex es -1 acá, fin para el vínculo cliente <-> proveedor
     this.providerCostsTableIndex = (this.provider.costsTable && this.provider.costsTable.length > 0 ? 0 : -1)
-    this.costsFilter.shippingType = (this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.costsTable[0].shippingType != -1 ? this.provider.costsTable[0].shippingType : 1)
-    this.costsFilter.serviceType = (this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.costsTable[0].serviceType != -1 ? this.provider.costsTable[0].serviceType : 1)
-    this.costsFilter.packageType = (this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.costsTable[0].packageType != -1 ? this.provider.costsTable[0].packageType : 1)
-    this.costsFilter.shippingZone = (this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.costsTable[0].shippingZone != -1 ? this.provider.costsTable[0].shippingZone : 1)
+    this.costsFilter.shippingType = (this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.costsTable[0].shippingType !== -1 ? this.provider.costsTable[0].shippingType : 1)
+    this.costsFilter.serviceType = (this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.costsTable[0].serviceType !== -1 ? this.provider.costsTable[0].serviceType : 1)
+    this.costsFilter.packageType = (this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.costsTable[0].packageType !== -1 ? this.provider.costsTable[0].packageType : 1)
+    this.costsFilter.shippingZone = (this.provider.costsTable && this.provider.costsTable.length > 0 && this.provider.costsTable[0].shippingZone !== -1 ? this.provider.costsTable[0].shippingZone : 1)
 
     // el proveedor tiene: weight / grossPrice / costDiscount
     // el cliente tiene:   weight / saleDiscount
