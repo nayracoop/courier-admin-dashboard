@@ -312,14 +312,20 @@ export default {
         rows.sort((a, b) => a.weight - b.weight)
         for (const row of rows) {
           rowsHTML += `<tr>
-            <td>${row.weight} kg</td>
-            <td>$${row.grossPrice}</td>
-            <td>${row.discount}%</td>
-            <td>$${row.grossPrice * (1 - row.discount / 100)}</td>
+            <td style="border:1px solid #000">${row.weight} kg</td>
+            <td style="border:1px solid #000">$${row.grossPrice}</td>
+            <td style="border:1px solid #000">${row.discount}%</td>
+            <td style="border:1px solid #000">$${row.grossPrice * (1 - row.discount / 100)}</td>
           </tr>`
         }
 
-        let result = `<h1>American Courier</h1>
+        let header = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+                      <head>
+                        <meta charset="utf-8">
+                        <title>${this.client.name} - American Courier</title>
+                      </head><body>`
+        let footer = '</body></html>'
+        let result = `${header}<h1>American Courier</h1>
         <p>
           <b>Para</b>: ${this.client.name}<br />
           ${formattedDate}
@@ -334,17 +340,17 @@ export default {
         <table width="100%">
           <thead>
             <tr>
-              <th>Peso</th>
-              <th>Precio bruto</th>
-              <th>Descuento</th>
-              <th>Neto</th>
+              <th style="border:1px solid #000">Peso</th>
+              <th style="border:1px solid #000">Precio bruto</th>
+              <th style="border:1px solid #000">Descuento</th>
+              <th style="border:1px solid #000">Neto</th>
             </tr>
           </thead>
           <tbody>${rowsHTML}</tbody>
-        </table>`
+        </table>${footer}`
 
-        fileLink.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(result))
-        fileLink.setAttribute('download', this.client.name + '.docx')
+        fileLink.setAttribute('href', 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(result))
+        fileLink.setAttribute('download', this.client.name + '.doc')
         fileLink.click()
       }
     }
