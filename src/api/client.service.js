@@ -1,11 +1,18 @@
 import Parse from 'parse'
 
 export default {
-  create (params) {
-    let Client = Parse.Object.extend('Client')
-    let client = new Client()
+  async create (params) {
+    try {
+      const Client = Parse.Object.extend('Client')
+      const client = new Client()
 
-    return client.save(params)
+      const savedClient = await client.save(params)
+      Parse.Cloud.run('AfterSaveClient', {clientId: savedClient.id})
+
+      return savedClient
+    } catch (error) {
+      throw new Error(error)
+    }
   },
   getAll () {
     let query = new Parse.Query('Client')
@@ -64,6 +71,6 @@ export default {
     })
   },
   getSyncClients () {
-    return Parse.Cloud.run('ClientSync', {})
+    return Parse.Cloud.run('ClientSync')
   }
 }

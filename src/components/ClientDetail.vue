@@ -35,7 +35,7 @@
             <b-form-group>
               <label for="docValue">N° de identificación</label>
               <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title="Número de DNI, CUIT, CUIL. Este campo solo puede contener números y tiene que tener un mínimo de 8 dígitos"></i>
-              <b-form-input v-validate="'alpha_dash|min:8|max:20'" name="docValue" data-vv-as="número de identificación" id="docValue" type="text" v-model="client.docValue" placeholder="Ej: 20320508742"></b-form-input>
+              <b-form-input v-validate="'min:8|max:20'" name="docValue" data-vv-as="número de identificación" id="docValue" type="text" v-model="client.docValue" placeholder="Ej: 20320508742"></b-form-input>
               <!-- Debe ser numérico, tener un mínimo de 8 caracteres y un máximo de 20 -->
               <span><small class="inv-feedback" v-show="errors.has('docValue')">{{ errors.first('docValue') }}</small></span>
             </b-form-group>

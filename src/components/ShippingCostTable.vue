@@ -356,6 +356,7 @@ export default {
         }
       }
       if (Number(this.shipping.package.declaredValue) === 0) isComplete = false // return null
+      // eslint-disable-next-line
       this.showingSavedPricing = !isComplete
       if (isComplete) {
         return {
