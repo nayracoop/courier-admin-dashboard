@@ -85,18 +85,20 @@ export default {
   data: () => {
     return {
       fields: [ { key: 'selection', class: 'selection' },
-        // { key: 'finalDate', label: 'Fecha de cierre', sortable: true },
-        { key: 'provider', label: 'Proveedor', sortable: true },
+        { key: 'trackingGuide', label: 'Número de guía' },
         { key: 'client', label: 'Cliente', sortable: true },
+        { key: 'addressee', label: 'Destinatario', sortable: true },
+        { key: 'shippingType', label: 'Tipo de envío', sortable: true },
+        { key: 'initialDate', label: 'Fecha de envío', sortable: true },
+        { key: 'destination', label: 'País de destino', sortable: true },
+        // { key: 'finalDate', label: 'Fecha de cierre', sortable: true },
+        // { key: 'provider', label: 'Proveedor', sortable: true },
         // { key: 'clientDocValue', label: 'CUIT / Nº doc.' },
         // { key: 'origin', label: 'País de origen', sortable: true },
         // { key: 'route', label: 'Origen / Destino', sortable: true },
-        { key: 'shippingType', label: 'Tipo de envío', sortable: true },
-        { key: 'serviceType', label: 'Servicio', sortable: true },
-        { key: 'destination', label: 'País de destino', sortable: true },
-        { key: 'initialDate', label: 'Fecha de inicio', sortable: true },
-        { key: 'status', label: 'Estado' },
+        // { key: 'serviceType', label: 'Servicio', sortable: true },
         // { key: 'cost', label: 'Costo final' },
+        { key: 'status', label: 'Estado' },
         { key: 'actions', label: 'Acciones' }
       ],
       allSelected: false,
@@ -127,10 +129,10 @@ export default {
       this.shippingsList = this.shippings.map(shipping => {
         let provider = this.providers.find(element => element.objectId === shipping.providerId)
         let clients = this.clients.find(element => element.objectId === shipping.clientId)
-
         return {
           objectId: shipping.objectId,
           initialDate: shipping.initialDate,
+          addressee: shipping.destination.contactName,
           // finalDate: shipping.finalDate,
           client: (clients !== undefined) ? clients.name : '',
           provider: (provider !== undefined) ? provider.name : '',
@@ -142,6 +144,8 @@ export default {
           serviceType: serviceTypes.find(element => element.value === shipping.serviceType).text,
           status: shipping.status === 0 ? 'Abierto' : 'Cerrado',
           billingStatus: shipping.billingStatus ? 'Facturado' : 'Pendiente de facturación',
+          trackingGuide: shipping.tracking.guide,
+          packageReference: shipping.package.reference,
           // cost: (shipping.pricing.cost !== undefined) ? '$' + shipping.pricing.cost : 'Sin precio',
           selection: false
         }
