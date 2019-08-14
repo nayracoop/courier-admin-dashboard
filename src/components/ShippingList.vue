@@ -143,7 +143,7 @@ export default {
           shippingType: shippingTypes.find(element => element.value === shipping.shippingType).text,
           serviceType: serviceTypes.find(element => element.value === shipping.serviceType).text,
           status: shipping.status === 0 ? 'Abierto' : 'Cerrado',
-          billingStatus: shipping.billingStatus ? 'Facturado' : 'Pendiente de facturación',
+          billingStatus: shipping.billingStatus ? 'Facturado' : 'No facturado',
           trackingGuide: shipping.tracking.guide,
           packageReference: shipping.package.reference,
           // cost: (shipping.pricing.cost !== undefined) ? '$' + shipping.pricing.cost : 'Sin precio',

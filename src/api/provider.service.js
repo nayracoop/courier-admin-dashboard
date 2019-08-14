@@ -1,11 +1,14 @@
 import Parse from 'parse'
 
 export default {
-  create (params) {
+  async create (params) {
     let Provider = Parse.Object.extend('Provider')
     let provider = new Provider()
 
-    return provider.save(params)
+    const savedProvider = await provider.save(params)
+    Parse.Cloud.run('AfterSaveProvider', {providerId: savedProvider.id})
+
+    return savedProvider
   },
   getAll () {
     let query = new Parse.Query('Provider')
