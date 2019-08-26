@@ -89,6 +89,6 @@ export default {
     })
   },
   getSyncProviders () {
-    return Parse.Cloud.run('ProviderSync', {})
+    return Parse.Cloud.run('SyncXubioProviders', {})
   }
 }

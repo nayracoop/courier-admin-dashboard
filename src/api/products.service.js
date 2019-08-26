@@ -2,6 +2,6 @@ import Parse from 'parse'
 
 export default {
   getAll () {
-    return Parse.Cloud.run('GetProducts', {})
+    return Parse.Cloud.run('FetchXubioProducts', {})
   }
 }

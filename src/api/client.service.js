@@ -71,6 +71,6 @@ export default {
     })
   },
   getSyncClients () {
-    return Parse.Cloud.run('ClientSync')
+    return Parse.Cloud.run('SyncXubioClients')
   }
 }
