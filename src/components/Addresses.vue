@@ -123,8 +123,13 @@ export default {
       return this.selAddressId === -1
     },
     selectedCountry () {
+      if (this.currentAddress && this.currentAddress.address) {
+        return countries.find(el => {
+          return el.numericCode === this.currentAddress.address.country
+        })
+      }
       return countries.find(el => {
-        return el.numericCode === this.currentAddress.address.country
+        return el.numericCode === '042'
       })
     }
   },

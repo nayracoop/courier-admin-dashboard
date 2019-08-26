@@ -62,7 +62,7 @@
           </b-form-group>
         </b-col>
         <b-col sm="5">
-          <b-form-group v-if="value.address.country === '032'">
+          <b-form-group v-if="value.address && value.address.country === '032'">
             <label :for="id + '_province'" class="required-label">Provincia</label>
             <i class="fa fa-question-circle fa-sm" v-b-tooltip.hover title=""></i>
             <b-form-select :class="{ 'is-invalid': errors.has(id + '_province') }" v-validate="'required'" :name="id + '_province'" :id="id + '_province'" :plain="true" :options="argProvinceList" v-model="value.address.province" @change="updateStateText"></b-form-select>
@@ -200,8 +200,13 @@ export default {
   },
   computed: {
     selectedCountry: function () {
+      if (this.value.address) {
+        return countries.find(el => {
+          return el.numericCode === this.value.address.country
+        })
+      }
       return countries.find(el => {
-        return el.numericCode === this.value.country
+        return el.numericCode === '042'
       })
     }
   },

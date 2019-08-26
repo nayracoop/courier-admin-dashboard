@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { ClientsService } from '@/api'
-import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, CLIENT_RESET_STATE, FETCH_CLIENT, FETCH_CLIENTS, FETCH_SYNC_CLIENTS } from '@/store/types/actions'
-import { RESET_STATE, SET_CLIENT, FETCH_START, FETCH_CLIENTS_END, FETCH_SYNC_CLIENTS_END } from '@/store/types/mutations'
+import { CLIENT_SAVE, CLIENT_EDIT, CLIENT_DELETE, CLIENT_RESET_STATE, FETCH_CLIENT, FETCH_CLIENTS, FETCH_CLIENTS_SYNC_DIFFERENCES, CLIENTS_SYNC } from '@/store/types/actions'
+import { RESET_STATE, SET_CLIENT, FETCH_CLIENT_START, SYNCH_CLIENT_START, FETCH_CLIENTS_END, FETCH_CLIENTS_SYNC_DIFFERENCES_END, SYNC_CLIENTS_END } from '@/store/types/mutations'
 
 const getInitialState = () => {
   return {
@@ -46,10 +46,12 @@ const getInitialState = () => {
       costsTable: []
     },
     clients: [],
-    syncClients: [],
     clientLoading: false, // clientLoading se usa en distintos lugares
+    clientSynching: false,
     clientsCount: 0,
-    syncClientsCount: 0
+    clientsCanSync: false,
+    clientsImport: 0,
+    clientsExport: 0
   }
 }
 
@@ -60,7 +62,7 @@ export const actions = {
     return ClientsService.create(state.client)
   },
   [FETCH_CLIENTS] ({ commit }) {
-    commit(FETCH_START)
+    commit(FETCH_CLIENT_START)
     return ClientsService.getAll()
       .then(data => {
         commit(FETCH_CLIENTS_END, data)
@@ -69,13 +71,26 @@ export const actions = {
         throw new Error(error)
       })
   },
-  [FETCH_SYNC_CLIENTS] ({ commit }) {
-    commit(FETCH_START)
-    return ClientsService.getSyncClients()
-      .then(data => {
-        commit(FETCH_SYNC_CLIENTS_END, data)
+  [FETCH_CLIENTS_SYNC_DIFFERENCES] ({ commit }) {
+    commit(SYNCH_CLIENT_START)
+    return ClientsService.getClientsSyncDifferences()
+      .then((syncDifferencesDetails) => {
+        commit(FETCH_CLIENTS_SYNC_DIFFERENCES_END, syncDifferencesDetails)
       })
       .catch((error) => {
+        commit(FETCH_CLIENTS_SYNC_DIFFERENCES_END)
+        throw new Error(error)
+      })
+  },
+  [CLIENTS_SYNC] ({ commit }) {
+    commit(SYNCH_CLIENT_START)
+    return ClientsService.syncClients()
+      .then((results) => {
+        commit(SYNC_CLIENTS_END)
+        return results
+      })
+      .catch((error) => {
+        commit(SYNC_CLIENTS_END)
         throw new Error(error)
       })
   },
@@ -107,8 +122,12 @@ export const actions = {
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
-  [FETCH_START] (state) {
+  [FETCH_CLIENT_START] (state) {
     state.clientLoading = true
+  },
+  [SYNCH_CLIENT_START] (state) {
+    state.clientLoading = true
+    state.clientSynching = true
   },
   [FETCH_CLIENTS_END] (state, clients) {
     state.clients = clients.map(function (e) {
@@ -117,14 +136,17 @@ export const mutations = {
     state.clientsCount = clients.length
     state.clientLoading = false
   },
-  [FETCH_SYNC_CLIENTS_END] (state, clients) {
-    state.syncClients = clients.map(function (e) {
-      if (e.constructor === Object) {
-        return e
-      }
-      return e.toJSON()
-    })
-    state.syncClientsCount = clients.length
+  [FETCH_CLIENTS_SYNC_DIFFERENCES_END] (state, syncDifferencesDetails = null) {
+    if (syncDifferencesDetails) {
+      state.clientsCanSync = syncDifferencesDetails.canSync
+      state.clientsImport = syncDifferencesDetails.xubio
+      state.clientsExport = syncDifferencesDetails.parse
+    }
+    state.clientSynching = false
+    state.clientLoading = false
+  },
+  [SYNC_CLIENTS_END] (state) {
+    state.clientSynching = false
     state.clientLoading = false
   },
   [SET_CLIENT] (state, client) {
@@ -142,20 +164,24 @@ const getters = {
   clients (state) {
     return state.clients
   },
-  syncClients (state) {
-    return state.syncClients
-  },
   client (state) {
     return state.client
   },
   clientsCount (state) {
     return state.clientsCount
   },
-  syncClientsCount (state) {
-    return state.syncClientsCount
-  },
   clientLoading (state) {
     return state.clientLoading // el getter clientLoading se usa en distintos lugares
+  },
+  clientSynching (state) {
+    return state.clientSynching
+  },
+  clientSyncDifferencesDetails (state) {
+    return {
+      canSync: state.clientsCanSync,
+      import: state.clientsImport,
+      export: state.clientsExport
+    }
   }
 }
 

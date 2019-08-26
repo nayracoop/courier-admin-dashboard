@@ -4,7 +4,7 @@
       <b-col sm="6">
         <b-button variant="primary" :to="{ name: 'Nuevo Cliente' }"><i class="fa fa-plus-circle ml-1"></i> Nuevo cliente</b-button>
         <!-- <b-button variant="outline-danger" @click="showDeleteModal()" v-b-modal.modal-center>Eliminar <i class="fa fa-trash ml-1"></i></b-button> -->
-        <b-button variant="outline-primary" @click="showImportModal()"><i v-if="!clientLoading" class="fa fa-file ml-1"></i><i v-else class="fa fa-cog fa-spin ml-1"></i> Importar</b-button>
+        <b-button variant="outline-primary" @click="showImportModal()"><i v-if="!clientSynching" class="fa fa-file ml-1"></i><i v-else class="fa fa-cog fa-spin ml-1"></i> Sincronizar</b-button>
       </b-col>
     </b-row>
     <b-card :header="caption" v-if="clients.length === 0">
@@ -78,9 +78,9 @@
   cancellationMethod="cancelDelete"
   @confirmDelete="confirmDelete"
   @cancelDelete="hideDeleteModal" />
-  <c-confirmation-modal classModal="import-modal" modalTitle="Importar clientes" :promptMessage="'¿Desea importar ' + (syncClientsCount && syncClientsCount > 1 ? `${syncClientsCount} registros` : 'un registro') + '?'"
-    ref="importModal" title="Confirmar importación" variantConfirmation="primary" defaultStyles="true"
-    :confirmationMessage="'Sí, deseo importarlo' + (syncClientsCount && syncClientsCount > 1 ? 's' : '')"
+  <c-confirmation-modal classModal="import-modal" modalTitle="Sincronizar clientes" :promptMessage="syncDifferencesMessage"
+    ref="importModal" title="Confirmar sincronización" variantConfirmation="primary" defaultStyles="true"
+    :confirmationMessage="'Sí, deseo sincronizarlo' + (syncClientsCount && syncClientsCount > 1 ? 's' : '')"
     confirmationMethod="confirmImport" cancellationMethod="cancelImport"
     @confirmImport="confirmImport" @cancelImport="hideImportModal" />
   </div>
@@ -88,8 +88,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_CLIENTS, FETCH_SYNC_CLIENTS, CLIENT_DELETE } from '@/store/types/actions'
-import { ClientsService } from '@/api'
+import { FETCH_CLIENTS, FETCH_CLIENTS_SYNC_DIFFERENCES, CLIENTS_SYNC, CLIENT_DELETE } from '@/store/types/actions'
 import CConfirmationModal from '@/components/ConfirmationModal'
 
 export default {
@@ -117,11 +116,13 @@ export default {
       currentPage: 1,
       perPage: 5,
       totalRows: 0,
-      filter: null
+      filter: null,
+      syncDifferencesMessage: '',
+      syncClientsCount: 0
     }
   },
   computed: {
-    ...mapGetters([ 'clientsCount', 'clientLoading', 'clients', 'syncClients', 'syncClientsCount' ])
+    ...mapGetters([ 'clients', 'clientsCount', 'clientSynching', 'clientSyncDifferencesDetails' ])
   },
   mounted () {
     this.fetchClients()
@@ -140,53 +141,32 @@ export default {
       this.$store.dispatch(FETCH_CLIENTS)
     },
     showImportModal () {
-      this.$store.dispatch(FETCH_SYNC_CLIENTS).then(() => {
-        if (this.syncClientsCount && this.syncClientsCount > 0) {
-          this.$refs.importModal.$refs.confirmationModal.show()
-        } else {
-          this.$toasted.global.error_toast({ message: 'No hay nuevos registros para importar' })
-        }
-      })
+      this.$store.dispatch(FETCH_CLIENTS_SYNC_DIFFERENCES)
+        .then(() => {
+          if (this.clientSyncDifferencesDetails && this.clientSyncDifferencesDetails.canSync) {
+            this.syncClientsCount = this.clientSyncDifferencesDetails.import + this.clientSyncDifferencesDetails.export
+            this.syncDifferencesMessage = `¿Desea recibir ${this.clientSyncDifferencesDetails.import} y enviar ${this.clientSyncDifferencesDetails.export} registros?`
+            this.$refs.importModal.$refs.confirmationModal.show()
+          } else {
+            this.$toasted.global.error_toast({ message: 'No hay registros para sincronizar' })
+          }
+        })
+        .catch((error) => {
+          this.$toasted.global.error_toast({ message: error })
+        })
     },
     hideImportModal () {
       this.$refs.importModal.$refs.confirmationModal.hide()
     },
     confirmImport () {
-      let promises = []
-      for (const client of this.syncClients) {
-        let clientData = {
-          address: {
-            streetAddress: '',
-            city: '',
-            postalCode: '',
-            state: '',
-            province: null,
-            country: null
-          }
-        }
-        // le defino una tabla vacía de precios de costo
-        // porque el componente costsTable asume que existe
-        clientData.costsTable = []
-        clientData.addresses = []
-
-        let addressProperties = [ 'address', 'country', 'state', 'province', 'location', 'postalCode', 'city' ]
-        for (let property in client) {
-          if (addressProperties.find((prop) => { return prop === property })) {
-            if (property === 'address') clientData.address['streetAddress'] = client[property]
-            if (property === 'location') clientData.address['city'] = client[property]
-            else clientData.address[property] = client[property]
-          } else {
-            clientData[property] = client[property]
-          }
-        }
-        promises.push(ClientsService.create(clientData))
-      }
-      Promise.all(promises).then(() => {
-        this.$toasted.global.success_toast({ message: `${this.syncClientsCount} registros importados con éxito` })
-        this.fetchClients()
-      }, error => {
-        this.$toasted.global.error_toast({ message: error })
-      })
+      this.$store.dispatch(CLIENTS_SYNC)
+        .then((syncResults) => {
+          this.$toasted.global.success_toast({ message: syncResults.message })
+          this.fetchClients()
+        })
+        .catch((error) => {
+          this.$toasted.global.error_toast({ message: error })
+        })
       this.$refs.importModal.$refs.confirmationModal.hide()
     },
     showDeleteModal (id) {

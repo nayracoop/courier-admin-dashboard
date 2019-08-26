@@ -3,7 +3,7 @@
     <b-row class="actions-bar">
       <b-col sm="12">
         <b-button variant="primary" :to="{ name: 'Nuevo Proveedor' }"><i class="fa fa-plus-circle ml-1"></i> Nuevo proveedor</b-button>
-        <b-button variant="outline-primary" @click="showImportModal()"><i v-if="!providerLoading" class="fa fa-file ml-1"></i><i v-else class="fa fa-cog fa-spin ml-1"></i> Importar </b-button>
+        <b-button variant="outline-primary" @click="showImportModal()"><i v-if="!providerSynching" class="fa fa-file ml-1"></i><i v-else class="fa fa-cog fa-spin ml-1"></i> Sincronizar</b-button>
       </b-col>
     </b-row>
     <b-card :header="caption" v-if="providers.length === 0">
@@ -76,11 +76,11 @@
     @confirmDelete="confirmDelete"
     @cancelDelete="hideDeleteModal" />
     <c-confirmation-modal
-    classModal="import-modal"  modalTitle="Importar proveedores"
+    classModal="import-modal"  modalTitle="Sincronizar proveedores"
     ref="importModal"  defaultStyles="true" variantConfirmation="primary"
-    :promptMessage="'¿Desea importar ' + (syncProvidersCount && syncProvidersCount > 1 ? `${syncProvidersCount} registros` : 'un registro') + '?'"
+    :promptMessage="syncDifferencesMessage"
     title="Confirmar importación"
-    :confirmationMessage="'Sí, deseo importarlo' + (syncProvidersCount && syncProvidersCount > 1 ? 's' : '')"
+    :confirmationMessage="'Sí, deseo sincronizarlo' + (syncProvidersCount && syncProvidersCount > 1 ? 's' : '')"
     confirmationMethod="confirmImport"
     cancellationMethod="cancelImport"
     @confirmImport="confirmImport"
@@ -90,8 +90,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_PROVIDERS, FETCH_SYNC_PROVIDERS, PROVIDER_DELETE } from '@/store/types/actions'
-import { ProvidersService } from '@/api'
+import { FETCH_PROVIDERS, FETCH_PROVIDERS_SYNC_DIFFERENCES, PROVIDERS_SYNC, PROVIDER_DELETE } from '@/store/types/actions'
 import CConfirmationModal from '@/components/ConfirmationModal'
 
 export default {
@@ -118,11 +117,13 @@ export default {
       deleteMultiple: false,
       currentPage: 1,
       perPage: 5,
-      filter: null
+      filter: null,
+      syncDifferencesMessage: '',
+      syncProvidersCount: 0
     }
   },
   computed: {
-    ...mapGetters([ 'providersCount', 'providerLoading', 'providers', 'syncProviders', 'syncProvidersCount' ])
+    ...mapGetters([ 'providers', 'providersCount', 'providerSynching', 'providerSyncDifferencesDetails' ])
   },
   mounted () {
     this.fetchProviders()
@@ -141,55 +142,32 @@ export default {
       this.$store.dispatch(FETCH_PROVIDERS)
     },
     showImportModal () {
-      this.$store.dispatch(FETCH_SYNC_PROVIDERS).then(() => {
-        if (this.syncProvidersCount && this.syncProvidersCount > 0) {
-          this.$refs.importModal.$refs.confirmationModal.show()
-        } else {
-          this.$toasted.global.error_toast({ message: 'No hay nuevos registros para importar' })
-        }
-      })
+      this.$store.dispatch(FETCH_PROVIDERS_SYNC_DIFFERENCES)
+        .then(() => {
+          if (this.providerSyncDifferencesDetails && this.providerSyncDifferencesDetails.canSync) {
+            this.syncProvidersCount = this.providerSyncDifferencesDetails.import + this.providerSyncDifferencesDetails.export
+            this.syncDifferencesMessage = `¿Desea recibir ${this.providerSyncDifferencesDetails.import} y enviar ${this.providerSyncDifferencesDetails.export} registros?`
+            this.$refs.importModal.$refs.confirmationModal.show()
+          } else {
+            this.$toasted.global.error_toast({ message: 'No hay registros para sincronizar' })
+          }
+        })
+        .catch((error) => {
+          this.$toasted.global.error_toast({ message: error })
+        })
     },
     hideImportModal () {
       this.$refs.importModal.$refs.confirmationModal.hide()
     },
     confirmImport () {
-      let promises = []
-      for (const provider of this.syncProviders) {
-        let providerData = {
-          address: {
-            streetAddress: '',
-            city: '',
-            postalCode: '',
-            state: '',
-            province: null,
-            country: null
-          }
-        }
-        // le defino una tabla vacía de precios de costo
-        // porque el componente costsTable asume que existe
-        providerData.costsTable = []
-        providerData.shippingZones = []
-        providerData.fuelTable = []
-
-        let addressProperties = [ 'address', 'country', 'state', 'province', 'location', 'postalCode', 'city' ]
-        for (let property in provider) {
-          if (addressProperties.find((prop) => { return prop === property })) {
-            if (property === 'address') providerData.address['streetAddress'] = provider[property]
-            if (property === 'location') providerData.address['city'] = provider[property]
-            else providerData.address[property] = provider[property]
-          } else {
-            providerData[property] = provider[property]
-          }
-        }
-        promises.push(ProvidersService.create(providerData))
-        // promises.push(ProvidersService.create(provider))
-      }
-      Promise.all(promises).then(() => {
-        this.$toasted.global.success_toast({ message: `${this.syncProvidersCount} registros importados con éxito` })
-        this.fetchProviders()
-      }, error => {
-        this.$toasted.global.error_toast({ message: error })
-      })
+      this.$store.dispatch(PROVIDERS_SYNC)
+        .then((syncResults) => {
+          this.$toasted.global.success_toast({ message: syncResults.message })
+          this.fetchProviders()
+        })
+        .catch((error) => {
+          this.$toasted.global.error_toast({ message: error })
+        })
       this.$refs.importModal.$refs.confirmationModal.hide()
     },
     showDeleteModal (id) {

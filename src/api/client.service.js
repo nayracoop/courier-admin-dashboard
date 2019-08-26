@@ -2,17 +2,13 @@ import Parse from 'parse'
 
 export default {
   async create (params) {
-    try {
-      const Client = Parse.Object.extend('Client')
-      const client = new Client()
+    const Client = Parse.Object.extend('Client')
+    const client = new Client()
 
-      const savedClient = await client.save(params)
-      Parse.Cloud.run('AfterSaveClient', {clientId: savedClient.id})
+    const savedClient = await client.save(params)
+    Parse.Cloud.run('AfterSaveClient', {clientId: savedClient.id})
 
-      return savedClient
-    } catch (error) {
-      throw new Error(error)
-    }
+    return savedClient
   },
   getAll () {
     let query = new Parse.Query('Client')
@@ -70,7 +66,10 @@ export default {
       }
     })
   },
-  getSyncClients () {
+  getClientsSyncDifferences () {
+    return Parse.Cloud.run('FetchXubioClientsSyncDifferences')
+  },
+  syncClients () {
     return Parse.Cloud.run('SyncXubioClients')
   }
 }

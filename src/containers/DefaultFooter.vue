@@ -3,7 +3,7 @@
     <slot>
       <div>
         <span>Courier Admin Dashboard</span>
-        <span>&copy; 2018</span>
+        <span>&copy; {{theYear}}</span>
       </div>
       <div class="ml-auto">
         <span>Desarrollado por</span>
@@ -30,6 +30,9 @@ export default {
       return [
         'app-footer'
       ]
+    },
+    theYear () {
+      return new Date().getFullYear()
     }
   },
   methods: {

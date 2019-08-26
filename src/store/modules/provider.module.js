@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { ProvidersService } from '@/api'
-import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, PROVIDER_RESET_STATE, FETCH_PROVIDER, FETCH_PROVIDERS, FETCH_SHIPPING_PROVIDERS, FETCH_SYNC_PROVIDERS } from '@/store/types/actions'
-import { RESET_STATE, SET_PROVIDER, FETCH_START, FETCH_PROVIDERS_END, FETCH_SYNC_PROVIDERS_END } from '@/store/types/mutations'
+import { PROVIDER_SAVE, PROVIDER_EDIT, PROVIDER_DELETE, PROVIDER_RESET_STATE, FETCH_PROVIDER, FETCH_PROVIDERS, FETCH_SHIPPING_PROVIDERS, FETCH_PROVIDERS_SYNC_DIFFERENCES, PROVIDERS_SYNC } from '@/store/types/actions'
+import { RESET_STATE, SET_PROVIDER, FETCH_PROVIDER_START, SYNCH_PROVIDER_START, FETCH_PROVIDERS_END, FETCH_PROVIDERS_SYNC_DIFFERENCES_END, SYNC_PROVIDERS_END } from '@/store/types/mutations'
 
 const getInitialState = () => {
   return {
@@ -41,8 +41,11 @@ const getInitialState = () => {
     providers: [],
     syncProviders: [],
     providerLoading: false,
+    providerSynching: false,
     providersCount: 0,
-    syncProvidersCount: 0
+    providersCanSync: false,
+    providersImport: 0,
+    providersExport: 0
   }
 }
 
@@ -53,7 +56,7 @@ export const actions = {
     return ProvidersService.create(state.provider)
   },
   [FETCH_PROVIDERS] ({ commit }) {
-    commit(FETCH_START)
+    commit(FETCH_PROVIDER_START)
     return ProvidersService.getAll()
       .then(data => {
         commit(FETCH_PROVIDERS_END, data)
@@ -63,7 +66,7 @@ export const actions = {
       })
   },
   [FETCH_SHIPPING_PROVIDERS] ({ commit }) {
-    commit(FETCH_START)
+    commit(FETCH_PROVIDER_START)
     return ProvidersService.getShipping()
       .then(data => {
         commit(FETCH_PROVIDERS_END, data)
@@ -72,13 +75,26 @@ export const actions = {
         throw new Error(error)
       })
   },
-  [FETCH_SYNC_PROVIDERS] ({ commit }) {
-    commit(FETCH_START)
-    return ProvidersService.getSyncProviders()
-      .then(data => {
-        commit(FETCH_SYNC_PROVIDERS_END, data)
+  [FETCH_PROVIDERS_SYNC_DIFFERENCES] ({ commit }) {
+    commit(SYNCH_PROVIDER_START)
+    return ProvidersService.getProvidersSyncDifferences()
+      .then((syncDifferencesDetails) => {
+        commit(FETCH_PROVIDERS_SYNC_DIFFERENCES_END, syncDifferencesDetails)
       })
       .catch((error) => {
+        commit(FETCH_PROVIDERS_SYNC_DIFFERENCES_END)
+        throw new Error(error)
+      })
+  },
+  [PROVIDERS_SYNC] ({ commit }) {
+    commit(SYNCH_PROVIDER_START)
+    return ProvidersService.syncProviders()
+      .then((results) => {
+        commit(SYNC_PROVIDERS_END)
+        return results
+      })
+      .catch((error) => {
+        commit(SYNC_PROVIDERS_END)
         throw new Error(error)
       })
   },
@@ -110,8 +126,12 @@ export const actions = {
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export const mutations = {
-  [FETCH_START] (state) {
+  [FETCH_PROVIDER_START] (state) {
     state.providerLoading = true
+  },
+  [SYNCH_PROVIDER_START] (state) {
+    state.providerLoading = true
+    state.providerSynching = true
   },
   [FETCH_PROVIDERS_END] (state, providers) {
     state.providers = providers.map(function (e) {
@@ -123,15 +143,18 @@ export const mutations = {
     state.providersCount = providers.length
     state.providerLoading = false
   },
-  [FETCH_SYNC_PROVIDERS_END] (state, providers) {
-    state.syncProviders = providers.map(function (e) {
-      if (e.constructor === Object) {
-        return e
-      }
-      return e.toJSON()
-    })
-    state.syncProvidersCount = providers.length
+  [FETCH_PROVIDERS_SYNC_DIFFERENCES_END] (state, syncDifferencesDetails = null) {
+    if (syncDifferencesDetails) {
+      state.providersCanSync = syncDifferencesDetails.canSync
+      state.providersImport = syncDifferencesDetails.xubio
+      state.providersExport = syncDifferencesDetails.parse
+    }
     state.providerLoading = false
+    state.providerSynching = false
+  },
+  [SYNC_PROVIDERS_END] (state) {
+    state.providerLoading = false
+    state.providerSynching = false
   },
   [SET_PROVIDER] (state, provider) {
     state.provider = provider.toJSON()
@@ -148,20 +171,24 @@ const getters = {
   providers (state) {
     return state.providers
   },
-  syncProviders (state) {
-    return state.syncProviders
-  },
   provider (state) {
     return state.provider
   },
   providersCount (state) {
     return state.providersCount
   },
-  syncProvidersCount (state) {
-    return state.syncProvidersCount
-  },
   providerLoading (state) {
     return state.providerLoading // el getter providerLoading se usa en distintos lugares
+  },
+  providerSynching (state) {
+    return state.providerSynching
+  },
+  providerSyncDifferencesDetails (state) {
+    return {
+      canSync: state.providersCanSync,
+      import: state.providersImport,
+      export: state.providersExport
+    }
   }
 }
 

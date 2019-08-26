@@ -88,7 +88,10 @@ export default {
       }
     })
   },
-  getSyncProviders () {
-    return Parse.Cloud.run('SyncXubioProviders', {})
+  getProvidersSyncDifferences () {
+    return Parse.Cloud.run('FetchXubioProvidersSyncDifferences')
+  },
+  syncProviders () {
+    return Parse.Cloud.run('SyncXubioProviders')
   }
 }
