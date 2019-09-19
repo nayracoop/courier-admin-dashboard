@@ -164,8 +164,9 @@ export default {
           this.$toasted.global.success_toast({ message: syncResults.message })
           this.fetchClients()
         })
-        .catch((error) => {
-          this.$toasted.global.error_toast({ message: error })
+        .catch((errorData) => {
+          console.error(errorData.message ? errorData.message.internalMessage : errorData)
+          this.$toasted.global.error_toast({ message: errorData.message ? errorData.message.friendlyMessage : errorData })
         })
       this.$refs.importModal.$refs.confirmationModal.hide()
     },

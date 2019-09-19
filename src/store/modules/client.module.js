@@ -68,7 +68,7 @@ export const actions = {
         commit(FETCH_CLIENTS_END, data)
       })
       .catch((error) => {
-        throw new Error(error)
+        throw error
       })
   },
   [FETCH_CLIENTS_SYNC_DIFFERENCES] ({ commit }) {
@@ -79,7 +79,7 @@ export const actions = {
       })
       .catch((error) => {
         commit(FETCH_CLIENTS_SYNC_DIFFERENCES_END)
-        throw new Error(error)
+        throw error
       })
   },
   [CLIENTS_SYNC] ({ commit }) {
@@ -91,7 +91,7 @@ export const actions = {
       })
       .catch((error) => {
         commit(SYNC_CLIENTS_END)
-        throw new Error(error)
+        throw error
       })
   },
   [FETCH_CLIENT] (context, clientId, prevClient) {

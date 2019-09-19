@@ -62,7 +62,7 @@ export const actions = {
         commit(FETCH_PROVIDERS_END, data)
       })
       .catch((error) => {
-        throw new Error(error)
+        throw error
       })
   },
   [FETCH_SHIPPING_PROVIDERS] ({ commit }) {
@@ -72,7 +72,7 @@ export const actions = {
         commit(FETCH_PROVIDERS_END, data)
       })
       .catch((error) => {
-        throw new Error(error)
+        throw error
       })
   },
   [FETCH_PROVIDERS_SYNC_DIFFERENCES] ({ commit }) {
@@ -83,7 +83,7 @@ export const actions = {
       })
       .catch((error) => {
         commit(FETCH_PROVIDERS_SYNC_DIFFERENCES_END)
-        throw new Error(error)
+        throw error
       })
   },
   [PROVIDERS_SYNC] ({ commit }) {
@@ -95,7 +95,7 @@ export const actions = {
       })
       .catch((error) => {
         commit(SYNC_PROVIDERS_END)
-        throw new Error(error)
+        throw error
       })
   },
   [FETCH_PROVIDER] (context, providerId, prevProvider) {
