@@ -173,12 +173,18 @@ export default {
         }
       }
     },
-    id: Number,
+    id: {
+      type: Number,
+      default: 0
+    },
     savable: {
       type: Boolean,
       default: false
     },
-    base: Boolean
+    base: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
