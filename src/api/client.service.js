@@ -30,7 +30,7 @@ export default {
       'purchaseAccount',
       'saleAccount',
       'addresses'])
-
+    query.limit(1000)
     return query.find()
   },
   get (id) {

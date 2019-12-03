@@ -11,7 +11,7 @@ export default {
     let query = new Parse.Query('Shipping')
     query.ascending('name')
     query.doesNotExist('deletedAt')
-
+    query.limit(1000)
     return query.find()
   },
   get (id) {

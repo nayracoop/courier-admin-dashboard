@@ -29,7 +29,7 @@ export default {
       'saleAccount',
       'isShipping',
       'insurance'])
-
+    query.limit(1000)
     return query.find()
   },
   getShipping () {
@@ -52,7 +52,7 @@ export default {
       'saleAccount',
       'isShipping',
       'insurance'])
-
+    query.limit(1000)
     return query.find()
   },
   get (id) {
