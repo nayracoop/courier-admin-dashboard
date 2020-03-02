@@ -3,8 +3,8 @@
     <AppHeader fixed>
       <SidebarToggler class="d-lg-none" display="md" mobile />
       <b-link class="navbar-brand" to="#">
-        <img class="navbar-brand-full" src="/static/img/brand/logo.png" width="55" height="" alt="Courier Admin Logo">
-        <img class="navbar-brand-minimized ml-5" src="/static/img/brand/logo.png" width="55" alt="Courier Admin Logo">
+        <img class="navbar-brand-full" src="/static/img/logo.png" width="55" height="" alt="Courier Admin Logo">
+        <img class="navbar-brand-minimized ml-5" src="/static/img/logo.png" width="55" alt="Courier Admin Logo">
       </b-link>
       <SidebarToggler class="d-md-down-none mr-auto" display="lg" />
       <!--b-navbar-nav class="d-md-down-none">
